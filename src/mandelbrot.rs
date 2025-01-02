@@ -1,0 +1,44 @@
+use rayon::prelude::*;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn calculate_mandelbrot(
+    width: usize,
+    height: usize,
+    max_iterations: usize,
+    zoom: f64,
+) -> Vec<u8> {
+    (0..width * height)
+        .into_par_iter()
+        .map(|index| {
+            let x = index % width;
+            let y = index / width;
+
+            let cx = zoom * x as f64 / width as f64 * 3.5 - 2.5;
+            let cy = zoom * y as f64 / height as f64 * 2.0 - 1.0;
+
+            let mut zx = 0.0;
+            let mut zy = 0.0;
+            let mut iteration = 0;
+
+            while zx * zx + zy * zy <= 6.0 && iteration < max_iterations {
+                let temp = zx * zx - zy * zy + cx;
+                zy = 2.0 * zx * zy + cy;
+                zx = temp;
+                iteration += 1;
+            }
+
+            if iteration >= max_iterations {
+                return vec![0, 0, 0, 255];
+            }
+
+            let hue = iteration as f64 / max_iterations as f64;
+            let r = (hue * 7.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0;
+            let g = (hue * 5.0 * std::f64::consts::TAU + 4.0).sin() * 128.0 + 128.0;
+            let b = (hue * 3.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
+
+            vec![r as u8, g as u8, b as u8, 255]
+        })
+        .flatten()
+        .collect()
+}
