@@ -38,11 +38,20 @@ async function main() {
 
   draw();
 
+  let inCooldown = false;
   document.addEventListener("keydown", function (event) {
-    if (event.key === "+") {
-      zoom *= 0.9;
-    } else if (event.key === "-") {
-      zoom *= 1.5;
+    if (inCooldown) {
+      return;
+    }
+
+    inCooldown = true;
+    setTimeout(() => {
+      inCooldown = false;
+    }, 100);
+    if (event.key === "z") {
+      zoom *= 0.8;
+    } else if (event.key === "x") {
+      zoom *= 1.25;
     }
 
     draw();
