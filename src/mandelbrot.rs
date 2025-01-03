@@ -16,13 +16,14 @@ pub fn calculate_mandelbrot(
             let x = index % width;
             let y = index / width;
 
-            let cx = zoom * (x as f64 / width as f64 * 3.5 - 2.5) - mid_x;
-            let cy = zoom * (y as f64 / height as f64 * 2.0 - 1.0) - mid_y;
+            let cx = zoom * (3.5 * x as f64 / width as f64 - 2.5) - mid_x;
+            let cy = zoom * (2.0 * y as f64 / height as f64 - 1.0) - mid_y;
 
             let mut zx = 0.0;
             let mut zy = 0.0;
             let mut iteration = 0;
 
+            // Check for cycles with a HashMap of integer approximations.
             while zx * zx + zy * zy <= 4.0 && iteration < max_iterations {
                 let temp = zx * zx - zy * zy + cx;
                 zy = 2.0 * zx * zy + cy;
@@ -30,17 +31,21 @@ pub fn calculate_mandelbrot(
                 iteration += 1;
             }
 
-            if iteration >= max_iterations {
-                return vec![0, 0, 0, 255];
-            }
-
-            let hue = iteration as f64 / max_iterations as f64;
-            let r = (hue * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0;
-            let b = (hue * 17.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
-            let g = (hue * 17.0 * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0;
-
-            vec![r as u8, g as u8, b as u8, 255]
+            hue(iteration, max_iterations)
         })
         .flatten()
         .collect()
+}
+
+fn hue(iteration: usize, max_iterations: usize) -> Vec<u8> {
+    if iteration >= max_iterations {
+        return vec![0, 0, 0, 255];
+    }
+
+    let hue = iteration as f64 / max_iterations as f64;
+    let r = (hue * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0;
+    let b = (hue * 17.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
+    let g = (hue * 17.0 * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0;
+
+    vec![r as u8, g as u8, b as u8, 255]
 }
