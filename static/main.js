@@ -5,11 +5,18 @@ main();
 async function main() {
   await init();
 
+  run();
+
+  window.addEventListener("resize", run);
+}
+
+function run() {
   const canvas = document.getElementById("mandelbrotCanvas");
   const ctx = canvas.getContext("2d");
 
-  const width = 700;
-  const height = 400;
+  const width = document.body.clientWidth;
+  const height = document.body.clientHeight;
+
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   const dpr = window.devicePixelRatio;
@@ -51,20 +58,20 @@ async function main() {
     inCooldown = true;
     setTimeout(() => {
       inCooldown = false;
-    }, 128);
+    }, 256);
 
     switch (event.key) {
       case "ArrowLeft":
-        midX += zoom * 0.2;
+        midX += zoom * 0.4;
         break;
       case "ArrowRight":
-        midX -= zoom * 0.2;
+        midX -= zoom * 0.4;
         break;
       case "ArrowUp":
-        midY += zoom * 0.2;
+        midY += zoom * 0.4;
         break;
       case "ArrowDown":
-        midY -= zoom * 0.2;
+        midY -= zoom * 0.4;
         break;
       case "x":
         zoom *= 0.8;

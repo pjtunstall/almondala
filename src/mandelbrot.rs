@@ -23,7 +23,7 @@ pub fn calculate_mandelbrot(
             let mut zy = 0.0;
             let mut iteration = 0;
 
-            while zx * zx + zy * zy <= 6.0 && iteration < max_iterations {
+            while zx * zx + zy * zy <= 4.0 && iteration < max_iterations {
                 let temp = zx * zx - zy * zy + cx;
                 zy = 2.0 * zx * zy + cy;
                 zx = temp;
