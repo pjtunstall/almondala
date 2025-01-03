@@ -16,8 +16,8 @@ pub fn calculate_mandelbrot(
             let x = index % width;
             let y = index / width;
 
-            let cx = zoom * x as f64 / width as f64 * 3.5 - mid_x;
-            let cy = zoom * y as f64 / height as f64 * 2.0 - mid_y;
+            let cx = zoom * (x as f64 / width as f64 * 3.5 - 2.5) - mid_x;
+            let cy = zoom * (y as f64 / height as f64 * 2.0 - 1.0) - mid_y;
 
             let mut zx = 0.0;
             let mut zy = 0.0;

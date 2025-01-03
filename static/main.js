@@ -17,9 +17,9 @@ async function main() {
   canvas.height = height * dpr;
 
   const imageData = ctx.createImageData(canvas.width, canvas.height);
-  let zoom = 1.0;
-  let midX = 2.5;
-  let midY = 1.0;
+  let zoom = 1.5625;
+  let midX = -0.75;
+  let midY = 0.0;
   const maxIterations = 1000;
 
   const draw = () => {
@@ -51,20 +51,20 @@ async function main() {
     inCooldown = true;
     setTimeout(() => {
       inCooldown = false;
-    }, 64);
+    }, 200);
 
     switch (event.key) {
       case "ArrowLeft":
-        midX += 0.1 * zoom;
+        midX += zoom;
         break;
       case "ArrowRight":
-        midX -= 0.1 * zoom;
+        midX -= zoom;
         break;
       case "ArrowUp":
-        midY += 0.1 * zoom;
+        midY += zoom;
         break;
       case "ArrowDown":
-        midY -= 0.1 * zoom;
+        midY -= zoom;
         break;
       case "x":
         zoom *= 0.8;
