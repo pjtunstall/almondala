@@ -1,7 +1,6 @@
 import init, { calculate_mandelbrot } from "../pkg/almondala.js";
 
-const keys = new Set();
-let isInCooldown = false;
+const keys = {};
 let zoom;
 let midX;
 let midY;
@@ -21,7 +20,7 @@ async function main() {
   document.addEventListener("keyup", (event) => handleKeyup(event.key));
   window.addEventListener("resize", reset);
 
-  setInterval(handleKeys, 256);
+  requestAnimationFrame(handleKeys);
 }
 
 function reset() {
@@ -32,7 +31,7 @@ function reset() {
   let width = 0.8 * document.body.clientWidth;
   let height = 0.8 * document.body.clientHeight;
   width > height
-    ? (width = height * 1.618033988749895)
+    ? (width = height * 1.618033988749895) // Golden ratio.
     : (height = width * 0.618033988749895);
 
   canvas.style.width = `${width}px`;
@@ -64,17 +63,14 @@ function draw() {
   ctx.putImageData(imageData, 0, 0);
 }
 
-function handleKeys() {
-  if (isInCooldown) {
+function handleKeys(timestamp) {
+  requestAnimationFrame(handleKeys);
+
+  if (Object.keys(keys).length === 0) {
     return;
   }
 
-  isInCooldown = true;
-  setTimeout(() => {
-    isInCooldown = false;
-  }, 256);
-
-  for (const key of keys) {
+  Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
         midX += zoom * 0.4;
@@ -97,7 +93,11 @@ function handleKeys() {
       case " ":
         reset();
     }
-  }
+
+    if (keys[key] === false) {
+      delete keys[key];
+    }
+  });
 
   draw();
 }
@@ -111,7 +111,7 @@ function handleKeydown(key) {
     case "x":
     case "z":
     case " ":
-      keys.add(key);
+      keys[key] = true;
   }
 }
 
@@ -124,6 +124,6 @@ function handleKeyup(key) {
     case "x":
     case "z":
     case " ":
-      keys.delete(key);
+      keys[key] = false;
   }
 }
