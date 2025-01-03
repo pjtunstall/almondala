@@ -17,7 +17,9 @@ async function main() {
   canvas.height = height * dpr;
 
   const imageData = ctx.createImageData(canvas.width, canvas.height);
-  let zoom = 1;
+  let zoom = 1.0;
+  let midX = 2.5;
+  let midY = 1.0;
   const maxIterations = 1000;
 
   const draw = () => {
@@ -26,6 +28,8 @@ async function main() {
       canvas.width,
       canvas.height,
       maxIterations,
+      midX,
+      midY,
       zoom
     );
 
@@ -47,11 +51,27 @@ async function main() {
     inCooldown = true;
     setTimeout(() => {
       inCooldown = false;
-    }, 100);
-    if (event.key === "z") {
-      zoom *= 0.8;
-    } else if (event.key === "x") {
-      zoom *= 1.25;
+    }, 64);
+
+    switch (event.key) {
+      case "ArrowLeft":
+        midX += 0.1 * zoom;
+        break;
+      case "ArrowRight":
+        midX -= 0.1 * zoom;
+        break;
+      case "ArrowUp":
+        midY += 0.1 * zoom;
+        break;
+      case "ArrowDown":
+        midY -= 0.1 * zoom;
+        break;
+      case "x":
+        zoom *= 0.8;
+        break;
+      case "z":
+        zoom *= 1.25;
+        break;
     }
 
     draw();
