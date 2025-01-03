@@ -51,20 +51,20 @@ async function main() {
     inCooldown = true;
     setTimeout(() => {
       inCooldown = false;
-    }, 200);
+    }, 128);
 
     switch (event.key) {
       case "ArrowLeft":
-        midX += zoom;
+        midX += zoom * 0.2;
         break;
       case "ArrowRight":
-        midX -= zoom;
+        midX -= zoom * 0.2;
         break;
       case "ArrowUp":
-        midY += zoom;
+        midY += zoom * 0.2;
         break;
       case "ArrowDown":
-        midY -= zoom;
+        midY -= zoom * 0.2;
         break;
       case "x":
         zoom *= 0.8;

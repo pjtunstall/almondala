@@ -35,9 +35,9 @@ pub fn calculate_mandelbrot(
             }
 
             let hue = iteration as f64 / max_iterations as f64;
-            let r = (hue * 7.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0;
-            let g = (hue * 5.0 * std::f64::consts::TAU + 4.0).sin() * 128.0 + 128.0;
-            let b = (hue * 3.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
+            let r = (hue * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0;
+            let b = (hue * 17.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
+            let g = (hue * 17.0 * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0;
 
             vec![r as u8, g as u8, b as u8, 255]
         })
