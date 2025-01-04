@@ -1,4 +1,4 @@
-import init, { calculate_mandelbrot } from "../pkg/almondala.js";
+import init, { calculate_mandelbrot } from "./pkg/almondala.js";
 
 const keys = {};
 let zoom;
