@@ -1,5 +1,1 @@
-pkg/*
-!pkg/almondala.js
-!pkg/your_wasm_file.wasm
-
 target/
