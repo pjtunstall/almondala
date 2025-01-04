@@ -1,5 +1,11 @@
 # Almondala
 
+![Mandelbrot](initial.jpg)
+
+- [Description](#description)
+- [Setup](#setup)
+- [Usage](#usage)
+
 ## Description
 
 A WASM-based Mandelbrot set explorer.
