@@ -44,5 +44,9 @@ Then open a browser and navigate to `http://localhost:8000/static/`.
 ## Usage
 
 - Arrow keys to pan.
-- Z to zoom out.
 - X to zoom in.
+- Z to zoom out.
+
+- Click on a point of the Mandelbrot to move it to the center of the canvas.
+- Double click to move and zoom.
+- Drag a point of the Mandelbrot move it to a new location on the canvas.
