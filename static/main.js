@@ -8,6 +8,7 @@ const maxIterations = 1024;
 let imageData;
 const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
+let cooldown = false;
 
 main();
 
@@ -18,12 +19,28 @@ async function main() {
 
   document.addEventListener("keydown", (event) => handleKeydown(event.key));
   document.addEventListener("keyup", (event) => handleKeyup(event.key));
+  canvas.addEventListener("click", (event) => {
+    clickHandler(event);
+    draw();
+  });
+  canvas.addEventListener("dblclick", (event_) => {
+    zoom *= 0.8;
+    draw();
+  });
   window.addEventListener("resize", reset);
 
   requestAnimationFrame(handleKeys);
 }
 
 function reset() {
+  if (cooldown) {
+    return;
+  }
+  cooldown = true;
+  setTimeout(() => {
+    cooldown = false;
+  }, 256);
+
   zoom = 1.5625;
   midX = -0.75;
   midY = 0.0;
@@ -63,7 +80,7 @@ function draw() {
   ctx.putImageData(imageData, 0, 0);
 }
 
-function handleKeys(timestamp) {
+function handleKeys(timestamp_) {
   requestAnimationFrame(handleKeys);
 
   if (Object.keys(keys).length === 0) {
@@ -127,3 +144,46 @@ function handleKeyup(key) {
       keys[key] = false;
   }
 }
+
+function clickHandler(event) {
+  const rect = canvas.getBoundingClientRect();
+
+  const x = (event.clientX - rect.left) * window.devicePixelRatio;
+  const y = (event.clientY - rect.top) * window.devicePixelRatio;
+
+  const cx = zoom * ((3.5 * x) / canvas.width - 2.5 + 0.75);
+  const cy = zoom * ((2.0 * y) / canvas.height - 1.0);
+
+  midX -= cx;
+  midY -= cy;
+}
+
+// let swipeStartX, swipeStartY;
+
+// canvas.addEventListener("touchstart", (event) => {
+//   swipeStartX = event.touches[0].clientX;
+//   swipeStartY = event.touches[0].clientY;
+// });
+
+// canvas.addEventListener("touchmove", (event) => {
+//   const swipeEndX = event.touches[0].clientX;
+//   const swipeEndY = event.touches[0].clientY;
+//   const swipeDeltaX = swipeEndX - swipeStartX;
+//   const swipeDeltaY = swipeEndY - swipeStartY;
+
+//   if (Math.abs(swipeDeltaX) > Math.abs(swipeDeltaY)) {
+//     if (swipeDeltaX > 0) {
+//       midX -= zoom * 0.4;
+//     } else {
+//       midX += zoom * 0.4;
+//     }
+//   } else {
+//     if (swipeDeltaY > 0) {
+//       midY += zoom * 0.4;
+//     } else {
+//       midY -= zoom * 0.4;
+//     }
+//   }
+
+//   draw();
+// });
