@@ -8,7 +8,7 @@
 
 ## Description
 
-A WASM-based Mandelbrot set explorer.
+A Mandelbrot set explorer, written in Rust (compiled to WebAssembly) and JackScript.
 
 ## Setup
 
