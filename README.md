@@ -12,10 +12,12 @@ A Mandelbrot set explorer, written in Rust (compiled to WebAssembly) and JackScr
 
 ## Setup
 
-Open a terminal and build with
+Simply view online at [Almondala](https://almondala.netlify.app/).
+
+Alternatively, here is a guid to build and run locally. First, clone the repo and navigate into it by entering the following commands into a terminal:
 
 ```bash
-https://github.com/pjtunstall/almondala
+git clone https://github.com/pjtunstall/almondala
 cd almondala
 ```
 
@@ -33,19 +35,21 @@ Make sure you have `wasm-pack` installed:
 cargo install wasm-pack
 ```
 
-Build with:
+Compile the Rust to WebAssembly with
 
 ```bash
 wasm-pack build --target web --release
 ```
 
-Start a server, for example with:
+Then move the `.wasm` file, `almondala_bg.wasm`, and its wasm-bindgen JavaScript wrapper, `almondala.js`, from the new `pkg/` folder, which `wasm-pack` should just have produced, to `static/pkg/`, replacing any previously built versions.
+
+Start a server, for example with
 
 ```bash
 python3 -m http.server
 ```
 
-Then open a browser and navigate to `http://localhost:8000/static/`.
+Finally, open a browser and navigate to `http://localhost:8000/static/`.
 
 ## Usage
 
