@@ -4,7 +4,7 @@ const keys = {};
 let zoom;
 let midX;
 let midY;
-const maxIterations = 1024;
+let maxIterations = 1024;
 let imageData;
 const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
@@ -31,7 +31,7 @@ async function main() {
     clearTimeout(singleClick);
     singleClick = setTimeout(() => {
       handleClick(event);
-      draw();
+      requestAnimationFrame(draw);
     }, 200);
   });
   canvas.addEventListener("dblclick", (event) => {
@@ -70,7 +70,7 @@ function reset() {
 
   imageData = ctx.createImageData(canvas.width, canvas.height);
 
-  draw();
+  requestAnimationFrame(draw);
 }
 
 function draw() {
@@ -178,7 +178,7 @@ function handleDoubleClick(event) {
   handleClick(event);
   zoom *= 0.8;
   midX += zoom * 0.2;
-  draw();
+  requestAnimationFrame(draw);
 }
 
 function handleMousedown(event) {
@@ -206,7 +206,7 @@ function handleDrag(event) {
   dragStartX = currentX;
   dragStartY = currentY;
 
-  draw();
+  requestAnimationFrame(draw);
 
   return true;
 }
