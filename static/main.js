@@ -11,6 +11,7 @@ const ctx = canvas.getContext("2d");
 let cooldown = false;
 let dragStartX, dragStartY;
 let singleClick;
+let prev = 0;
 
 main();
 
@@ -31,13 +32,10 @@ async function main() {
     singleClick = setTimeout(() => {
       handleClick(event);
       draw();
-    }, 300);
+    }, 200);
   });
   canvas.addEventListener("dblclick", (event) => {
-    clearTimeout(singleClick);
-    handleClick(event);
-    zoom *= 0.8;
-    draw();
+    handleDoubleClick(event);
   });
 
   window.addEventListener("resize", reset);
@@ -93,10 +91,15 @@ function draw() {
   ctx.putImageData(imageData, 0, 0);
 }
 
-function handleKeys(timestamp_) {
+function handleKeys(timestamp) {
   requestAnimationFrame(handleKeys);
+  if (timestamp - prev < 120) {
+    return;
+  }
+  prev = timestamp;
 
   if (Object.keys(keys).length === 0) {
+    prev = timestamp;
     return;
   }
 
@@ -168,6 +171,14 @@ function handleClick(event) {
 
   midX -= cx;
   midY -= cy;
+}
+
+function handleDoubleClick(event) {
+  clearTimeout(singleClick);
+  handleClick(event);
+  zoom *= 0.8;
+  midX += zoom * 0.2;
+  draw();
 }
 
 function handleMousedown(event) {
