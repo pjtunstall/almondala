@@ -1,0 +1,15 @@
+{
+  "name": "almondala",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "almondala_bg.wasm",
+    "almondala.js",
+    "almondala.d.ts"
+  ],
+  "main": "almondala.js",
+  "types": "almondala.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
