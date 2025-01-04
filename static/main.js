@@ -9,6 +9,7 @@ let imageData;
 const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
 let cooldown = false;
+let dragStartX, dragStartY;
 
 main();
 
@@ -19,7 +20,12 @@ async function main() {
 
   document.addEventListener("keydown", (event) => handleKeydown(event.key));
   document.addEventListener("keyup", (event) => handleKeyup(event.key));
-  canvas.addEventListener("click", (event) => {
+  document.addEventListener("mousedown", (event) => handleMousedown(event));
+
+  canvas.addEventListener("mouseup", (event) => {
+    if (handleDrag(event)) {
+      return;
+    }
     clickHandler(event);
     draw();
   });
@@ -27,6 +33,7 @@ async function main() {
     zoom *= 0.8;
     draw();
   });
+
   window.addEventListener("resize", reset);
 
   requestAnimationFrame(handleKeys);
@@ -146,44 +153,56 @@ function handleKeyup(key) {
 }
 
 function clickHandler(event) {
-  const rect = canvas.getBoundingClientRect();
+  const canvasRect = canvas.getBoundingClientRect();
 
-  const x = (event.clientX - rect.left) * window.devicePixelRatio;
-  const y = (event.clientY - rect.top) * window.devicePixelRatio;
+  const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+  const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 
-  const cx = zoom * ((3.5 * x) / canvas.width - 2.5 + 0.75);
-  const cy = zoom * ((2.0 * y) / canvas.height - 1.0);
+  const [cx, cy] = canvasToMandelCoords(x, y);
 
   midX -= cx;
   midY -= cy;
 }
 
-// let swipeStartX, swipeStartY;
+function handleMousedown(event) {
+  const canvasRect = canvas.getBoundingClientRect();
+  dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+  dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
+}
 
-// canvas.addEventListener("touchstart", (event) => {
-//   swipeStartX = event.touches[0].clientX;
-//   swipeStartY = event.touches[0].clientY;
-// });
+function handleDrag(event) {
+  const canvasRect = canvas.getBoundingClientRect();
+  const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+  const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
+  const dragDeltaX = currentX - dragStartX;
+  const dragDeltaY = currentY - dragStartY;
 
-// canvas.addEventListener("touchmove", (event) => {
-//   const swipeEndX = event.touches[0].clientX;
-//   const swipeEndY = event.touches[0].clientY;
-//   const swipeDeltaX = swipeEndX - swipeStartX;
-//   const swipeDeltaY = swipeEndY - swipeStartY;
+  if (dragDeltaX * dragDeltaX + dragDeltaY * dragDeltaY < 5) {
+    return false;
+  }
 
-//   if (Math.abs(swipeDeltaX) > Math.abs(swipeDeltaY)) {
-//     if (swipeDeltaX > 0) {
-//       midX -= zoom * 0.4;
-//     } else {
-//       midX += zoom * 0.4;
-//     }
-//   } else {
-//     if (swipeDeltaY > 0) {
-//       midY += zoom * 0.4;
-//     } else {
-//       midY -= zoom * 0.4;
-//     }
-//   }
+  const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY);
 
-//   draw();
-// });
+  midX += dx;
+  midY += dy;
+
+  dragStartX = currentX;
+  dragStartY = currentY;
+
+  draw();
+
+  return true;
+}
+
+function canvasToMandelCoords(x, y) {
+  // View of 3.5 real units by 2.0 imaginary units in the complex plane.
+  const cx = zoom * ((3.5 * x) / canvas.width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
+  const cy = zoom * ((2.0 * y) / canvas.height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
+  return [cx, cy];
+}
+
+function canvasToMandelDelta(dx, dy) {
+  const [x1, y1] = canvasToMandelCoords(0, 0);
+  const [x2, y2] = canvasToMandelCoords(dx, dy);
+  return [x2 - x1, y2 - y1];
+}
