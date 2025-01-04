@@ -10,6 +10,7 @@ const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
 let cooldown = false;
 let dragStartX, dragStartY;
+let singleClick;
 
 main();
 
@@ -26,10 +27,15 @@ async function main() {
     if (handleDrag(event)) {
       return;
     }
-    clickHandler(event);
-    draw();
+    clearTimeout(singleClick);
+    singleClick = setTimeout(() => {
+      handleClick(event);
+      draw();
+    }, 300);
   });
-  canvas.addEventListener("dblclick", (event_) => {
+  canvas.addEventListener("dblclick", (event) => {
+    clearTimeout(singleClick);
+    handleClick(event);
     zoom *= 0.8;
     draw();
   });
@@ -152,7 +158,7 @@ function handleKeyup(key) {
   }
 }
 
-function clickHandler(event) {
+function handleClick(event) {
   const canvasRect = canvas.getBoundingClientRect();
 
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
