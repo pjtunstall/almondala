@@ -14,7 +14,7 @@ A Mandelbrot set explorer, written in Rust (compiled to WebAssembly) and JackScr
 
 Simply view online at [Almondala](https://almondala.netlify.app/).
 
-Alternatively, here is a guid to build and run locally. First, clone the repo and navigate into it by entering the following commands into a terminal:
+Alternatively, here is a guide to build and run locally. First, clone the repo and navigate into it by entering the following commands into a terminal:
 
 ```bash
 git clone https://github.com/pjtunstall/almondala
