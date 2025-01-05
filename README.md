@@ -8,7 +8,7 @@
 
 ## Description
 
-[Almondala](https://almondala.netlify.app/) is a Mandelbrot set explorer, written in Rust (compiled to WebAssembly) and JavaScript.
+[Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and JavaScript.
 
 ## Usage
 

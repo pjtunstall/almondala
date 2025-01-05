@@ -7,7 +7,12 @@ let imageData;
 let zoom;
 let midX;
 let midY;
-let maxIterations = 1024;
+const fullMaxIterations = 1024;
+let maxIterations = fullMaxIterations;
+let rFactor = 23.0;
+let gFactor = 17.0;
+let bFactor = 17.0;
+let fullDrawTimeoutId;
 
 const keys = {};
 let cooldown = false;
@@ -69,16 +74,31 @@ function reset() {
   requestAnimationFrame(draw);
 }
 
-function calculateMandelbrot(width, height, maxIterations, midX, midY, zoom) {
+function calculateMandelbrot(
+  width,
+  height,
+  maxIterations,
+  fullMaxIterations,
+  midX,
+  midY,
+  zoom,
+  rFactor,
+  gFactor,
+  bFactor
+) {
   return new Promise((resolve, reject) => {
     try {
       const pixels = calculate_mandelbrot(
         width,
         height,
         maxIterations,
+        fullMaxIterations,
         midX,
         midY,
-        zoom
+        zoom,
+        rFactor,
+        gFactor,
+        bFactor
       );
       resolve(pixels);
     } catch (error) {
@@ -92,9 +112,13 @@ async function draw() {
     canvas.width,
     canvas.height,
     maxIterations,
+    fullMaxIterations,
     midX,
     midY,
-    zoom
+    zoom,
+    rFactor,
+    gFactor,
+    bFactor
   );
 
   if (imageData.data.length !== pixels.length) {
@@ -119,6 +143,8 @@ function handleKeys(timestamp) {
     prev = timestamp;
     return;
   }
+
+  clearTimeout(fullDrawTimeoutId);
 
   Object.keys(keys).forEach((key) => {
     switch (key) {
@@ -149,7 +175,13 @@ function handleKeys(timestamp) {
     }
   });
 
+  maxIterations = 512;
   draw();
+
+  fullDrawTimeoutId = setTimeout(() => {
+    maxIterations = fullMaxIterations;
+    draw();
+  }, 128);
 }
 
 function handleKeydown(key) {
