@@ -1,16 +1,19 @@
 import init, { calculate_mandelbrot } from "./pkg/almondala.js";
 
-const keys = {};
+const canvas = document.getElementById("mandelbrotCanvas");
+const ctx = canvas.getContext("2d");
+let imageData;
+
 let zoom;
 let midX;
 let midY;
 let maxIterations = 1024;
-let imageData;
-const canvas = document.getElementById("mandelbrotCanvas");
-const ctx = canvas.getContext("2d");
+
+const keys = {};
 let cooldown = false;
 let dragStartX, dragStartY;
-let singleClick;
+let singleClickTimeoutId;
+
 let prev = 0;
 
 main();
@@ -25,14 +28,7 @@ async function main() {
   document.addEventListener("mousedown", (event) => handleMousedown(event));
 
   canvas.addEventListener("mouseup", (event) => {
-    if (handleDrag(event)) {
-      return;
-    }
-    clearTimeout(singleClick);
-    singleClick = setTimeout(() => {
-      handleClick(event);
-      requestAnimationFrame(draw);
-    }, 200);
+    handleSingleClick(event);
   });
   canvas.addEventListener("dblclick", (event) => {
     handleDoubleClick(event);
@@ -73,9 +69,27 @@ function reset() {
   requestAnimationFrame(draw);
 }
 
-function draw() {
+function calculateMandelbrot(width, height, maxIterations, midX, midY, zoom) {
+  return new Promise((resolve, reject) => {
+    try {
+      const pixels = calculate_mandelbrot(
+        width,
+        height,
+        maxIterations,
+        midX,
+        midY,
+        zoom
+      );
+      resolve(pixels);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const pixels = calculate_mandelbrot(
+  const pixels = await calculateMandelbrot(
     canvas.width,
     canvas.height,
     maxIterations,
@@ -173,8 +187,19 @@ function handleClick(event) {
   midY -= cy;
 }
 
+function handleSingleClick(event) {
+  if (handleDrag(event)) {
+    return;
+  }
+  clearTimeout(singleClickTimeoutId);
+  singleClickTimeoutId = setTimeout(() => {
+    handleClick(event);
+    requestAnimationFrame(draw);
+  }, 200);
+}
+
 function handleDoubleClick(event) {
-  clearTimeout(singleClick);
+  clearTimeout(singleClickTimeoutId);
   handleClick(event);
   zoom *= 0.8;
   midX += zoom * 0.2;

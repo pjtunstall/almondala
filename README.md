@@ -3,12 +3,26 @@
 ![Mandelbrot](initial.jpg)
 
 - [Description](#description)
-- [Setup](#setup)
 - [Usage](#usage)
+- [Setup](#setup)
 
 ## Description
 
-A Mandelbrot set explorer, written in Rust (compiled to WebAssembly) and JackScript.
+[Almondala](https://almondala.netlify.app/) is a Mandelbrot set explorer, written in Rust (compiled to WebAssembly) and JavaScript.
+
+## Usage
+
+- Keys:
+  - Arrow keys to pan.
+  - X to zoom in.
+  - Z to zoom out.
+  - SPACE to reset.
+- Mouse:
+  - Click on a point of the Mandelbrot to move it to the center of the canvas.
+  - Double click to move and zoom.
+  - Drag a point of the Mandelbrot move it to a new location on the canvas.
+
+Resizing the window also resets the view.
 
 ## Setup
 
@@ -54,17 +68,3 @@ python3 -m http.server
 ```
 
 Finally, open a browser and navigate to `http://localhost:8000/static/`.
-
-## Usage
-
-- Keys:
-  - Arrow keys to pan.
-  - X to zoom in.
-  - Z to zoom out.
-  - SPACE to reset.
-- Mouse:
-  - Click on a point of the Mandelbrot to move it to the center of the canvas.
-  - Double click to move and zoom.
-  - Drag a point of the Mandelbrot move it to a new location on the canvas.
-
-Resizing the window also resets the view.
