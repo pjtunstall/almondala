@@ -58,7 +58,7 @@ wasm-pack build --target web --release
 Then move the `.wasm` file, `almondala_bg.wasm`, and its associated glue script (wasm-bindgen JavaScript wrapper), `almondala.js`, from the new `pkg/` folder, which `wasm-pack` should just have produced, to `static/pkg/` (replacing any previously built versions):
 
 ```bash
-mv pkg/almondala_bg.wasm pkg/almondala.js /static/pkg/
+mv pkg/almondala_bg.wasm pkg/almondala.js static/pkg/
 ```
 
 Start a server, for example with

@@ -88,7 +88,6 @@ function calculateMandelbrot(width, height, maxIterations, midX, midY, zoom) {
 }
 
 async function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   const pixels = await calculateMandelbrot(
     canvas.width,
     canvas.height,
@@ -97,6 +96,10 @@ async function draw() {
     midY,
     zoom
   );
+
+  if (imageData.data.length !== pixels.length) {
+    return;
+  }
 
   for (let i = 0; i < pixels.length; i++) {
     imageData.data[i] = pixels[i];
@@ -201,8 +204,8 @@ function handleSingleClick(event) {
 function handleDoubleClick(event) {
   clearTimeout(singleClickTimeoutId);
   handleClick(event);
-  zoom *= 0.8;
-  midX += zoom * 0.2;
+  zoom *= 0.64;
+  midX += zoom * 0.4;
   requestAnimationFrame(draw);
 }
 
