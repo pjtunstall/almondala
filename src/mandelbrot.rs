@@ -19,6 +19,11 @@ pub fn calculate_mandelbrot(
             let cx = zoom * (3.5 * x as f64 / width as f64 - 2.5) - mid_x;
             let cy = zoom * (2.0 * y as f64 / height as f64 - 1.0) - mid_y;
 
+            // Exit early for a disc of points known to be inside the main cardioid.
+            if (cx + 0.25) * (cx + 0.25) + cy * cy < 0.16 {
+                return vec![0, 0, 0, 255];
+            }
+
             let mut zx = 0.0;
             let mut zy = 0.0;
             let mut iteration = 0;
