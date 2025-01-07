@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "wasm-pack build --target web --out-dir ./dist/wasm && mv ./dist/wasm/*.wasm ./public/wasm/ && mv ./dist/wasm/*.js ./public/wasm/"
+  }
+}

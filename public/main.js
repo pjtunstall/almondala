@@ -1,4 +1,4 @@
-import init, { calculate_mandelbrot } from "./pkg/almondala.js";
+import init, { calculate_mandelbrot } from "./wasm/almondala.js";
 
 const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
@@ -8,7 +8,7 @@ let zoom;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
-const lazyMaxIterations = 512;
+const firstPassMaxIterations = 512;
 let maxIterations = fullMaxIterations;
 let rFactor = 23.0;
 let gFactor = 17.0;
@@ -176,7 +176,7 @@ function handleKeys(timestamp) {
     }
   });
 
-  maxIterations = lazyMaxIterations;
+  maxIterations = firstPassMaxIterations;
   draw();
 
   fullDrawTimeoutId = setTimeout(() => {
