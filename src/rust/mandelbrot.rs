@@ -2,7 +2,8 @@ use rayon::prelude::*;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub fn calculate_mandelbrot(
+pub fn calculate_mandelbrot_shared(
+    buffer_ptr: *mut u8,
     width: usize,
     height: usize,
     max_iterations: usize,
@@ -13,10 +14,13 @@ pub fn calculate_mandelbrot(
     r_factor: f64,
     g_factor: f64,
     b_factor: f64,
-) -> Vec<u8> {
-    (0..width * height)
-        .into_par_iter()
-        .map(|index| {
+) {
+    let buffer = unsafe { std::slice::from_raw_parts_mut(buffer_ptr, width * height * 4) };
+
+    buffer
+        .par_chunks_mut(4)
+        .enumerate()
+        .for_each(|(index, pixel)| {
             let x = index % width;
             let y = index / width;
 
@@ -34,29 +38,29 @@ pub fn calculate_mandelbrot(
                 iteration += 1;
             }
 
-            hue(
+            let color = calculate_color(
                 iteration,
                 max_iterations,
                 full_max_iterations,
                 r_factor,
                 g_factor,
                 b_factor,
-            )
-        })
-        .flatten()
-        .collect()
+            );
+
+            pixel.copy_from_slice(&color);
+        });
 }
 
-fn hue(
+fn calculate_color(
     iteration: usize,
     max_iterations: usize,
     full_max_iterations: usize,
     r_factor: f64,
     g_factor: f64,
     b_factor: f64,
-) -> Vec<u8> {
+) -> [u8; 4] {
     if iteration >= max_iterations {
-        return vec![0, 0, 0, 255];
+        return [0, 0, 0, 255];
     }
 
     let hue = iteration as f64 / full_max_iterations as f64;
@@ -64,5 +68,5 @@ fn hue(
     let b = (hue * g_factor * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
     let g = (hue * b_factor * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0;
 
-    vec![r as u8, g as u8, b as u8, 255]
+    [r as u8, g as u8, b as u8, 255]
 }

@@ -49,22 +49,18 @@ Make sure you have `wasm-pack` installed:
 cargo install wasm-pack
 ```
 
-Compile the Rust to WebAssembly with
+Run the build script with
 
 ```bash
-wasm-pack build --target web --release
+npm run build
 ```
 
-Then move the `.wasm` file, `almondala_bg.wasm`, and its associated glue script (wasm-bindgen JavaScript wrapper), `almondala.js`, from the new `pkg/` folder, which `wasm-pack` should just have produced, to `static/pkg/` (replacing any previously built versions):
+This will build the WebAssembly file `almondala_bg.wasm` to the `pkg` directory and copy it to the `public/wasm` directory.
+
+Start the local server (in `server.go`) with
 
 ```bash
-mv pkg/almondala_bg.wasm pkg/almondala.js static/pkg/
+go run .
 ```
 
-Start a server, for example with
-
-```bash
-python3 -m http.server
-```
-
-Finally, open a browser and navigate to `http://localhost:8000/static/`.
+Finally, open a browser, when the popup prompts you, allow the application to accept incoming connections, and navigate to `http://localhost:8080`.

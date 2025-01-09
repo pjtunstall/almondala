@@ -1,9 +1,3 @@
-import init, { calculate_mandelbrot } from "./wasm/almondala.js";
-
-const canvas = document.getElementById("mandelbrotCanvas");
-const ctx = canvas.getContext("2d");
-let imageData;
-
 let zoom;
 let midX;
 let midY;
@@ -22,10 +16,21 @@ let singleClickTimeoutId;
 
 let prev = 0;
 
+const canvas = document.getElementById("mandelbrotCanvas");
+const offscreen = canvas.transferControlToOffscreen();
+const worker = new Worker("worker.js", { type: "module" });
+
 main();
 
 async function main() {
-  await init();
+  initCanvas();
+  await new Promise((resolve) => {
+    worker.onmessage = function (e) {
+      if (e.data.type === "initialized") {
+        resolve();
+      }
+    };
+  });
 
   reset();
 
@@ -43,6 +48,32 @@ async function main() {
   window.addEventListener("resize", reset);
 
   requestAnimationFrame(handleKeys);
+}
+
+async function initCanvas() {
+  // Should be enough for a 4K display. 3645 * 2160 * 4 = 31_492_800.
+  const maxWidth = 3645;
+  const maxHeight = 2373;
+  const maxMemorySize = maxWidth * maxHeight * 4;
+  const pageSize = 65536;
+  const maxPages = Math.ceil(maxMemorySize / pageSize); // 528.
+
+  const memory = new WebAssembly.Memory({
+    initial: 256,
+    maximum: maxPages,
+    shared: true,
+  });
+
+  worker.postMessage(
+    {
+      type: "init",
+      memory,
+      maxWidth,
+      maxHeight,
+      offscreen,
+    },
+    [offscreen]
+  );
 }
 
 function reset() {
@@ -67,51 +98,17 @@ function reset() {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   const dpr = window.devicePixelRatio;
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
+  width *= dpr;
+  height *= dpr;
+  worker.postMessage({ type: "resize", width, height });
 
-  imageData = ctx.createImageData(canvas.width, canvas.height);
-
-  requestAnimationFrame(draw);
+  draw();
 }
 
-function calculateMandelbrot(
-  width,
-  height,
-  maxIterations,
-  fullMaxIterations,
-  midX,
-  midY,
-  zoom,
-  rFactor,
-  gFactor,
-  bFactor
-) {
-  return new Promise((resolve, reject) => {
-    try {
-      const pixels = calculate_mandelbrot(
-        width,
-        height,
-        maxIterations,
-        fullMaxIterations,
-        midX,
-        midY,
-        zoom,
-        rFactor,
-        gFactor,
-        bFactor
-      );
-      resolve(pixels);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-async function draw() {
-  const pixels = await calculateMandelbrot(
-    canvas.width,
-    canvas.height,
+function draw() {
+  console.log("draw called in main");
+  worker.postMessage({
+    type: "draw",
     maxIterations,
     fullMaxIterations,
     midX,
@@ -119,19 +116,30 @@ async function draw() {
     zoom,
     rFactor,
     gFactor,
-    bFactor
-  );
-
-  if (imageData.data.length !== pixels.length) {
-    return;
-  }
-
-  for (let i = 0; i < pixels.length; i++) {
-    imageData.data[i] = pixels[i];
-  }
-
-  ctx.putImageData(imageData, 0, 0);
+    bFactor,
+  });
 }
+
+// async function draw() {
+//   await new Promise((resolve) => {
+//     worker.postMessage({
+//       type: "draw",
+//       maxIterations,
+//       fullMaxIterations,
+//       midX,
+//       midY,
+//       zoom,
+//       rFactor,
+//       gFactor,
+//       bFactor,
+//     });
+//     worker.onmessage((e) => {
+//       if (e.data.type === "drawn") {
+//         resolve();
+//       }
+//     });
+//   });
+// }
 
 function handleKeys(timestamp) {
   requestAnimationFrame(handleKeys);
@@ -176,13 +184,13 @@ function handleKeys(timestamp) {
     }
   });
 
-  maxIterations = firstPassMaxIterations;
+  // maxIterations = firstPassMaxIterations;
   draw();
 
-  fullDrawTimeoutId = setTimeout(() => {
-    maxIterations = fullMaxIterations;
-    draw();
-  }, 128);
+  // fullDrawTimeoutId = setTimeout(() => {
+  //   maxIterations = fullMaxIterations;
+  //   draw();
+  // }, 128);
 }
 
 function handleKeydown(key) {
@@ -230,7 +238,7 @@ function handleSingleClick(event) {
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = setTimeout(() => {
     handleClick(event);
-    requestAnimationFrame(draw);
+    draw;
   }, 200);
 }
 
@@ -239,7 +247,7 @@ function handleDoubleClick(event) {
   handleClick(event);
   zoom *= 0.64;
   midX += zoom * 0.4;
-  requestAnimationFrame(draw);
+  draw;
 }
 
 function handleMousedown(event) {
@@ -267,7 +275,7 @@ function handleDrag(event) {
   dragStartX = currentX;
   dragStartY = currentY;
 
-  requestAnimationFrame(draw);
+  draw;
 
   return true;
 }

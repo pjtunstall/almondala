@@ -1,19 +1,7 @@
 let wasm;
 
-let cachedUint8ArrayMemory0 = null;
-
-function getUint8ArrayMemory0() {
-    if (cachedUint8ArrayMemory0 === null || cachedUint8ArrayMemory0.byteLength === 0) {
-        cachedUint8ArrayMemory0 = new Uint8Array(wasm.memory.buffer);
-    }
-    return cachedUint8ArrayMemory0;
-}
-
-function getArrayU8FromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
-}
 /**
+ * @param {number} buffer_ptr
  * @param {number} width
  * @param {number} height
  * @param {number} max_iterations
@@ -24,13 +12,9 @@ function getArrayU8FromWasm0(ptr, len) {
  * @param {number} r_factor
  * @param {number} g_factor
  * @param {number} b_factor
- * @returns {Uint8Array}
  */
-export function calculate_mandelbrot(width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, r_factor, g_factor, b_factor) {
-    const ret = wasm.calculate_mandelbrot(width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, r_factor, g_factor, b_factor);
-    var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
-    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
-    return v1;
+export function calculate_mandelbrot(buffer_ptr, width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, r_factor, g_factor, b_factor) {
+    wasm.calculate_mandelbrot(buffer_ptr, width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, r_factor, g_factor, b_factor);
 }
 
 async function __wbg_load(module, imports) {
@@ -88,7 +72,6 @@ function __wbg_init_memory(imports, memory) {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
-    cachedUint8ArrayMemory0 = null;
 
 
     wasm.__wbindgen_start();
