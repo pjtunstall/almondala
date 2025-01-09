@@ -1,14 +1,14 @@
-import init, { calculate_mandelbrot } from "./wasm/almondala.js";
-
 const canvas = document.getElementById("mandelbrotCanvas");
-const ctx = canvas.getContext("2d");
-let imageData;
+const offscreen = canvas.transferControlToOffscreen();
+const worker = new Worker("worker.js", { type: "module" });
+
+let drawing = false;
 
 let zoom;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
-const firstPassMaxIterations = 512;
+const firstPassMaxIterations = 256;
 let maxIterations = fullMaxIterations;
 let rFactor = 23.0;
 let gFactor = 17.0;
@@ -25,7 +25,14 @@ let prev = 0;
 main();
 
 async function main() {
-  await init();
+  initCanvas();
+  await new Promise((resolve) => {
+    worker.onmessage = function (e) {
+      if (e.data.type === "initialized") {
+        resolve();
+      }
+    };
+  });
 
   reset();
 
@@ -43,6 +50,16 @@ async function main() {
   window.addEventListener("resize", reset);
 
   requestAnimationFrame(handleKeys);
+}
+
+async function initCanvas() {
+  worker.postMessage(
+    {
+      type: "init",
+      offscreen,
+    },
+    [offscreen]
+  );
 }
 
 function reset() {
@@ -67,51 +84,21 @@ function reset() {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   const dpr = window.devicePixelRatio;
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
+  width *= dpr;
+  height *= dpr;
+  worker.postMessage({ type: "resize", width, height });
 
-  imageData = ctx.createImageData(canvas.width, canvas.height);
-
-  requestAnimationFrame(draw);
+  draw();
 }
 
-function calculateMandelbrot(
-  width,
-  height,
-  maxIterations,
-  fullMaxIterations,
-  midX,
-  midY,
-  zoom,
-  rFactor,
-  gFactor,
-  bFactor
-) {
-  return new Promise((resolve, reject) => {
-    try {
-      const pixels = calculate_mandelbrot(
-        width,
-        height,
-        maxIterations,
-        fullMaxIterations,
-        midX,
-        midY,
-        zoom,
-        rFactor,
-        gFactor,
-        bFactor
-      );
-      resolve(pixels);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
+function draw() {
+  if (drawing) {
+    return;
+  }
+  drawing = true;
 
-async function draw() {
-  const pixels = await calculateMandelbrot(
-    canvas.width,
-    canvas.height,
+  worker.postMessage({
+    type: "draw",
     maxIterations,
     fullMaxIterations,
     midX,
@@ -119,47 +106,30 @@ async function draw() {
     zoom,
     rFactor,
     gFactor,
-    bFactor
-  );
-
-  if (imageData.data.length !== pixels.length) {
-    return;
-  }
-
-  for (let i = 0; i < pixels.length; i++) {
-    imageData.data[i] = pixels[i];
-  }
-
-  ctx.putImageData(imageData, 0, 0);
+    bFactor,
+  });
 }
 
-function handleKeys(timestamp) {
-  requestAnimationFrame(handleKeys);
-  if (timestamp - prev < 120) {
-    return;
+worker.addEventListener("message", (e) => {
+  if (e.data.type === "drawn") {
+    drawing = false;
   }
-  prev = timestamp;
+});
 
-  if (Object.keys(keys).length === 0) {
-    prev = timestamp;
-    return;
-  }
-
-  clearTimeout(fullDrawTimeoutId);
-
+function handleKeys() {
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        midX += zoom * 0.4;
+        midX += zoom * 0.2;
         break;
       case "ArrowRight":
-        midX -= zoom * 0.4;
+        midX -= zoom * 0.2;
         break;
       case "ArrowUp":
-        midY += zoom * 0.4;
+        midY += zoom * 0.2;
         break;
       case "ArrowDown":
-        midY -= zoom * 0.4;
+        midY -= zoom * 0.2;
         break;
       case "x":
         zoom *= 0.8;
@@ -170,19 +140,7 @@ function handleKeys(timestamp) {
       case " ":
         reset();
     }
-
-    if (keys[key] === false) {
-      delete keys[key];
-    }
   });
-
-  maxIterations = firstPassMaxIterations;
-  draw();
-
-  fullDrawTimeoutId = setTimeout(() => {
-    maxIterations = fullMaxIterations;
-    draw();
-  }, 128);
 }
 
 function handleKeydown(key) {
@@ -195,6 +153,11 @@ function handleKeydown(key) {
     case "z":
     case " ":
       keys[key] = true;
+      if (drawing) {
+        return;
+      }
+      handleKeys();
+      draw();
   }
 }
 
@@ -207,7 +170,7 @@ function handleKeyup(key) {
     case "x":
     case "z":
     case " ":
-      keys[key] = false;
+      delete keys[key];
   }
 }
 
@@ -230,7 +193,7 @@ function handleSingleClick(event) {
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = setTimeout(() => {
     handleClick(event);
-    requestAnimationFrame(draw);
+    draw();
   }, 200);
 }
 
@@ -239,7 +202,7 @@ function handleDoubleClick(event) {
   handleClick(event);
   zoom *= 0.64;
   midX += zoom * 0.4;
-  requestAnimationFrame(draw);
+  draw();
 }
 
 function handleMousedown(event) {
