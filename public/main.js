@@ -118,8 +118,8 @@ worker.addEventListener("message", (e) => {
 
 function handleKeys(timestamp) {
   requestAnimationFrame(handleKeys);
+  // The check for drawing is to ake sure state is not changed while drawing is blocked/in-progress. (draw returns early if drawing is in progress to prevent a build-up of requests.)
   if (drawing || timestamp - prev < 120) {
-    // Make sure state is not changed while drawing is blocked/in-progress. (draw returns early if drawing is in progress to prevent a build-up of requests.)
     return;
   }
   prev = timestamp;
