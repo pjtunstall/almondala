@@ -1,7 +1,5 @@
 # Experimental branch: offscreen
 
-# Experimental Branch: Feature-X
-
 This branch contains experimental work on using worker threads and offscreen canvases for performance and to avoid blocking the main thread. It's not complete or deployed.
 
 To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala/tree/main).
