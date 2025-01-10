@@ -2,7 +2,7 @@
 
 This branch contains experimental work on using worker threads and offscreen canvases for performance and to avoid blocking the main thread. It's not complete or deployed.
 
-To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala/tree/main).
+To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala).
 
 In this branch, I have two worker threads: fast and slow. When the main thread initiates a render, the fast worker calls the Rust function with a lower number of maximum iterations. At the same time, the slow worker calls it with a higher value. In this way, a provisional image can be displayed while waiting for the full result.
 
