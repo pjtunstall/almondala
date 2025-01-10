@@ -1,8 +1,13 @@
-const canvas = document.getElementById("mandelbrotCanvas");
-const offscreen = canvas.transferControlToOffscreen();
-const worker = new Worker("worker.js", { type: "module" });
+const fastCanvas = document.getElementById("fastCanvas");
+const fastOffscreen = fastCanvas.transferControlToOffscreen();
+const fastWorker = new Worker("worker.js", { type: "module" });
 
-let drawing = false;
+const slowCanvas = document.getElementById("slowCanvas");
+const slowOffscreen = slowCanvas.transferControlToOffscreen();
+const slowWorker = new Worker("worker.js", { type: "module" });
+
+let fastDrawing = false;
+let slowDrawing = false;
 
 let zoom;
 let midX;
@@ -23,9 +28,17 @@ let prev = 0;
 main();
 
 async function main() {
-  initCanvas();
+  initCanvases();
   await new Promise((resolve) => {
-    worker.onmessage = function (e) {
+    fastWorker.onmessage = function (e) {
+      if (e.data.type === "initialized") {
+        resolve();
+      }
+    };
+  });
+
+  await new Promise((resolve) => {
+    slowWorker.onmessage = function (e) {
       if (e.data.type === "initialized") {
         resolve();
       }
@@ -38,10 +51,10 @@ async function main() {
   document.addEventListener("keyup", (event) => handleKeyup(event.key));
   document.addEventListener("mousedown", (event) => handleMousedown(event));
 
-  canvas.addEventListener("mouseup", (event) => {
+  fastCanvas.addEventListener("mouseup", (event) => {
     handleSingleClick(event);
   });
-  canvas.addEventListener("dblclick", (event) => {
+  fastCanvas.addEventListener("dblclick", (event) => {
     handleDoubleClick(event);
   });
 
@@ -50,13 +63,21 @@ async function main() {
   requestAnimationFrame(handleKeys);
 }
 
-async function initCanvas() {
-  worker.postMessage(
+function initCanvases() {
+  fastWorker.postMessage(
     {
       type: "init",
-      offscreen,
+      offscreen: fastOffscreen,
     },
-    [offscreen]
+    [fastOffscreen]
+  );
+
+  slowWorker.postMessage(
+    {
+      type: "init",
+      offscreen: slowOffscreen,
+    },
+    [slowOffscreen]
   );
 }
 
@@ -79,21 +100,35 @@ function reset() {
     ? (width = height * 1.618033988749895) // Golden ratio.
     : (height = width * 0.618033988749895);
 
+  resize(fastCanvas, fastWorker, width, height);
+  resize(slowCanvas, slowWorker, width, height);
+
+  draw(slowWorker, fullMaxIterations);
+}
+
+function resize(canvas, worker, width, height) {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   const dpr = window.devicePixelRatio;
   width *= dpr;
   height *= dpr;
   worker.postMessage({ type: "resize", width, height });
-
-  draw(fullMaxIterations);
 }
 
-function draw(maxIterations) {
-  if (drawing) {
-    return;
+function draw(worker, maxIterations) {
+  if (worker === slowWorker) {
+    if (slowDrawing) {
+      return;
+    }
+    slowDrawing = true;
   }
-  drawing = true;
+
+  if (worker === fastWorker) {
+    if (fastDrawing) {
+      return;
+    }
+    fastDrawing = true;
+  }
 
   worker.postMessage({
     type: "draw",
@@ -108,16 +143,26 @@ function draw(maxIterations) {
   });
 }
 
-worker.addEventListener("message", (e) => {
+fastWorker.addEventListener("message", (e) => {
   if (e.data.type === "drawn") {
-    drawing = false;
+    fastDrawing = false;
+    fastCanvas.style.opacity = 1;
+    slowCanvas.style.opacity = 0;
+  }
+});
+
+slowWorker.addEventListener("message", (e) => {
+  if (e.data.type === "drawn") {
+    slowDrawing = false;
+    fastCanvas.style.opacity = 0;
+    slowCanvas.style.opacity = 1;
   }
 });
 
 function handleKeys(timestamp) {
   requestAnimationFrame(handleKeys);
-  // The check for drawing is to ake sure state is not changed while drawing is blocked/in-progress. (draw returns early if drawing is in progress to prevent a build-up of requests.)
-  if (drawing || timestamp - prev < 120) {
+  // The check for drawing is to make sure state is not changed while drawing is blocked/in-progress. (draw returns early if drawing is in progress to prevent a build-up of requests.)
+  if (fastDrawing || slowDrawing || timestamp - prev < 120) {
     return;
   }
   prev = timestamp;
@@ -158,9 +203,10 @@ function handleKeys(timestamp) {
   });
 
   if (Object.keys(keys).length === 0) {
-    draw(fullMaxIterations);
+    draw(fastWorker, firstPassMaxIterations);
+    draw(slowWorker, fullMaxIterations);
   } else {
-    draw(firstPassMaxIterations);
+    draw(fastWorker, firstPassMaxIterations);
   }
 }
 
@@ -191,7 +237,7 @@ function handleKeyup(key) {
 }
 
 function handleClick(event) {
-  const canvasRect = canvas.getBoundingClientRect();
+  const canvasRect = fastCanvas.getBoundingClientRect();
 
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
@@ -209,7 +255,8 @@ function handleSingleClick(event) {
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = setTimeout(() => {
     handleClick(event);
-    draw(fullMaxIterations);
+    draw(fastWorker, firstPassMaxIterations);
+    draw(slowWorker, fullMaxIterations);
   }, 200);
 }
 
@@ -218,17 +265,18 @@ function handleDoubleClick(event) {
   handleClick(event);
   zoom *= 0.64;
   midX += zoom * 0.4;
-  draw(fullMaxIterations);
+  draw(fastWorker, firstPassMaxIterations);
+  draw(slowWorker, fullMaxIterations);
 }
 
 function handleMousedown(event) {
-  const canvasRect = canvas.getBoundingClientRect();
+  const canvasRect = fastCanvas.getBoundingClientRect();
   dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 }
 
 function handleDrag(event) {
-  const canvasRect = canvas.getBoundingClientRect();
+  const canvasRect = fastCanvas.getBoundingClientRect();
   const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
   const dragDeltaX = currentX - dragStartX;
@@ -253,8 +301,8 @@ function handleDrag(event) {
 
 function canvasToMandelCoords(x, y) {
   // View of 3.5 real units by 2.0 imaginary units in the complex plane.
-  const cx = zoom * ((3.5 * x) / canvas.width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
-  const cy = zoom * ((2.0 * y) / canvas.height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
+  const cx = zoom * ((3.5 * x) / fastCanvas.width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
+  const cy = zoom * ((2.0 * y) / fastCanvas.height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
   return [cx, cy];
 }
 
