@@ -132,6 +132,9 @@ function handleKeys(timestamp) {
         zoom *= 1.25;
         break;
       case " ":
+        if (keys[key] === false) {
+          delete keys[key];
+        }
         reset();
     }
 
