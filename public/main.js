@@ -13,7 +13,6 @@ let maxIterations = fullMaxIterations;
 let rFactor = 23.0;
 let gFactor = 17.0;
 let bFactor = 17.0;
-let fullDrawTimeoutId;
 
 const keys = {};
 let cooldown = false;
@@ -145,8 +144,6 @@ function handleKeys(timestamp) {
     return;
   }
 
-  clearTimeout(fullDrawTimeoutId);
-
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
@@ -176,13 +173,12 @@ function handleKeys(timestamp) {
     }
   });
 
-  maxIterations = firstPassMaxIterations;
-  draw();
-
-  fullDrawTimeoutId = setTimeout(() => {
+  if (Object.keys(keys).length === 0) {
     maxIterations = fullMaxIterations;
-    draw();
-  }, 128);
+  } else {
+    maxIterations = firstPassMaxIterations;
+  }
+  draw();
 }
 
 function handleKeydown(key) {
