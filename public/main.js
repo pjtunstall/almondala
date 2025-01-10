@@ -9,11 +9,9 @@ let midX;
 let midY;
 const fullMaxIterations = 1024;
 const firstPassMaxIterations = 256;
-let maxIterations = fullMaxIterations;
 let rFactor = 23.0;
 let gFactor = 17.0;
 let bFactor = 17.0;
-let fullDrawTimeoutId;
 
 const keys = {};
 let cooldown = false;
@@ -88,10 +86,10 @@ function reset() {
   height *= dpr;
   worker.postMessage({ type: "resize", width, height });
 
-  draw();
+  draw(fullMaxIterations);
 }
 
-function draw() {
+function draw(maxIterations) {
   if (drawing) {
     return;
   }
@@ -132,16 +130,16 @@ function handleKeys(timestamp) {
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        midX += zoom * 0.4;
+        midX += zoom * 0.2;
         break;
       case "ArrowRight":
-        midX -= zoom * 0.4;
+        midX -= zoom * 0.2;
         break;
       case "ArrowUp":
-        midY += zoom * 0.4;
+        midY += zoom * 0.2;
         break;
       case "ArrowDown":
-        midY -= zoom * 0.4;
+        midY -= zoom * 0.2;
         break;
       case "x":
         zoom *= 0.9;
@@ -160,11 +158,10 @@ function handleKeys(timestamp) {
   });
 
   if (Object.keys(keys).length === 0) {
-    maxIterations = fullMaxIterations;
+    draw(fullMaxIterations);
   } else {
-    maxIterations = firstPassMaxIterations;
+    draw(firstPassMaxIterations);
   }
-  draw();
 }
 
 function handleKeydown(key) {
@@ -212,7 +209,7 @@ function handleSingleClick(event) {
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = setTimeout(() => {
     handleClick(event);
-    draw();
+    draw(fullMaxIterations);
   }, 200);
 }
 
@@ -221,7 +218,7 @@ function handleDoubleClick(event) {
   handleClick(event);
   zoom *= 0.64;
   midX += zoom * 0.4;
-  draw();
+  draw(fullMaxIterations);
 }
 
 function handleMousedown(event) {
