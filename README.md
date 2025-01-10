@@ -1,66 +1,17 @@
-# Almondala
+# Experimental branch: offscreen
 
-![Mandelbrot](static/initial.jpg)
+# Experimental Branch: Feature-X
 
-- [Description](#description)
-- [Usage](#usage)
-- [Setup](#setup)
+This branch contains experimental work on using worker threads and offscreen canvases for performance and to avoid blocking the main thread. It's not complete or deployed.
 
-## Description
+To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala/tree/main).
 
-[Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and JavaScript.
+In this branch, I have two worker threads: fast and slow. When the main thread initiates a render, the fast worker calls the Rust function with a lower number of maximum iterations. At the same time, the slow worker calls it with a higher value. In this way, a provisional image can be displayed while waiting for the full result.
 
-## Usage
+Each worker puts its result onto its own [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas). The main thread toggles the opacity of the two canvases as needed.
 
-- Keys:
-  - Arrow keys to pan.
-  - X to zoom in.
-  - Z to zoom out.
-  - SPACE to reset.
-- Mouse:
-  - Click on a point of the Mandelbrot to move it to the center of the canvas.
-  - Double click to move and zoom.
-  - Drag a point of the Mandelbrot move it to a new location on the canvas.
+As in the main branch, I only do the full calculation when the zoom and pan keys are released.
 
-Resizing the window also resets the view.
+It seems to be working well except that I see occasional jumps when switching between canvases, especially on reset.
 
-## Setup
-
-Simply view online at [Almondala](https://almondala.netlify.app/).
-
-Alternatively, here is a guide to build and run locally. First, clone the repo and navigate into it by entering the following commands into a terminal:
-
-```bash
-git clone https://github.com/pjtunstall/almondala
-cd almondala
-```
-
-[Install Rust](https://www.rust-lang.org/tools/install), if you haven't already.
-
-Install Rust dependencies with
-
-```bash
-cargo add .
-```
-
-Make sure you have `wasm-pack` installed:
-
-```bash
-cargo install wasm-pack
-```
-
-Run the build script with
-
-```bash
-npm run build
-```
-
-This will build the WebAssembly file almondala_bg.wasm to the pkg directory and copy it to the public/wasm directory along with its associated JavaScipt glue code `almondala.js`.
-
-Start a local server. For example,
-
-```bash
-python3 -m http.server
-```
-
-Open a browser. When the popup prompts you, allow the application to accept incoming connections. Then navigate to `http://localhost:8000/public/`.
+Also unsatisfying is the fact that the provisional result doesn't contribute towards the final one, and must slow it a bit, even if it feels faster, thanks to the more immediate first result. I could try caching the results, but should benchmark as I do so; an earlier experiment where I checked for revisited points on each iteration actually turned out to be slower than simply calculating all iterations up to the maximum or till the point escaped beyond two units of the origin.
