@@ -1,6 +1,6 @@
 # Almondala
 
-![Mandelbrot](static/initial.jpg)
+![Mandelbrot](public/initial.jpg)
 
 - [Description](#description)
 - [Usage](#usage)
