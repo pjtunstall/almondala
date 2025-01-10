@@ -116,31 +116,55 @@ worker.addEventListener("message", (e) => {
   }
 });
 
-function handleKeys() {
+function handleKeys(timestamp) {
+  requestAnimationFrame(handleKeys);
+  if (drawing || timestamp - prev < 120) {
+    // Make sure state is not changed while drawing is blocked/in-progress. (draw returns early if drawing is in progress to prevent a build-up of requests.)
+    return;
+  }
+  prev = timestamp;
+
+  if (Object.keys(keys).length === 0) {
+    prev = timestamp;
+    return;
+  }
+
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        midX += zoom * 0.2;
+        midX += zoom * 0.4;
         break;
       case "ArrowRight":
-        midX -= zoom * 0.2;
+        midX -= zoom * 0.4;
         break;
       case "ArrowUp":
-        midY += zoom * 0.2;
+        midY += zoom * 0.4;
         break;
       case "ArrowDown":
-        midY -= zoom * 0.2;
+        midY -= zoom * 0.4;
         break;
       case "x":
-        zoom *= 0.8;
+        zoom *= 0.9;
         break;
       case "z":
-        zoom *= 1.25;
+        zoom *= 1 / 0.9;
         break;
       case " ":
+        delete keys[key];
         reset();
     }
+
+    if (keys[key] === false) {
+      delete keys[key];
+    }
   });
+
+  if (Object.keys(keys).length === 0) {
+    maxIterations = fullMaxIterations;
+  } else {
+    maxIterations = firstPassMaxIterations;
+  }
+  draw();
 }
 
 function handleKeydown(key) {
@@ -153,11 +177,6 @@ function handleKeydown(key) {
     case "z":
     case " ":
       keys[key] = true;
-      if (drawing) {
-        return;
-      }
-      handleKeys();
-      draw();
   }
 }
 
@@ -170,7 +189,7 @@ function handleKeyup(key) {
     case "x":
     case "z":
     case " ":
-      delete keys[key];
+      keys[key] = false;
   }
 }
 
