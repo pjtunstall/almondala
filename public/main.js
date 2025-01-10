@@ -28,18 +28,18 @@ let prev = 0;
 main();
 
 async function main() {
-  initCanvases();
+  initializeCanvases();
   await new Promise((resolve) => {
-    fastWorker.onmessage = function (e) {
-      if (e.data.type === "initialized") {
+    fastWorker.onmessage = function (event) {
+      if (event.data.type === "initialized") {
         resolve();
       }
     };
   });
 
   await new Promise((resolve) => {
-    slowWorker.onmessage = function (e) {
-      if (e.data.type === "initialized") {
+    slowWorker.onmessage = function (event) {
+      if (event.data.type === "initialized") {
         resolve();
       }
     };
@@ -60,10 +60,22 @@ async function main() {
 
   window.addEventListener("resize", reset);
 
+  fastWorker.addEventListener("message", (event) => {
+    if (event.data.type === "drawn") {
+      fastDrawnHandler();
+    }
+  });
+
+  slowWorker.addEventListener("message", (event) => {
+    if (event.data.type === "drawn") {
+      slowDrawnHandler();
+    }
+  });
+
   requestAnimationFrame(handleKeys);
 }
 
-function initCanvases() {
+function initializeCanvases() {
   fastWorker.postMessage(
     {
       type: "init",
@@ -103,6 +115,9 @@ function reset() {
   resize(fastCanvas, fastWorker, width, height);
   resize(slowCanvas, slowWorker, width, height);
 
+  fastDrawing = false;
+  slowDrawing = false;
+  draw(fastWorker, firstPassMaxIterations);
   draw(slowWorker, fullMaxIterations);
 }
 
@@ -143,25 +158,21 @@ function draw(worker, maxIterations) {
   });
 }
 
-fastWorker.addEventListener("message", (e) => {
-  if (e.data.type === "drawn") {
-    fastDrawing = false;
-    fastCanvas.style.opacity = 1;
-    slowCanvas.style.opacity = 0;
-  }
-});
+function fastDrawnHandler() {
+  fastDrawing = false;
+  fastCanvas.style.opacity = 1;
+  slowCanvas.style.opacity = 0;
+}
 
-slowWorker.addEventListener("message", (e) => {
-  if (e.data.type === "drawn") {
-    slowDrawing = false;
-    fastCanvas.style.opacity = 0;
-    slowCanvas.style.opacity = 1;
-  }
-});
+function slowDrawnHandler() {
+  slowDrawing = false;
+  slowCanvas.style.opacity = 1;
+  fastCanvas.style.opacity = 0;
+}
 
 function handleKeys(timestamp) {
   requestAnimationFrame(handleKeys);
-  // The check for drawing is to make sure state is not changed while drawing is blocked/in-progress. (draw returns early if drawing is in progress to prevent a build-up of requests.)
+  // The check for fastDrawing or slowDrawing is to make sure state is not changed while drawing is in progress. In that case, draw returns early to prevent a build-up of requests.
   if (fastDrawing || slowDrawing || timestamp - prev < 120) {
     return;
   }
