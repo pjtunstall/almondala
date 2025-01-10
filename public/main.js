@@ -294,7 +294,8 @@ function handleDrag(event) {
   dragStartX = currentX;
   dragStartY = currentY;
 
-  requestAnimationFrame(draw);
+  draw(fastWorker, firstPassMaxIterations);
+  draw(slowWorker, fullMaxIterations);
 
   return true;
 }
