@@ -13,10 +13,15 @@ pub fn calculate_mandelbrot(
     r_factor: f64,
     g_factor: f64,
     b_factor: f64,
+    parity: u8,
 ) -> Vec<u8> {
     (0..width * height)
         .into_par_iter()
         .map(|index| {
+            if ((index % width) % 2) as u8 == parity {
+                return vec![0, 0, 0, 255];
+            }
+
             let x = index % width;
             let y = index / width;
 

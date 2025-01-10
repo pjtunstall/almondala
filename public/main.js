@@ -265,7 +265,7 @@ function handleDoubleClick(event) {
   handleClick(event);
   zoom *= 0.64;
   midX += zoom * 0.4;
-  draw(fastWorker, firstPassMaxIterations);
+  // draw(fastWorker, firstPassMaxIterations);
   draw(slowWorker, fullMaxIterations);
 }
 
