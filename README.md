@@ -1,6 +1,6 @@
 # Almondala
 
-![Mandelbrot](public/initial.jpg)
+![Mandelbrot](static/initial.jpg)
 
 - [Description](#description)
 - [Usage](#usage)
@@ -57,10 +57,10 @@ npm run build
 
 This will build the WebAssembly file almondala_bg.wasm to the pkg directory and copy it to the public/wasm directory along with its associated JavaScipt glue code `almondala.js`.
 
-Start the local server (in server.go) with
+Start a local server. For example,
 
 ```bash
-go run .
+python3 -m http.server
 ```
 
-Open a browser. When the popup prompts you, allow the application to accept incoming connections. Then navigate to `http://localhost:8080`.
+Open a browser. When the popup prompts you, allow the application to accept incoming connections. Then navigate to `http://localhost:8000/public/`.
