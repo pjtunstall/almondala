@@ -1,66 +1,9 @@
-# Almondala
+# Experimental branch: shared
 
-![Mandelbrot](static/initial.jpg)
+This branch contains experimental work on sharing memory between JavaScript and WASM. It's not complete or deployed.
 
-- [Description](#description)
-- [Usage](#usage)
-- [Setup](#setup)
+To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala/tree/main).
 
-## Description
+The plan was to create the shared memory buffer in the JavaScript main thread, then have the worker share it with the Rust/WASM, which would write to it, so that the result would be available for the worker to apply to an offscreen canvas. Can all that be done without copying? I don't know.
 
-[Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and JavaScript.
-
-## Usage
-
-- Keys:
-  - Arrow keys to pan.
-  - X to zoom in.
-  - Z to zoom out.
-  - SPACE to reset.
-- Mouse:
-  - Click on a point of the Mandelbrot to move it to the center of the canvas.
-  - Double click to move and zoom.
-  - Drag a point of the Mandelbrot move it to a new location on the canvas.
-
-Resizing the window also resets the view.
-
-## Setup
-
-Simply view online at [Almondala](https://almondala.netlify.app/).
-
-Alternatively, here is a guide to build and run locally. First, clone the repo and navigate into it by entering the following commands into a terminal:
-
-```bash
-git clone https://github.com/pjtunstall/almondala
-cd almondala
-```
-
-[Install Rust](https://www.rust-lang.org/tools/install), if you haven't already.
-
-Install Rust dependencies with
-
-```bash
-cargo add .
-```
-
-Make sure you have `wasm-pack` installed:
-
-```bash
-cargo install wasm-pack
-```
-
-Run the build script with
-
-```bash
-npm run build
-```
-
-This will build the WebAssembly file `almondala_bg.wasm` to the `pkg` directory and copy it to the `public/wasm` directory.
-
-Start the local server (in `server.go`) with
-
-```bash
-go run .
-```
-
-Finally, open a browser, when the popup prompts you, allow the application to accept incoming connections, and navigate to `http://localhost:8080`.
+In any case, it's still not working. Based on asserts, it seems that the Rust considers the pointer to be null, even though it's well-defined in the JS. The issue may be finding the correct type for the Rust function `calculate_mandelbrot` to receive the buffer as. Here I'm trying `buffer_ptr: *mut u8`. Another suggestion was `&mut js_sys::Uint8Array`.
