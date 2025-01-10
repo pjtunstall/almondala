@@ -74,41 +74,8 @@ function reset() {
   requestAnimationFrame(draw);
 }
 
-function calculateMandelbrot(
-  width,
-  height,
-  maxIterations,
-  fullMaxIterations,
-  midX,
-  midY,
-  zoom,
-  rFactor,
-  gFactor,
-  bFactor
-) {
-  return new Promise((resolve, reject) => {
-    try {
-      const pixels = calculate_mandelbrot(
-        width,
-        height,
-        maxIterations,
-        fullMaxIterations,
-        midX,
-        midY,
-        zoom,
-        rFactor,
-        gFactor,
-        bFactor
-      );
-      resolve(pixels);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-async function draw() {
-  const pixels = await calculateMandelbrot(
+function draw() {
+  const pixels = calculate_mandelbrot(
     canvas.width,
     canvas.height,
     maxIterations,
