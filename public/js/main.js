@@ -1,4 +1,4 @@
-import init, { calculate_mandelbrot } from "./wasm/almondala.js";
+import init, { calculate_mandelbrot } from "../wasm/almondala.js";
 
 const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
@@ -27,6 +27,7 @@ async function main() {
   await init();
 
   reset();
+  canvas.style.opacity = 1;
 
   document.addEventListener("keydown", (event) => handleKeydown(event.key));
   document.addEventListener("keyup", (event) => handleKeyup(event.key));
