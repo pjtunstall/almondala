@@ -12,7 +12,7 @@ As in the main branch, I only do the full calculation when the zoom and pan keys
 
 It works except that I see occasional glitchy jumps when switching between canvases. In Firefox, there's a flash of the background color on reset, except when the Mandelbrot has not been moved (panned or zoomed).
 
-I should investigate what happens if the slow draw completes first or a worker tries to draw to a canvas that's been resized, etc.
+I should investigate what happens if the slow draw completes first.
 
 Also unsatisfying is the fact that the provisional result doesn't contribute towards the final one, and must slow it a bit, even if it feels faster, thanks to the more immediate first result. I could try caching the results, but should benchmark as I do so; an earlier experiment where I checked for revisited points on each iteration actually turned out to be slower than simply calculating all iterations up to the maximum or till the point escaped beyond two units of the origin.
 
