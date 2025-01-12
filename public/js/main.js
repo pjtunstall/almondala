@@ -255,8 +255,7 @@ function handleClick(event) {
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 
-  const cx = midX - 1.618033988749895 * (x / canvas.width - 0.5) * 3.0 * zoom;
-  const cy = midY - (y / canvas.height - 0.5) * 3.0 * zoom;
+  const [cx, cy] = canvasToMandelCoords(x, y);
 
   midX = cx;
   midY = cy;
@@ -319,8 +318,9 @@ function handleDrag(event) {
 }
 
 function canvasToMandelCoords(x, y) {
-  const cx = 1.618033988749895 * (x / canvas.width - 0.5) * 3.0 * zoom;
-  const cy = (y / canvas.width - 0.5) * 3.0 * zoom;
+  const cx = midX - 1.618033988749895 * (x / canvas.width - 0.5) * 3.0 * zoom;
+  const cy = midY - (y / canvas.height - 0.5) * 3.0 * zoom;
+
   return [cx, cy];
 }
 
