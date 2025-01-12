@@ -5,9 +5,6 @@ const ctx = canvas.getContext("2d");
 let imageData;
 
 let zoom;
-let fakeScale = 1;
-let isZoomingTimer;
-let isPanningTimer;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
@@ -15,6 +12,24 @@ let maxIterations = fullMaxIterations;
 let rFactor = 23.0;
 let gFactor = 17.0;
 let bFactor = 17.0;
+
+let fakeScale = 1;
+let fakePanX = 0;
+let fakePanY = 0;
+let zoomingOutTimer;
+let zoomingInTimer;
+let panningLeftTimer;
+let panningRightTimer;
+let panningUpTimer;
+let panningDownTimer;
+const timers = {
+  zoomingInTimer,
+  zoomingOutTimer,
+  panningDownTimer,
+  panningLeftTimer,
+  panningRightTimer,
+  panningUpTimer,
+};
 
 const keys = {};
 let cooldown = false;
@@ -80,7 +95,9 @@ function reset() {
 function fakeZoom(scaleFactor) {
   fakeScale *= scaleFactor;
 
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.scale(fakeScale, fakeScale);
 
@@ -91,19 +108,13 @@ function fakeZoom(scaleFactor) {
   imgCtx.putImageData(imageData, 0, 0);
 
   ctx.drawImage(imgCanvas, -imageData.width / 2, -imageData.height / 2);
-
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
-let fakePanX = 0;
-let fakePanY = 0;
-
 function fakePan(deltaX, deltaY) {
-  console.log(`fakePan: ${fakePanX}, ${fakePanY}`);
   fakePanX += deltaX;
   fakePanY += deltaY;
-  console.log(`fakePan: ${fakePanX}, ${fakePanY}`);
 
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -117,8 +128,6 @@ function fakePan(deltaX, deltaY) {
   imgCtx.putImageData(imageData, 0, 0);
 
   ctx.drawImage(imgCanvas, -imageData.width / 2, -imageData.height / 2);
-
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function draw() {
@@ -134,7 +143,6 @@ function draw() {
     gFactor,
     bFactor
   );
-  console.log("draw");
 
   if (imageData.data.length !== pixels.length) {
     return;
@@ -149,21 +157,22 @@ function draw() {
   console.log(`midX: ${midX}, midY: ${midY}, zoom: ${zoom}`);
 }
 
-function setZoomTimer() {
-  clearTimeout(isZoomingTimer);
-  isZoomingTimer = setTimeout(() => {
-    fakeScale = 1;
-    requestAnimationFrame(draw);
-  }, 180);
-}
-
-function setPanTimer() {
-  clearTimeout(isPanningTimer);
-  isPanningTimer = setTimeout(() => {
-    fakePanX = 0;
-    fakePanY = 0;
-    requestAnimationFrame(draw);
-  }, 180);
+function setTimer(timer) {
+  console.log("setTimer");
+  Object.entries(timers).forEach(([key, value]) => {
+    clearTimeout(timers[key]);
+    console.log(`timer: ${timer}, key: ${key}, value: ${value}`);
+    if (key === timer) {
+      timers[key] = setTimeout(() => {
+        console.log("callback");
+        fakeScale = 1;
+        fakePanX = 0;
+        fakePanY = 0;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        requestAnimationFrame(draw);
+      }, 180);
+    }
+  });
 }
 
 function handleKeys(timestamp) {
@@ -181,34 +190,34 @@ function handleKeys(timestamp) {
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        fakePan(40 / fakeScale, 0);
-        setPanTimer();
-        midX += zoom * 0.4;
+        fakePan(28 / fakeScale, 0);
+        setTimer("panningLeftTimer");
+        midX += zoom * 0.2;
         break;
       case "ArrowRight":
-        fakePan(-40 / fakeScale, 0);
-        setPanTimer();
-        midX -= zoom * 0.4;
+        fakePan(-28 / fakeScale, 0);
+        setTimer("panningRightTimer");
+        midX -= zoom * 0.2;
         break;
       case "ArrowUp":
-        fakePan(0, 40 / fakeScale);
-        setPanTimer();
-        midY += zoom * 0.4;
+        fakePan(0, 28 / fakeScale);
+        setTimer("panningUpTimer");
+        midY += zoom * 0.2;
         break;
       case "ArrowDown":
-        fakePan(0, -40 / fakeScale);
-        setPanTimer();
-        midY -= zoom * 0.4;
+        fakePan(0, -28 / fakeScale);
+        setTimer("panningDownTimer");
+        midY -= zoom * 0.2;
         break;
       case "x":
-        fakeZoom(1.25);
-        setZoomTimer();
-        zoom *= 0.8;
+        fakeZoom(1 / 0.9);
+        setTimer("zoomingInTimer");
+        zoom *= 0.9;
         break;
       case "z":
-        fakeZoom(0.8);
-        setZoomTimer();
-        zoom *= 1.25;
+        fakeZoom(0.9);
+        setTimer("zoomingOutTimer");
+        zoom *= 1 / 0.9;
         break;
       case " ":
         if (keys[key] === false) {
