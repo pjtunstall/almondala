@@ -3,12 +3,18 @@
 ![Mandelbrot](public/initial.jpg)
 
 - [Description](#description)
+- [Name](#name)
 - [Usage](#usage)
 - [Setup](#setup)
+- [Experimental branches](#experimental-branches)
 
 ## Description
 
 [Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and JavaScript.
+
+## Name
+
+Mandelbrot, from [Benoit Mandelbrot](https://en.wikipedia.org/wiki/Benoit_Mandelbrot), the set's discoverer, is German for "almond bread". I coined Almondala as a [portmanteau](https://en.wikipedia.org/wiki/Blend_word) of almond and [mandala](https://en.wikipedia.org/wiki/Mandala).
 
 ## Usage
 
@@ -64,3 +70,14 @@ python3 -m http.server
 ```
 
 Open a browser. When the popup prompts you, allow the application to accept incoming connections. Then navigate to `http://localhost:8000/public/`.
+
+## Experimental branches
+
+This repo includes several branches for exploring new features:
+
+- `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (It works, but can be a bit jarring.)
+- `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
+- `lines`: an attempt at calculating odd and even numbered columns separately, one after the other, so as to have something to display faster, while waiting for the rest of the calculation. (The basic idea of calculating alternate lines works--the Rust does its job--but the branch is not yet fully functional. It derived from `offscreen`, and I think the two workers/canvases are complicting matters.)
+- `shared`: an attempt at sharing memory betwee JS and Wasm. (Not yet working.)
+
+See their `README`s for more info.
