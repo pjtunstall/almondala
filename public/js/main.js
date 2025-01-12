@@ -7,6 +7,7 @@ let imageData;
 let zoom;
 let fakeScale = 1;
 let isZoomingTimer;
+let isPanningTimer;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
@@ -106,10 +107,6 @@ function fakePan(deltaX, deltaY) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  console.log("Before transform reset:", ctx.getTransform());
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  console.log("After transform reset:", ctx.getTransform());
-
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.scale(fakeScale, fakeScale);
   ctx.translate(fakePanX, fakePanY);
@@ -152,8 +149,6 @@ function draw() {
 
   console.log(`midX: ${midX}, midY: ${midY}, zoom: ${zoom}`);
 }
-
-let isPanningTimer;
 
 function setZoomTimer() {
   clearTimeout(isZoomingTimer);
@@ -239,11 +234,11 @@ function handleKeys(timestamp) {
     return;
   }
 
-  if (Object.keys(keys).length === 0) {
-    maxIterations = fullMaxIterations;
-  } else {
-    maxIterations = firstPassMaxIterations;
-  }
+  // if (Object.keys(keys).length === 0) {
+  //   maxIterations = fullMaxIterations;
+  // } else {
+  //   maxIterations = firstPassMaxIterations;
+  // }
 
   requestAnimationFrame(draw);
 }
