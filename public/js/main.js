@@ -190,22 +190,22 @@ function handleKeys(timestamp) {
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        fakePan(28 / fakeScale, 0);
+        fakePan(20 / fakeScale, 0);
         setTimer("panningLeftTimer");
         midX += zoom * 0.2;
         break;
       case "ArrowRight":
-        fakePan(-28 / fakeScale, 0);
+        fakePan(-20 / fakeScale, 0);
         setTimer("panningRightTimer");
         midX -= zoom * 0.2;
         break;
       case "ArrowUp":
-        fakePan(0, 28 / fakeScale);
+        fakePan(0, 20 / fakeScale);
         setTimer("panningUpTimer");
         midY += zoom * 0.2;
         break;
       case "ArrowDown":
-        fakePan(0, -28 / fakeScale);
+        fakePan(0, -20 / fakeScale);
         setTimer("panningDownTimer");
         midY -= zoom * 0.2;
         break;
