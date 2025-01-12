@@ -11,7 +11,6 @@ let isPanningTimer;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
-const firstPassMaxIterations = 512;
 let maxIterations = fullMaxIterations;
 let rFactor = 23.0;
 let gFactor = 17.0;
@@ -222,25 +221,6 @@ function handleKeys(timestamp) {
       delete keys[key];
     }
   });
-
-  if (
-    keys["z"] ||
-    keys["x"] ||
-    keys["ArrowLeft"] ||
-    keys["ArrowRight"] ||
-    keys["ArrowUp"] ||
-    keys["ArrowDown"]
-  ) {
-    return;
-  }
-
-  // if (Object.keys(keys).length === 0) {
-  //   maxIterations = fullMaxIterations;
-  // } else {
-  //   maxIterations = firstPassMaxIterations;
-  // }
-
-  requestAnimationFrame(draw);
 }
 
 function handleKeydown(key) {
