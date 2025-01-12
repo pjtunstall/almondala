@@ -5,6 +5,8 @@ const ctx = canvas.getContext("2d");
 let imageData;
 
 let zoom;
+let fakeScale = 1;
+let isZoomingTimer;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
@@ -52,10 +54,10 @@ function reset() {
   cooldown = true;
   setTimeout(() => {
     cooldown = false;
-  }, 256);
+  }, 180);
 
-  zoom = 1.5625;
-  midX = -0.75;
+  zoom = 1.0;
+  midX = 0.6;
   midY = 0.0;
 
   let width = 0.8 * document.body.clientWidth;
@@ -75,6 +77,54 @@ function reset() {
   requestAnimationFrame(draw);
 }
 
+function fakeZoom(scaleFactor) {
+  fakeScale *= scaleFactor;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(fakeScale, fakeScale);
+
+  const imgCanvas = document.createElement("canvas");
+  imgCanvas.width = imageData.width;
+  imgCanvas.height = imageData.height;
+  const imgCtx = imgCanvas.getContext("2d");
+  imgCtx.putImageData(imageData, 0, 0);
+
+  ctx.drawImage(imgCanvas, -imageData.width / 2, -imageData.height / 2);
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+let fakePanX = 0;
+let fakePanY = 0;
+
+function fakePan(deltaX, deltaY) {
+  console.log(`fakePan: ${fakePanX}, ${fakePanY}`);
+  fakePanX += deltaX;
+  fakePanY += deltaY;
+  console.log(`fakePan: ${fakePanX}, ${fakePanY}`);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  console.log("Before transform reset:", ctx.getTransform());
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  console.log("After transform reset:", ctx.getTransform());
+
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(fakeScale, fakeScale);
+  ctx.translate(fakePanX, fakePanY);
+
+  const imgCanvas = document.createElement("canvas");
+  imgCanvas.width = imageData.width;
+  imgCanvas.height = imageData.height;
+  const imgCtx = imgCanvas.getContext("2d");
+  imgCtx.putImageData(imageData, 0, 0);
+
+  ctx.drawImage(imgCanvas, -imageData.width / 2, -imageData.height / 2);
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
 function draw() {
   const pixels = calculate_mandelbrot(
     canvas.width,
@@ -88,6 +138,7 @@ function draw() {
     gFactor,
     bFactor
   );
+  console.log("draw");
 
   if (imageData.data.length !== pixels.length) {
     return;
@@ -98,6 +149,27 @@ function draw() {
   }
 
   ctx.putImageData(imageData, 0, 0);
+
+  console.log(`midX: ${midX}, midY: ${midY}, zoom: ${zoom}`);
+}
+
+let isPanningTimer;
+
+function setZoomTimer() {
+  clearTimeout(isZoomingTimer);
+  isZoomingTimer = setTimeout(() => {
+    fakeScale = 1;
+    requestAnimationFrame(draw);
+  }, 180);
+}
+
+function setPanTimer() {
+  clearTimeout(isPanningTimer);
+  isPanningTimer = setTimeout(() => {
+    fakePanX = 0;
+    fakePanY = 0;
+    requestAnimationFrame(draw);
+  }, 180);
 }
 
 function handleKeys(timestamp) {
@@ -115,21 +187,33 @@ function handleKeys(timestamp) {
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
+        fakePan(40 / fakeScale, 0);
+        setPanTimer();
         midX += zoom * 0.4;
         break;
       case "ArrowRight":
+        fakePan(-40 / fakeScale, 0);
+        setPanTimer();
         midX -= zoom * 0.4;
         break;
       case "ArrowUp":
+        fakePan(0, 40 / fakeScale);
+        setPanTimer();
         midY += zoom * 0.4;
         break;
       case "ArrowDown":
+        fakePan(0, -40 / fakeScale);
+        setPanTimer();
         midY -= zoom * 0.4;
         break;
       case "x":
+        fakeZoom(1.25);
+        setZoomTimer();
         zoom *= 0.8;
         break;
       case "z":
+        fakeZoom(0.8);
+        setZoomTimer();
         zoom *= 1.25;
         break;
       case " ":
@@ -144,12 +228,24 @@ function handleKeys(timestamp) {
     }
   });
 
+  if (
+    keys["z"] ||
+    keys["x"] ||
+    keys["ArrowLeft"] ||
+    keys["ArrowRight"] ||
+    keys["ArrowUp"] ||
+    keys["ArrowDown"]
+  ) {
+    return;
+  }
+
   if (Object.keys(keys).length === 0) {
     maxIterations = fullMaxIterations;
   } else {
     maxIterations = firstPassMaxIterations;
   }
-  draw();
+
+  requestAnimationFrame(draw);
 }
 
 function handleKeydown(key) {
@@ -184,29 +280,37 @@ function handleClick(event) {
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 
-  const [cx, cy] = canvasToMandelCoords(x, y);
+  const cx = midX - 1.618033988749895 * (x / canvas.width - 0.5) * 3.0 * zoom;
+  const cy = midY - (y / canvas.height - 0.5) * 3.0 * zoom;
 
-  midX -= cx;
-  midY -= cy;
+  midX = cx;
+  midY = cy;
 }
 
 function handleSingleClick(event) {
   if (handleDrag(event)) {
     return;
   }
+
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = setTimeout(() => {
     handleClick(event);
     requestAnimationFrame(draw);
-  }, 200);
+  }, 180);
 }
 
 function handleDoubleClick(event) {
   clearTimeout(singleClickTimeoutId);
+
   handleClick(event);
   zoom *= 0.64;
-  midX += zoom * 0.4;
-  requestAnimationFrame(draw);
+
+  fakeZoom(1.5625);
+  fakeScale = 1;
+
+  setTimeout(() => {
+    requestAnimationFrame(draw);
+  }, 32);
 }
 
 function handleMousedown(event) {
@@ -240,9 +344,8 @@ function handleDrag(event) {
 }
 
 function canvasToMandelCoords(x, y) {
-  // View of 3.5 real units by 2.0 imaginary units in the complex plane.
-  const cx = zoom * ((3.5 * x) / canvas.width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
-  const cy = zoom * ((2.0 * y) / canvas.height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
+  const cx = 1.618033988749895 * (x / canvas.width - 0.5) * 3.0 * zoom;
+  const cy = (y / canvas.width - 0.5) * 3.0 * zoom;
   return [cx, cy];
 }
 
