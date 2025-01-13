@@ -89,11 +89,11 @@ function reset() {
   requestAnimationFrame(draw);
 }
 
-function fakeZoom(fakeScale) {
+function fakeZoom(s) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.translate(canvas.width / 2, canvas.height / 2);
-  ctx.scale(fakeScale, fakeScale);
+  ctx.scale(s, s);
   ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
   const imgCanvas = document.createElement("canvas");
@@ -141,18 +141,13 @@ function draw() {
   }
 
   ctx.putImageData(imageData, 0, 0);
-
-  console.log(`midX: ${midX}, midY: ${midY}, zoom: ${zoom}`);
 }
 
-function setTimer(timer) {
-  console.log("setTimer");
-  Object.entries(timers).forEach(([key, value]) => {
+function setFakingTimer(timer) {
+  Object.entries(timers).forEach(([key, _]) => {
     clearTimeout(timers[key]);
-    console.log(`timer: ${timer}, key: ${key}, value: ${value}`);
     if (key === timer) {
       timers[key] = setTimeout(() => {
-        console.log("callback");
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         requestAnimationFrame(draw);
       }, 180);
@@ -176,32 +171,32 @@ function handleKeys(timestamp) {
     switch (key) {
       case "ArrowLeft":
         fakePan(30, 0);
-        setTimer("panningLeftTimer");
+        setFakingTimer("panningLeftTimer");
         midX -= canvasToMandelDelta(30, 0)[0];
         break;
       case "ArrowRight":
         fakePan(-30, 0);
-        setTimer("panningRightTimer");
+        setFakingTimer("panningRightTimer");
         midX += canvasToMandelDelta(30, 0)[0];
         break;
       case "ArrowUp":
         fakePan(0, 30);
-        setTimer("panningUpTimer");
+        setFakingTimer("panningUpTimer");
         midY -= canvasToMandelDelta(0, 30)[1];
         break;
       case "ArrowDown":
         fakePan(0, -30);
-        setTimer("panningDownTimer");
+        setFakingTimer("panningDownTimer");
         midY += canvasToMandelDelta(0, 30)[1];
         break;
       case "x":
         fakeZoom(1 / 0.9);
-        setTimer("zoomingInTimer");
+        setFakingTimer("zoomingInTimer");
         zoom *= 0.9;
         break;
       case "z":
         fakeZoom(0.9);
-        setTimer("zoomingOutTimer");
+        setFakingTimer("zoomingOutTimer");
         zoom *= 1 / 0.9;
         break;
       case " ":
@@ -260,6 +255,11 @@ function handleSingleClick(event) {
     return;
   }
 
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  Object.entries(timers).forEach(([key, _]) => {
+    clearTimeout(timers[key]);
+  });
+
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = setTimeout(() => {
     handleClick(event);
@@ -274,7 +274,6 @@ function handleDoubleClick(event) {
   zoom *= 0.64;
 
   fakeZoom(1.5625);
-  fakeScale = 1;
 
   setTimeout(() => {
     requestAnimationFrame(draw);
@@ -300,8 +299,8 @@ function handleDrag(event) {
 
   const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY);
 
-  midX += dx;
-  midY += dy;
+  midX -= dx;
+  midY -= dy;
 
   dragStartX = currentX;
   dragStartY = currentY;
