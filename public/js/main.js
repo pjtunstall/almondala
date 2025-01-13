@@ -4,14 +4,18 @@ const canvas = document.getElementById("mandelbrotCanvas");
 const ctx = canvas.getContext("2d");
 let imageData;
 
+// Golden ratio, for the canvas.
+const PHI = 1.618033988749895;
+const phi = 0.618033988749895;
+
 let zoom;
 let midX;
 let midY;
 const fullMaxIterations = 1024;
 let maxIterations = fullMaxIterations;
-let rFactor = 23.0;
-let gFactor = 17.0;
-let bFactor = 17.0;
+let rFactor = 23;
+let gFactor = 17;
+let bFactor = 17;
 
 let zoomingOutTimer;
 let zoomingInTimer;
@@ -68,15 +72,13 @@ function reset() {
     cooldown = false;
   }, 180);
 
-  zoom = 1.0;
+  zoom = 1;
   midX = 0.6;
-  midY = 0.0;
+  midY = 0;
 
   let width = 0.8 * document.body.clientWidth;
   let height = 0.8 * document.body.clientHeight;
-  width > height
-    ? (width = height * 1.618033988749895) // Golden ratio.
-    : (height = width * 0.618033988749895);
+  width > height ? (width = height * PHI) : (height = width * phi);
 
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
@@ -311,8 +313,8 @@ function handleDrag(event) {
 }
 
 function canvasToMandelCoords(x, y) {
-  const cx = midX - 1.618033988749895 * (x / canvas.width - 0.5) * 3.0 * zoom;
-  const cy = midY - (y / canvas.height - 0.5) * 3.0 * zoom;
+  const cx = midX - PHI * (x / canvas.width - 0.5) * 3 * zoom;
+  const cy = midY - (y / canvas.height - 0.5) * 3 * zoom;
 
   return [cx, cy];
 }
