@@ -13,9 +13,6 @@ let rFactor = 23.0;
 let gFactor = 17.0;
 let bFactor = 17.0;
 
-let fakeScale = 1;
-let fakePanX = 0;
-let fakePanY = 0;
 let zoomingOutTimer;
 let zoomingInTimer;
 let panningLeftTimer;
@@ -92,14 +89,12 @@ function reset() {
   requestAnimationFrame(draw);
 }
 
-function fakeZoom(scaleFactor) {
-  fakeScale *= scaleFactor;
-
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+function fakeZoom(fakeScale) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.scale(fakeScale, fakeScale);
+  ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
   const imgCanvas = document.createElement("canvas");
   imgCanvas.width = imageData.width;
@@ -107,19 +102,12 @@ function fakeZoom(scaleFactor) {
   const imgCtx = imgCanvas.getContext("2d");
   imgCtx.putImageData(imageData, 0, 0);
 
-  ctx.drawImage(imgCanvas, -imageData.width / 2, -imageData.height / 2);
+  ctx.drawImage(imgCanvas, 0, 0);
 }
 
-function fakePan(deltaX, deltaY) {
-  fakePanX += deltaX;
-  fakePanY += deltaY;
-
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+function fakePan(x, y) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.translate(canvas.width / 2, canvas.height / 2);
-  ctx.scale(fakeScale, fakeScale);
-  ctx.translate(fakePanX, fakePanY);
+  ctx.translate(x, y);
 
   const imgCanvas = document.createElement("canvas");
   imgCanvas.width = imageData.width;
@@ -127,7 +115,7 @@ function fakePan(deltaX, deltaY) {
   const imgCtx = imgCanvas.getContext("2d");
   imgCtx.putImageData(imageData, 0, 0);
 
-  ctx.drawImage(imgCanvas, -imageData.width / 2, -imageData.height / 2);
+  ctx.drawImage(imgCanvas, 0, 0);
 }
 
 function draw() {
@@ -165,9 +153,6 @@ function setTimer(timer) {
     if (key === timer) {
       timers[key] = setTimeout(() => {
         console.log("callback");
-        fakeScale = 1;
-        fakePanX = 0;
-        fakePanY = 0;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         requestAnimationFrame(draw);
       }, 180);
@@ -190,24 +175,24 @@ function handleKeys(timestamp) {
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        fakePan(20 / fakeScale, 0);
+        fakePan(30, 0);
         setTimer("panningLeftTimer");
-        midX += zoom * 0.2;
+        midX -= canvasToMandelDelta(30, 0)[0];
         break;
       case "ArrowRight":
-        fakePan(-20 / fakeScale, 0);
+        fakePan(-30, 0);
         setTimer("panningRightTimer");
-        midX -= zoom * 0.2;
+        midX += canvasToMandelDelta(30, 0)[0];
         break;
       case "ArrowUp":
-        fakePan(0, 20 / fakeScale);
+        fakePan(0, 30);
         setTimer("panningUpTimer");
-        midY += zoom * 0.2;
+        midY -= canvasToMandelDelta(0, 30)[1];
         break;
       case "ArrowDown":
-        fakePan(0, -20 / fakeScale);
+        fakePan(0, -30);
         setTimer("panningDownTimer");
-        midY -= zoom * 0.2;
+        midY += canvasToMandelDelta(0, 30)[1];
         break;
       case "x":
         fakeZoom(1 / 0.9);
