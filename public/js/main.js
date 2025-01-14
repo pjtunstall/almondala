@@ -9,8 +9,8 @@ const PHI = 1.618033988749895;
 const phi = 0.618033988749895;
 
 let zoom;
-let midX;
-let midY;
+let offsetX;
+let offsetY;
 const fullMaxIterations = 1024;
 let maxIterations = fullMaxIterations;
 let rFactor = 23;
@@ -73,8 +73,8 @@ function reset() {
   }, 180);
 
   zoom = 1;
-  midX = 0.6;
-  midY = 0;
+  offsetX = 0.6;
+  offsetY = 0;
 
   let width = 0.8 * document.body.clientWidth;
   let height = 0.8 * document.body.clientHeight;
@@ -126,8 +126,8 @@ function draw() {
     canvas.height,
     maxIterations,
     fullMaxIterations,
-    midX,
-    midY,
+    offsetX,
+    offsetY,
     zoom,
     rFactor,
     gFactor,
@@ -174,22 +174,22 @@ function handleKeys(timestamp) {
       case "ArrowLeft":
         fakePan(30, 0);
         setFakingTimer("panningLeftTimer");
-        midX -= canvasToMandelDelta(30, 0)[0];
+        offsetX += canvasToMandelDelta(30, 0)[0];
         break;
       case "ArrowRight":
         fakePan(-30, 0);
         setFakingTimer("panningRightTimer");
-        midX += canvasToMandelDelta(30, 0)[0];
+        offsetX -= canvasToMandelDelta(30, 0)[0];
         break;
       case "ArrowUp":
         fakePan(0, 30);
         setFakingTimer("panningUpTimer");
-        midY -= canvasToMandelDelta(0, 30)[1];
+        offsetY += canvasToMandelDelta(0, 30)[1];
         break;
       case "ArrowDown":
         fakePan(0, -30);
         setFakingTimer("panningDownTimer");
-        midY += canvasToMandelDelta(0, 30)[1];
+        offsetY -= canvasToMandelDelta(0, 30)[1];
         break;
       case "x":
         fakeZoom(1 / 0.9);
@@ -207,6 +207,10 @@ function handleKeys(timestamp) {
         }
         reset();
     }
+
+    console.log(
+      `${offsetX === 0 ? "0" : -offsetX} ${offsetY === 0 ? "+ 0" : -offsetY}i`
+    );
 
     if (keys[key] === false) {
       delete keys[key];
@@ -248,8 +252,8 @@ function handleClick(event) {
 
   const [cx, cy] = canvasToMandelCoords(x, y);
 
-  midX = cx;
-  midY = cy;
+  offsetX = cx;
+  offsetY = cy;
 }
 
 function handleSingleClick(event) {
@@ -301,8 +305,8 @@ function handleDrag(event) {
 
   const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY);
 
-  midX -= dx;
-  midY -= dy;
+  offsetX -= dx;
+  offsetY -= dy;
 
   dragStartX = currentX;
   dragStartY = currentY;
@@ -313,8 +317,8 @@ function handleDrag(event) {
 }
 
 function canvasToMandelCoords(x, y) {
-  const cx = midX - PHI * (x / canvas.width - 0.5) * 3 * zoom;
-  const cy = midY - (y / canvas.height - 0.5) * 3 * zoom;
+  const cx = PHI * (x / canvas.width - 0.5) * 3 * zoom - offsetX;
+  const cy = (y / canvas.height - 0.5) * 3 * zoom - offsetY;
 
   return [cx, cy];
 }
