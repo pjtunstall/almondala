@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 let imageData;
 
 // Golden ratio, for the canvas.
-const PHI = 1.618033988749895;
+const Phi = 1.618033988749895;
 const phi = 0.618033988749895;
 
 let zoom;
@@ -78,7 +78,7 @@ function reset() {
 
   let width = 0.8 * document.body.clientWidth;
   let height = 0.8 * document.body.clientHeight;
-  width > height ? (width = height * PHI) : (height = width * phi);
+  width > height ? (width = height * Phi) : (height = width * phi);
 
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
@@ -150,7 +150,7 @@ function setFakingTimer(timer) {
     clearTimeout(timers[key]);
     if (key === timer) {
       timers[key] = setTimeout(() => {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.resetTransform();
         requestAnimationFrame(draw);
       }, 180);
     }
@@ -317,7 +317,7 @@ function handleDrag(event) {
 }
 
 function canvasToMandelCoords(x, y) {
-  const cx = PHI * (x / canvas.width - 0.5) * 3 * zoom - offsetX;
+  const cx = Phi * (x / canvas.width - 0.5) * 3 * zoom - offsetX;
   const cy = (y / canvas.height - 0.5) * 3 * zoom - offsetY;
 
   return [cx, cy];
