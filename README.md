@@ -55,13 +55,19 @@ Make sure you have `wasm-pack` installed:
 cargo install wasm-pack
 ```
 
+Install TypeScript and the related undici-types package as dev dependencies:
+
+```
+npm install
+```
+
 Run the build script with
 
 ```bash
 npm run build
 ```
 
-This will build the WebAssembly file almondala_bg.wasm to the pkg directory and copy it to the public/wasm directory along with its associated JavaScipt glue code `almondala.js`.
+This will build the WebAssembly file `almondala_bg.wasm` to the pkg directory and copy it to the public/wasm directory along with its associated JavaScipt glue code `almondala.js` and the two TypeScript type-declaration files, `amondala.d.ts` and `almondala_bg.wasm.d.ts`.
 
 Start a local server. For example,
 

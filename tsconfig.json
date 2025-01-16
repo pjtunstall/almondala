@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "./public/js",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "sourceMap": true,
+    "lib": ["DOM", "ESNext"]
+  },
+  "include": ["src/**/*", "public/wasm/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
