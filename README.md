@@ -10,7 +10,7 @@
 
 ## Description
 
-[Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and JavaScript.
+[Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and TypeScript.
 
 ## Name
 
@@ -55,7 +55,7 @@ Make sure you have `wasm-pack` installed:
 cargo install wasm-pack
 ```
 
-Install TypeScript and the related undici-types package as dev dependencies:
+Install TypeScript and the related `undici-types` package as dev dependencies:
 
 ```
 npm install
@@ -79,7 +79,7 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several branches for exploring new features:
+This repo includes several branches for exploring new features. At present they're all in raw JavaScript, as I've only just switched to using TypeScript on the `main` branch.
 
 - `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
