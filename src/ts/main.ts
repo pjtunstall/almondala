@@ -1,4 +1,4 @@
-import init, { calculate_mandelbrot } from "../../public/wasm/almondala.js";
+import init, { calculate_mandelbrot } from "@wasm/almondala.js";
 
 const canvas = document.createElement("canvas") as HTMLCanvasElement;
 document.body.append(canvas);
