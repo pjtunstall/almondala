@@ -1,6 +1,6 @@
 Experimental branch: ts-oo (TypeScript object-oriented)
 
-This branch contains experimental work on a modular, more object-oriented version. It works, but is noticeably slower than the original, procedural, non-modular TS version.
+This branch contains experimental work on a modular, more object-oriented iteration of the first TypeScript version.
 
 To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala).
 
