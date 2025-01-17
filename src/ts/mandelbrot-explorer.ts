@@ -20,11 +20,8 @@ export default class MandelbrotExplorer {
   rFactor = 23;
   gFactor = 17;
   bFactor = 17;
-  cooldown = false;
   canvas = document.createElement("canvas") as HTMLCanvasElement;
   ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-  height: number = 0;
-  width: number = 0;
   renderer!: Renderer;
 
   constructor() {
