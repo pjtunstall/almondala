@@ -79,7 +79,7 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several branches for exploring new features. At present they're mostly in raw JavaScript, as I've only just switched to using TypeScript on the `main` branch.
+This repo includes several branches for exploring new features. At present they're mostly in raw JavaScript, as I've only just started introducing TypeScript on the `main` branch.
 
 - `ts`: the original TypeScript branch, now merged with `main`.
 - `ts-oo`: a modular, more object-oriented style. I've chosen not to merge this yet as it feels slower than its procedural precursor, `ts`.
