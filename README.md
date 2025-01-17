@@ -67,7 +67,7 @@ Run the build script with
 npm run build
 ```
 
-This will build the WebAssembly file `almondala_bg.wasm` to the pkg directory and copy it to the public/wasm directory along with its associated JavaScipt glue code `almondala.js` and the two TypeScript type-declaration files, `amondala.d.ts` and `almondala_bg.wasm.d.ts`.
+This will build the WebAssembly file `almondala_bg.wasm` to the pkg directory and copy it to the `public/wasm` directory along with its associated JavaScipt glue code `almondala.js` and the two TypeScript type-declaration files, `amondala.d.ts` and `almondala_bg.wasm.d.ts`. It concludes by correcting the import path for the glue from relative to the TypeScript source, as required by the TypeScript compiler, to relative to the actual compiled JavaScript.
 
 Start a local server. For example,
 
@@ -82,7 +82,7 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 This repo includes several branches for exploring new features. At present they're mostly in raw JavaScript, as I've only just started introducing TypeScript on the `main` branch.
 
 - `ts`: the original TypeScript branch, now merged into `main`.
-- `ts-oo`: a modular, more object-oriented style. I've chosen not to merge this yet as it feels slower than its procedural precursor, `ts`.
+- `ts-oo`: a modular, more object-oriented version of `ts`, now merged into main.
 - `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
 - `lines`: an attempt at calculating odd and even numbered columns separately, one after the other, so as to have something to display faster, while waiting for the rest of the calculation. (The basic idea of calculating alternate lines works--the Rust does its job--but the branch is not yet fully functional. It derived from `offscreen`, and I think the two workers/canvases are complicting matters.)
