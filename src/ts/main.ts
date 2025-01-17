@@ -1,258 +1,262 @@
-import init, { calculate_mandelbrot } from "@wasm/almondala.js";
+import MandelbrotExplorer from "./mandelbrot-explorer.js";
 
-const canvas = document.createElement("canvas") as HTMLCanvasElement;
-document.body.append(canvas);
-const ctx: CanvasRenderingContext2D = canvas.getContext(
-  "2d"
-) as CanvasRenderingContext2D;
-let imageData: ImageData;
+new MandelbrotExplorer();
 
-const phi = 1.618033988749895;
+// import init, { calculate_mandelbrot } from "@wasm/almondala.js";
 
-let zoom: number;
-let offsetX: number;
-let offsetY: number;
-const fullMaxIterations = 1024;
-const firstPassMaxIterations = 512;
-let maxIterations = fullMaxIterations;
-let rFactor = 23;
-let gFactor = 17;
-let bFactor = 17;
+// const canvas = document.createElement("canvas") as HTMLCanvasElement;
+// document.body.append(canvas);
+// const ctx: CanvasRenderingContext2D = canvas.getContext(
+//   "2d"
+// ) as CanvasRenderingContext2D;
+// let imageData: ImageData;
 
-const keys: { [key: string]: boolean } = {};
-let cooldown = false;
-let dragStartX: number, dragStartY: number;
-let singleClickTimeoutId: number;
+// const phi = 1.618033988749895;
 
-let prev = 0;
+// let zoom: number;
+// let offsetX: number;
+// let offsetY: number;
+// const fullMaxIterations = 1024;
+// const firstPassMaxIterations = 512;
+// let maxIterations = fullMaxIterations;
+// let rFactor = 23;
+// let gFactor = 17;
+// let bFactor = 17;
 
-main();
+// const keys: { [key: string]: boolean } = {};
+// let cooldown = false;
+// let dragStartX: number, dragStartY: number;
+// let singleClickTimeoutId: number;
 
-async function main() {
-  await init();
+// let prev = 0;
 
-  reset();
-  canvas.style.opacity = "1";
+// main();
 
-  document.addEventListener("keydown", (event) => handleKeydown(event.key));
-  document.addEventListener("keyup", (event) => handleKeyup(event.key));
-  document.addEventListener("mousedown", (event) => handleMousedown(event));
+// async function main() {
+//   await init();
 
-  canvas.addEventListener("mouseup", (event) => {
-    handleSingleClick(event);
-  });
-  canvas.addEventListener("dblclick", (event) => {
-    handleDoubleClick(event);
-  });
+//   reset();
+//   canvas.style.opacity = "1";
 
-  window.addEventListener("resize", reset);
+//   document.addEventListener("keydown", (event) => handleKeydown(event.key));
+//   document.addEventListener("keyup", (event) => handleKeyup(event.key));
+//   document.addEventListener("mousedown", (event) => handleMousedown(event));
 
-  requestAnimationFrame(handleKeys);
-}
+//   canvas.addEventListener("mouseup", (event) => {
+//     handleSingleClick(event);
+//   });
+//   canvas.addEventListener("dblclick", (event) => {
+//     handleDoubleClick(event);
+//   });
 
-function reset() {
-  if (cooldown) {
-    return;
-  }
-  cooldown = true;
-  setTimeout(() => {
-    cooldown = false;
-  }, 256);
+//   window.addEventListener("resize", reset);
 
-  zoom = 1.5625;
-  offsetX = -0.75;
-  offsetY = 0.0;
+//   requestAnimationFrame(handleKeys);
+// }
 
-  let width = 0.8 * document.body.clientWidth;
-  let height = 0.8 * document.body.clientHeight;
-  width > height
-    ? (width = height * phi) // Golden ratio.
-    : (height = width / phi);
+// function reset() {
+//   if (cooldown) {
+//     return;
+//   }
+//   cooldown = true;
+//   setTimeout(() => {
+//     cooldown = false;
+//   }, 256);
 
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  const dpr = window.devicePixelRatio;
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
+//   zoom = 1.5625;
+//   offsetX = -0.75;
+//   offsetY = 0.0;
 
-  imageData = ctx.createImageData(canvas.width, canvas.height);
+//   let width = 0.8 * document.body.clientWidth;
+//   let height = 0.8 * document.body.clientHeight;
+//   width > height
+//     ? (width = height * phi) // Golden ratio.
+//     : (height = width / phi);
 
-  requestAnimationFrame(draw);
-}
+//   canvas.style.width = `${width}px`;
+//   canvas.style.height = `${height}px`;
+//   const dpr = window.devicePixelRatio;
+//   canvas.width = width * dpr;
+//   canvas.height = height * dpr;
 
-function draw() {
-  const pixels = calculate_mandelbrot(
-    canvas.width,
-    canvas.height,
-    maxIterations,
-    fullMaxIterations,
-    offsetX,
-    offsetY,
-    zoom,
-    rFactor,
-    gFactor,
-    bFactor
-  );
+//   imageData = ctx.createImageData(canvas.width, canvas.height);
 
-  if (imageData.data.length !== pixels.length) {
-    return;
-  }
+//   requestAnimationFrame(draw);
+// }
 
-  for (let i = 0; i < pixels.length; i++) {
-    imageData.data[i] = pixels[i];
-  }
+// function draw() {
+//   const pixels = calculate_mandelbrot(
+//     canvas.width,
+//     canvas.height,
+//     maxIterations,
+//     fullMaxIterations,
+//     offsetX,
+//     offsetY,
+//     zoom,
+//     rFactor,
+//     gFactor,
+//     bFactor
+//   );
 
-  ctx.putImageData(imageData, 0, 0);
-}
+//   if (imageData.data.length !== pixels.length) {
+//     return;
+//   }
 
-function handleKeys(timestamp: number) {
-  requestAnimationFrame(handleKeys);
-  if (timestamp - prev < 120) {
-    return;
-  }
-  prev = timestamp;
+//   for (let i = 0; i < pixels.length; i++) {
+//     imageData.data[i] = pixels[i];
+//   }
 
-  if (Object.keys(keys).length === 0) {
-    prev = timestamp;
-    return;
-  }
+//   ctx.putImageData(imageData, 0, 0);
+// }
 
-  Object.keys(keys).forEach((key) => {
-    switch (key) {
-      case "ArrowLeft":
-        offsetX += zoom * 0.4;
-        break;
-      case "ArrowRight":
-        offsetX -= zoom * 0.4;
-        break;
-      case "ArrowUp":
-        offsetY += zoom * 0.4;
-        break;
-      case "ArrowDown":
-        offsetY -= zoom * 0.4;
-        break;
-      case "x":
-        zoom *= 0.8;
-        break;
-      case "z":
-        zoom *= 1.25;
-        break;
-      case " ":
-        if (keys[key] === false) {
-          delete keys[key];
-        }
-        reset();
-    }
+// function handleKeys(timestamp: number) {
+//   requestAnimationFrame(handleKeys);
+//   if (timestamp - prev < 120) {
+//     return;
+//   }
+//   prev = timestamp;
 
-    if (keys[key] === false) {
-      delete keys[key];
-    }
-  });
+//   if (Object.keys(keys).length === 0) {
+//     prev = timestamp;
+//     return;
+//   }
 
-  if (Object.keys(keys).length === 0) {
-    maxIterations = fullMaxIterations;
-  } else {
-    maxIterations = firstPassMaxIterations;
-  }
-  draw();
-}
+//   Object.keys(keys).forEach((key) => {
+//     switch (key) {
+//       case "ArrowLeft":
+//         offsetX += zoom * 0.4;
+//         break;
+//       case "ArrowRight":
+//         offsetX -= zoom * 0.4;
+//         break;
+//       case "ArrowUp":
+//         offsetY += zoom * 0.4;
+//         break;
+//       case "ArrowDown":
+//         offsetY -= zoom * 0.4;
+//         break;
+//       case "x":
+//         zoom *= 0.8;
+//         break;
+//       case "z":
+//         zoom *= 1.25;
+//         break;
+//       case " ":
+//         if (keys[key] === false) {
+//           delete keys[key];
+//         }
+//         reset();
+//     }
 
-function handleKeydown(key: string) {
-  switch (key) {
-    case "ArrowUp":
-    case "ArrowDown":
-    case "ArrowLeft":
-    case "ArrowRight":
-    case "x":
-    case "z":
-    case " ":
-      keys[key] = true;
-  }
-}
+//     if (keys[key] === false) {
+//       delete keys[key];
+//     }
+//   });
 
-function handleKeyup(key: string) {
-  switch (key) {
-    case "ArrowUp":
-    case "ArrowDown":
-    case "ArrowLeft":
-    case "ArrowRight":
-    case "x":
-    case "z":
-    case " ":
-      keys[key] = false;
-  }
-}
+//   if (Object.keys(keys).length === 0) {
+//     maxIterations = fullMaxIterations;
+//   } else {
+//     maxIterations = firstPassMaxIterations;
+//   }
+//   draw();
+// }
 
-function handleClick(event: MouseEvent) {
-  const canvasRect = canvas.getBoundingClientRect();
+// function handleKeydown(key: string) {
+//   switch (key) {
+//     case "ArrowUp":
+//     case "ArrowDown":
+//     case "ArrowLeft":
+//     case "ArrowRight":
+//     case "x":
+//     case "z":
+//     case " ":
+//       keys[key] = true;
+//   }
+// }
 
-  const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
-  const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
+// function handleKeyup(key: string) {
+//   switch (key) {
+//     case "ArrowUp":
+//     case "ArrowDown":
+//     case "ArrowLeft":
+//     case "ArrowRight":
+//     case "x":
+//     case "z":
+//     case " ":
+//       keys[key] = false;
+//   }
+// }
 
-  const [cx, cy] = canvasToMandelCoords(x, y);
+// function handleClick(event: MouseEvent) {
+//   const canvasRect = canvas.getBoundingClientRect();
 
-  offsetX -= cx;
-  offsetY -= cy;
-}
+//   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+//   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 
-function handleSingleClick(event: MouseEvent) {
-  if (handleDrag(event)) {
-    return;
-  }
-  clearTimeout(singleClickTimeoutId);
-  singleClickTimeoutId = window.setTimeout(() => {
-    handleClick(event);
-    requestAnimationFrame(draw);
-  }, 200);
-}
+//   const [cx, cy] = canvasToMandelCoords(x, y);
 
-function handleDoubleClick(event: MouseEvent) {
-  clearTimeout(singleClickTimeoutId);
-  handleClick(event);
-  zoom *= 0.64;
-  offsetX += zoom * 0.4;
-  requestAnimationFrame(draw);
-}
+//   offsetX -= cx;
+//   offsetY -= cy;
+// }
 
-function handleMousedown(event: MouseEvent) {
-  const canvasRect = canvas.getBoundingClientRect();
-  dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
-  dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-}
+// function handleSingleClick(event: MouseEvent) {
+//   if (handleDrag(event)) {
+//     return;
+//   }
+//   clearTimeout(singleClickTimeoutId);
+//   singleClickTimeoutId = window.setTimeout(() => {
+//     handleClick(event);
+//     requestAnimationFrame(draw);
+//   }, 200);
+// }
 
-function handleDrag(event: MouseEvent) {
-  const canvasRect = canvas.getBoundingClientRect();
-  const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
-  const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-  const dragDeltaX = currentX - dragStartX;
-  const dragDeltaY = currentY - dragStartY;
+// function handleDoubleClick(event: MouseEvent) {
+//   clearTimeout(singleClickTimeoutId);
+//   handleClick(event);
+//   zoom *= 0.64;
+//   offsetX += zoom * 0.4;
+//   requestAnimationFrame(draw);
+// }
 
-  if (dragDeltaX * dragDeltaX + dragDeltaY * dragDeltaY < 5) {
-    return false;
-  }
+// function handleMousedown(event: MouseEvent) {
+//   const canvasRect = canvas.getBoundingClientRect();
+//   dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+//   dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
+// }
 
-  const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY);
+// function handleDrag(event: MouseEvent) {
+//   const canvasRect = canvas.getBoundingClientRect();
+//   const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+//   const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
+//   const dragDeltaX = currentX - dragStartX;
+//   const dragDeltaY = currentY - dragStartY;
 
-  offsetX += dx;
-  offsetY += dy;
+//   if (dragDeltaX * dragDeltaX + dragDeltaY * dragDeltaY < 5) {
+//     return false;
+//   }
 
-  dragStartX = currentX;
-  dragStartY = currentY;
+//   const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY);
 
-  requestAnimationFrame(draw);
+//   offsetX += dx;
+//   offsetY += dy;
 
-  return true;
-}
+//   dragStartX = currentX;
+//   dragStartY = currentY;
 
-function canvasToMandelCoords(x: number, y: number) {
-  // View of 3.5 real units by 2.0 imaginary units in the complex plane.
-  const cx = zoom * ((3.5 * x) / canvas.width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
-  const cy = zoom * ((2.0 * y) / canvas.height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
-  return [cx, cy];
-}
+//   requestAnimationFrame(draw);
 
-function canvasToMandelDelta(dx: number, dy: number) {
-  const [x1, y1] = canvasToMandelCoords(0, 0);
-  const [x2, y2] = canvasToMandelCoords(dx, dy);
-  return [x2 - x1, y2 - y1];
-}
+//   return true;
+// }
+
+// function canvasToMandelCoords(x: number, y: number) {
+//   // View of 3.5 real units by 2.0 imaginary units in the complex plane.
+//   const cx = zoom * ((3.5 * x) / canvas.width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
+//   const cy = zoom * ((2.0 * y) / canvas.height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
+//   return [cx, cy];
+// }
+
+// function canvasToMandelDelta(dx: number, dy: number) {
+//   const [x1, y1] = canvasToMandelCoords(0, 0);
+//   const [x2, y2] = canvasToMandelCoords(dx, dy);
+//   return [x2 - x1, y2 - y1];
+// }

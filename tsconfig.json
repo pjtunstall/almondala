@@ -4,10 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "outDir": "./public/js",
-    "baseUrl": ".",
-    "paths": {
-      "@wasm/*": ["public/wasm/*"]
-    },
+    "rootDir": "./src/ts",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "sourceMap": true,

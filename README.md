@@ -67,7 +67,7 @@ Run the build script with
 npm run build
 ```
 
-This will build the WebAssembly file `almondala_bg.wasm` to the pkg directory and copy it to the public/wasm directory along with its associated JavaScipt glue code `almondala.js` and the two TypeScript type-declaration files, `amondala.d.ts` and `almondala_bg.wasm.d.ts`.
+This will build the WebAssembly file `almondala_bg.wasm` to the pkg directory and copy it to the `public/wasm` directory along with its associated JavaScipt glue code `almondala.js` and the two TypeScript type-declaration files, `amondala.d.ts` and `almondala_bg.wasm.d.ts`. It concludes by correcting the import path for the glue from relative to the TypeScript source, as required by the TypeScript compiler, to relative to the actual compiled JavaScript.
 
 Start a local server. For example,
 
