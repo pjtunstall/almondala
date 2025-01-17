@@ -4,8 +4,8 @@ export function canvasToMandelCoords(x, y, zoom, width, height) {
         return [0, 0];
     }
     // View of 3.5 real units by 2.0 imaginary units in the complex plane.
-    const cx = zoom * ((3.5 * x) / width - 1.75); // -1.75 shifts the real range left, so the left edge of the canvas corresponds to -1.75 on the real axis when zoom = 1, which it will whne you zoom ina  couple of times.
-    const cy = zoom * ((2.0 * y) / height - 1.0); // -1.0 shifts the imaginary range up, so he top edge of the canvas corresponds to 1.0i when zoom = 1. The canvas has vertical coordinates increasing as they go down, the opposite of the complex plane, but the Mandelbrot is symmetric about the real axis, so there's no need to flip it.
+    const cx = zoom * ((3.5 * x) / width - 1.75);
+    const cy = zoom * ((2.0 * y) / height - 1.0);
     return [cx, cy];
 }
 export function canvasToMandelDelta(dx, dy, zoom, width, height) {

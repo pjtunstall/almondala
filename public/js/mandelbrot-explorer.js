@@ -10,11 +10,8 @@ export default class MandelbrotExplorer {
     rFactor = 23;
     gFactor = 17;
     bFactor = 17;
-    cooldown = false;
     canvas = document.createElement("canvas");
     ctx = this.canvas.getContext("2d");
-    height = 0;
-    width = 0;
     renderer;
     constructor() {
         this.state = new State();
