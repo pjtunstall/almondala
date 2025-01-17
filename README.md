@@ -2,7 +2,7 @@
 
 This branch contains experimental work on a fake (i.e. progressive) loading effect for zoom and pan.
 
-To see the fully functional and curently deployed version of this project, visit the main branch.
+To see the fully functional and deployed version of this project, visit the [main branch](https://github.com/pjtunstall/almondala).
 
 The idea is that before calculating the next image, the current image is panned or zoomed out (at the cost of showing blank space to the sides) or zoomed in (with loss of resolution). It feels more responsive because you can move faster if you hold down the keys. I find the blank space can be a bit jarring.
 
