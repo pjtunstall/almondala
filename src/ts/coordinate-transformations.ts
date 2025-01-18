@@ -1,9 +1,11 @@
+import State from "./state.js";
+
 export function canvasToMandelCoords(
   x: number,
   y: number,
-  zoom: number,
   width: number,
-  height: number
+  height: number,
+  state: State
 ): [number, number] {
   if (width <= 0 || height <= 0) {
     console.error(
@@ -11,21 +13,21 @@ export function canvasToMandelCoords(
     );
     return [0, 0];
   }
+  const { zoom, offsetX, offsetY } = state;
 
-  // View of 3.5 real units by 2.0 imaginary units in the complex plane.
-  const cx = zoom * ((3.5 * x) / width - 1.75);
-  const cy = zoom * ((2 * y) / height - 1);
+  const cx = 1.618033988749895 * (x / width - 0.5) * 3 * zoom - offsetX;
+  const cy = (y / height - 0.5) * 3 * zoom - offsetY;
   return [cx, cy];
 }
 
 export function canvasToMandelDelta(
   dx: number,
   dy: number,
-  zoom: number,
   width: number,
-  height: number
+  height: number,
+  state: State
 ): [number, number] {
-  const [x1, y1] = canvasToMandelCoords(0, 0, zoom, width, height);
-  const [x2, y2] = canvasToMandelCoords(dx, dy, zoom, width, height);
+  const [x1, y1] = canvasToMandelCoords(0, 0, width, height, state);
+  const [x2, y2] = canvasToMandelCoords(dx, dy, width, height, state);
   return [x2 - x1, y2 - y1];
 }

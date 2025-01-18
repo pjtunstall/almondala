@@ -15,7 +15,7 @@ export function handleDrag(event, canvas, width, height, maxIterations, fullMaxI
     if (dragDeltaX * dragDeltaX + dragDeltaY * dragDeltaY < 5) {
         return false;
     }
-    const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY, state.zoom, width, height);
+    const [dx, dy] = canvasToMandelDelta(dragDeltaX, dragDeltaY, width, height, state);
     state.offsetX += dx;
     state.offsetY += dy;
     dragStartX = currentX;
@@ -27,7 +27,7 @@ function handleClick(event, canvas, width, height, state) {
     const canvasRect = canvas.getBoundingClientRect();
     const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-    const [cx, cy] = canvasToMandelCoords(x, y, state.zoom, width, height);
+    const [cx, cy] = canvasToMandelCoords(x, y, width, height, state);
     state.offsetX -= cx;
     state.offsetY -= cy;
 }

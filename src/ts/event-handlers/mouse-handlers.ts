@@ -41,9 +41,9 @@ export function handleDrag(
   const [dx, dy] = canvasToMandelDelta(
     dragDeltaX,
     dragDeltaY,
-    state.zoom,
     width,
-    height
+    height,
+    state
   );
 
   state.offsetX += dx;
@@ -79,7 +79,7 @@ function handleClick(
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 
-  const [cx, cy] = canvasToMandelCoords(x, y, state.zoom, width, height);
+  const [cx, cy] = canvasToMandelCoords(x, y, width, height, state);
 
   state.offsetX -= cx;
   state.offsetY -= cy;
