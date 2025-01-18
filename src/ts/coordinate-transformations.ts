@@ -13,21 +13,25 @@ export function canvasToMandelCoords(
     );
     return [0, 0];
   }
-  const { zoom, offsetX, offsetY } = state;
 
-  const cx = 1.618033988749895 * (x / width - 0.5) * 3 * zoom - offsetX;
+  const { zoom, offsetX, offsetY } = state;
+  const phi = width > height ? 1.618033988749895 : 0.618033988749895;
+
+  const cx = phi * (x / width - 0.5) * 3 * zoom - offsetX;
   const cy = (y / height - 0.5) * 3 * zoom - offsetY;
   return [cx, cy];
 }
 
 export function canvasToMandelDelta(
-  dx: number,
-  dy: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
   width: number,
   height: number,
   state: State
 ): [number, number] {
-  const [x1, y1] = canvasToMandelCoords(0, 0, width, height, state);
-  const [x2, y2] = canvasToMandelCoords(dx, dy, width, height, state);
-  return [x2 - x1, y2 - y1];
+  const [cx1, cy1] = canvasToMandelCoords(x1, y1, width, height, state);
+  const [cx2, cy2] = canvasToMandelCoords(x2, y2, width, height, state);
+  return [cx2 - cx1, cy2 - cy1];
 }
