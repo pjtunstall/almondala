@@ -5,7 +5,7 @@ export function canvasToMandelCoords(x, y, width, height, state) {
     }
     const { zoom, offsetX, offsetY, ratio } = state;
     const cx = ratio * (x / width - 0.5) * 3 * zoom - offsetX;
-    const cy = (y / height - 0.5) * 3 * zoom - offsetY;
+    const cy = offsetY - (y / height - 0.5) * 3 * zoom;
     return [cx, cy];
 }
 export function canvasToMandelDelta(x1, y1, x2, y2, width, height, state) {

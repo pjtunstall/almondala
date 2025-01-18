@@ -1,4 +1,4 @@
-import { canvasToMandelDelta, } from "../coordinate-transformations.js";
+import { canvasToMandelDelta } from "../coordinate-transformations.js";
 let dragStartX, dragStartY;
 let singleClickTimeoutId;
 export function handleMousedown(event, canvas) {

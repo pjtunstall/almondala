@@ -17,7 +17,7 @@ export function canvasToMandelCoords(
   const { zoom, offsetX, offsetY, ratio } = state;
 
   const cx = ratio * (x / width - 0.5) * 3 * zoom - offsetX;
-  const cy = (y / height - 0.5) * 3 * zoom - offsetY;
+  const cy = offsetY - (y / height - 0.5) * 3 * zoom;
   return [cx, cy];
 }
 

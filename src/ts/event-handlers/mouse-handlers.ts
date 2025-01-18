@@ -1,7 +1,4 @@
-import {
-  canvasToMandelCoords,
-  canvasToMandelDelta,
-} from "../coordinate-transformations.js";
+import { canvasToMandelDelta } from "../coordinate-transformations.js";
 import Renderer from "../draw.js";
 import State from ".././state.js";
 

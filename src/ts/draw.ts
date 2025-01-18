@@ -1,5 +1,6 @@
 import init, { calculate_mandelbrot } from "../../public/wasm/almondala.js";
 import State from "./state.js";
+import { canvasToMandelCoords } from "./coordinate-transformations.js";
 
 await init();
 
@@ -19,9 +20,12 @@ export default class Renderer {
     ctx: CanvasRenderingContext2D,
     state: State
   ) {
+    const width = this.imageData.width;
+    const height = this.imageData.height;
+
     const pixels = calculate_mandelbrot(
-      this.imageData.width,
-      this.imageData.height,
+      width,
+      height,
       maxIterations,
       fullMaxIterations,
       state.offsetX,
@@ -45,5 +49,14 @@ export default class Renderer {
     }
 
     ctx.putImageData(this.imageData, 0, 0);
+
+    let [x, y] = canvasToMandelCoords(
+      width / 2,
+      height / 2,
+      width,
+      height,
+      state
+    );
+    console.log(`${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`);
   }
 }
