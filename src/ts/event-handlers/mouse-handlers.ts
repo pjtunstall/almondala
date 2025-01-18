@@ -81,8 +81,16 @@ function handleClick(
 
   const [cx, cy] = canvasToMandelCoords(x, y, width, height, state);
 
-  state.offsetX -= cx;
-  state.offsetY -= cy;
+  const [centerX, centerY] = canvasToMandelCoords(
+    width / 2,
+    height / 2,
+    width,
+    height,
+    state
+  );
+
+  state.offsetX += centerX - cx;
+  state.offsetY += centerY - cy;
 }
 
 export function handleSingleClick(
