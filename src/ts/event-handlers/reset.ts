@@ -1,7 +1,6 @@
 import Renderer from ".././draw.js";
 import State from ".././state.js";
 
-const phi = 1.618033988749895;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 
 export default function requestReset(
@@ -19,7 +18,7 @@ export default function requestReset(
 
   cooldownTimer = setTimeout(() => {
     Object.assign(state, { ...new State() });
-    renderer.imageData = reset(canvas, ctx).imageData;
+    renderer.imageData = reset(canvas, ctx, state).imageData;
     renderer.draw(
       maxIterations,
       fullMaxIterations,
@@ -34,14 +33,19 @@ export default function requestReset(
 
 export function reset(
   canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
+  state: State
 ): Renderer {
   let width = 0.8 * document.body.clientWidth;
   let height = 0.8 * document.body.clientHeight;
+  const phi = 0.618033988749895;
+
   if (width > height) {
-    width = height * phi;
+    width *= 0.8;
+    height = width * phi;
   } else {
-    height = width / phi;
+    width = height * phi;
+    state.zoom = 2;
   }
 
   canvas.style.width = `${width}px`;

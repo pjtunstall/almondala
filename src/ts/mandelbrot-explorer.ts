@@ -26,7 +26,7 @@ export default class MandelbrotExplorer {
 
   constructor() {
     this.state = new State();
-    this.renderer = reset(this.canvas, this.ctx);
+    this.renderer = reset(this.canvas, this.ctx, this.state);
 
     if (!this.renderer) {
       console.error("Renderer initialization failed");

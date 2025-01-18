@@ -1,24 +1,26 @@
 import Renderer from ".././draw.js";
 import State from ".././state.js";
-const phi = 1.618033988749895;
 let cooldownTimer = null;
 export default function requestReset(canvas, ctx, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, renderer, state) {
     if (cooldownTimer)
         clearTimeout(cooldownTimer);
     cooldownTimer = setTimeout(() => {
         Object.assign(state, { ...new State() });
-        renderer.imageData = reset(canvas, ctx).imageData;
+        renderer.imageData = reset(canvas, ctx, state).imageData;
         renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state);
     }, 256);
 }
-export function reset(canvas, ctx) {
+export function reset(canvas, ctx, state) {
     let width = 0.8 * document.body.clientWidth;
     let height = 0.8 * document.body.clientHeight;
+    const phi = 0.618033988749895;
     if (width > height) {
-        width = height * phi;
+        width *= 0.8;
+        height = width * phi;
     }
     else {
-        height = width / phi;
+        width = height * phi;
+        state.zoom = 2;
     }
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
