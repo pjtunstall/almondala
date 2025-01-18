@@ -5,7 +5,7 @@ export function canvasToMandelCoords(x, y, zoom, width, height) {
     }
     // View of 3.5 real units by 2.0 imaginary units in the complex plane.
     const cx = zoom * ((3.5 * x) / width - 1.75);
-    const cy = zoom * ((2.0 * y) / height - 1.0);
+    const cy = zoom * ((2 * y) / height - 1);
     return [cx, cy];
 }
 export function canvasToMandelDelta(dx, dy, zoom, width, height) {
