@@ -14,10 +14,9 @@ export function canvasToMandelCoords(
     return [0, 0];
   }
 
-  const { zoom, offsetX, offsetY } = state;
-  const phi = width > height ? 1.618033988749895 : 0.618033988749895;
+  const { zoom, offsetX, offsetY, ratio } = state;
 
-  const cx = phi * (x / width - 0.5) * 3 * zoom - offsetX;
+  const cx = ratio * (x / width - 0.5) * 3 * zoom - offsetX;
   const cy = (y / height - 0.5) * 3 * zoom - offsetY;
   return [cx, cy];
 }

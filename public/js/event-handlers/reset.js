@@ -13,15 +13,15 @@ export default function requestReset(canvas, ctx, maxIterations, fullMaxIteratio
 export function reset(canvas, ctx, state) {
     let width = 0.8 * document.body.clientWidth;
     let height = 0.8 * document.body.clientHeight;
-    const phi = 0.618033988749895;
+    const phi = state.ratio;
     if (width > height) {
-        width *= 0.8;
-        height = width * phi;
+        width = Math.min(height * phi, width);
     }
     else {
-        width = height * phi;
+        height = Math.min(width * phi, height);
         state.zoom = 2;
     }
+    state.ratio = width / height;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     const dpr = window.devicePixelRatio;

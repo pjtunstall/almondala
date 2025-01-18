@@ -3,9 +3,8 @@ export function canvasToMandelCoords(x, y, width, height, state) {
         console.error(`Error: Height and width should be positive: height: ${height}, width: ${width}`);
         return [0, 0];
     }
-    const { zoom, offsetX, offsetY } = state;
-    const phi = width > height ? 1.618033988749895 : 0.618033988749895;
-    const cx = phi * (x / width - 0.5) * 3 * zoom - offsetX;
+    const { zoom, offsetX, offsetY, ratio } = state;
+    const cx = ratio * (x / width - 0.5) * 3 * zoom - offsetX;
     const cy = (y / height - 0.5) * 3 * zoom - offsetY;
     return [cx, cy];
 }

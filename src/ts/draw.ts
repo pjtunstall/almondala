@@ -27,6 +27,7 @@ export default class Renderer {
       state.offsetX,
       state.offsetY,
       state.zoom,
+      state.ratio,
       rFactor,
       gFactor,
       bFactor
