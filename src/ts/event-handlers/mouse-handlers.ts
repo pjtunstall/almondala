@@ -34,8 +34,6 @@ export function handleDrag(
   ).toComplexPoint();
   const dragDelta = dragStart.subtract(dragEnd);
 
-  console.log(Point.dotProduct(dragDelta, dragDelta));
-
   if (Point.dotProduct(dragDelta, dragDelta) <= 0) {
     return false;
   }
