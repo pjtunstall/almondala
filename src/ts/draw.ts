@@ -1,6 +1,5 @@
 import init, { calculate_mandelbrot } from "../../public/wasm/almondala.js";
 import State from "./state.js";
-import { CanvasPoint, ComplexPoint } from "./points.js";
 
 await init();
 
