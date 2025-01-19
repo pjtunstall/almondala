@@ -79,10 +79,8 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several branches for exploring new features. At present they're mostly in raw JavaScript, as they date to before I switched to using TypeScript for the project.
+This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project.
 
-- `ts`: the original TypeScript branch.
-- `ts-oo`: a modular, more object-oriented version of `ts`, now merged into main.
 - `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
 - `lines`: an attempt at calculating odd and even numbered columns separately, one after the other, so as to have something to display faster, while waiting for the rest of the calculation. (The basic idea of calculating alternate lines works--the Rust does its job--but the branch is not yet fully functional. It derived from `offscreen`, and I think the two workers/canvases are complicting matters.)
