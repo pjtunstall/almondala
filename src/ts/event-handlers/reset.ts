@@ -67,7 +67,7 @@ export function reset(
   if (!imageData) {
     console.error("createImageData failed.");
   }
-
+  state.imageData = imageData;
   const renderer = new Renderer(imageData);
 
   return renderer;

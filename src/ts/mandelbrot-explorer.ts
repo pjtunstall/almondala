@@ -54,8 +54,6 @@ export default class MandelbrotExplorer {
       handleSingleClick(
         event,
         this.canvas,
-        this.canvas.width,
-        this.canvas.height,
         this.maxIterations,
         this.fullMaxIterations,
         this.rFactor,
@@ -70,8 +68,6 @@ export default class MandelbrotExplorer {
       handleDoubleClick(
         event,
         this.canvas,
-        this.canvas.width,
-        this.canvas.height,
         this.maxIterations,
         this.fullMaxIterations,
         this.rFactor,

@@ -34,6 +34,7 @@ export function reset(canvas, ctx, state) {
     if (!imageData) {
         console.error("createImageData failed.");
     }
+    state.imageData = imageData;
     const renderer = new Renderer(imageData);
     return renderer;
 }

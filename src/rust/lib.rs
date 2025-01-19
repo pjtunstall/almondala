@@ -1,1 +1,1 @@
-mod mandelbrot;
+mod calculate_mandelbrot;

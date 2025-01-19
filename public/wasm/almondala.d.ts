@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-export function calculate_mandelbrot(width: number, height: number, max_iterations: number, full_max_iterations: number, offset_x: number, offset_y: number, zoom: number, ratio: number, r_factor: number, g_factor: number, b_factor: number): Uint8Array;
+export function calculate_mandelbrot(width: number, height: number, max_iterations: number, full_max_iterations: number, mid_x: number, mid_y: number, zoom: number, ratio: number, r_factor: number, g_factor: number, b_factor: number): Uint8Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 

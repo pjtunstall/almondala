@@ -7,8 +7,8 @@ pub fn calculate_mandelbrot(
     height: usize,
     max_iterations: usize,
     full_max_iterations: usize,
-    offset_x: f64,
-    offset_y: f64,
+    mid_x: f64,
+    mid_y: f64,
     zoom: f64,
     ratio: f64,
     r_factor: f64,
@@ -21,8 +21,8 @@ pub fn calculate_mandelbrot(
             let x = index % width;
             let y = index / width;
 
-            let cx = ratio * (x as f64 / width as f64 - 0.5) * 3.0 * zoom - offset_x;
-            let cy = offset_y - (y as f64 / height as f64 - 0.5) * 3.0 * zoom;
+            let cx = ratio * (x as f64 / width as f64 - 0.5) * 3.0 * zoom + mid_x;
+            let cy = -(y as f64 / height as f64 - 0.5) * 3.0 * zoom + mid_y;
 
             let mut zx = 0.0;
             let mut zy = 0.0;

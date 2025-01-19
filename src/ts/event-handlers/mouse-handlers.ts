@@ -1,4 +1,4 @@
-import { canvasToMandelDelta } from "../coordinate-transformations.js";
+import { CanvasPoint, Point } from "../points.js";
 import Renderer from "../draw.js";
 import State from ".././state.js";
 
@@ -14,8 +14,6 @@ export function handleMousedown(event: MouseEvent, canvas: HTMLCanvasElement) {
 export function handleDrag(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  width: number,
-  height: number,
   maxIterations: number,
   fullMaxIterations: number,
   rFactor: number,
@@ -28,25 +26,19 @@ export function handleDrag(
   const canvasRect = canvas.getBoundingClientRect();
   const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-  const dragDeltaX = currentX - dragStartX;
-  const dragDeltaY = currentY - dragStartY;
+  const current = new CanvasPoint(currentX, currentY, state);
+  const dragStart = new CanvasPoint(dragStartX, dragStartY, state);
+  const dragDelta = dragStart.subtract(current);
 
-  if (dragDeltaX * dragDeltaX + dragDeltaY * dragDeltaY < 5) {
+  if (Point.dotProduct(dragDelta, dragDelta) < 5) {
     return false;
   }
 
-  const [dx, dy] = canvasToMandelDelta(
-    0,
-    0,
-    dragDeltaX,
-    dragDeltaY,
-    width,
-    height,
-    state
-  );
+  const canvasCenter = new CanvasPoint(0, 0, state);
+  const complexDifference = canvasCenter.complexSubtract(dragDelta);
 
-  state.offsetX += dx;
-  state.offsetY += dy;
+  state.midX -= complexDifference.x;
+  state.midY -= complexDifference.y;
 
   dragStartX = currentX;
   dragStartY = currentY;
@@ -69,34 +61,28 @@ export function handleDrag(
 function handleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  width: number,
-  height: number,
   state: State
 ) {
-  const canvasRect = canvas.getBoundingClientRect();
-
-  const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
-  const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-
-  const [dx, dy] = canvasToMandelDelta(
-    x,
-    y,
-    width / 2,
-    height / 2,
-    width,
-    height,
+  const oldCanvasCenter = new CanvasPoint(
+    state.imageData.width / 2,
+    state.imageData.height / 2,
     state
   );
 
-  state.offsetX += dx;
-  state.offsetY += dy;
+  const canvasRect = canvas.getBoundingClientRect();
+  const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
+  const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
+  const newCanvasCenter = new CanvasPoint(x, y, state);
+
+  const complexDifference = oldCanvasCenter.complexSubtract(newCanvasCenter);
+
+  state.midX -= complexDifference.x;
+  state.midY -= complexDifference.y;
 }
 
 export function handleSingleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  width: number,
-  height: number,
   maxIterations: number,
   fullMaxIterations: number,
   rFactor: number,
@@ -110,8 +96,6 @@ export function handleSingleClick(
     handleDrag(
       event,
       canvas,
-      width,
-      height,
       maxIterations,
       fullMaxIterations,
       rFactor,
@@ -126,7 +110,7 @@ export function handleSingleClick(
   }
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = window.setTimeout(() => {
-    handleClick(event, canvas, width, height, state);
+    handleClick(event, canvas, state);
     requestAnimationFrame(() =>
       renderer.draw(
         maxIterations,
@@ -144,8 +128,6 @@ export function handleSingleClick(
 export function handleDoubleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  width: number,
-  height: number,
   maxIterations: number,
   fullMaxIterations: number,
   rFactor: number,
@@ -156,7 +138,7 @@ export function handleDoubleClick(
   state: State
 ) {
   clearTimeout(singleClickTimeoutId);
-  handleClick(event, canvas, width, height, state);
+  handleClick(event, canvas, state);
   state.zoom *= 0.64;
   requestAnimationFrame(() =>
     renderer.draw(

@@ -26,10 +26,10 @@ export default class MandelbrotExplorer {
         document.addEventListener("keyup", (event) => handleKeyup(event.key));
         document.addEventListener("mousedown", (event) => handleMousedown(event, this.canvas));
         this.canvas.addEventListener("mouseup", (event) => {
-            handleSingleClick(event, this.canvas, this.canvas.width, this.canvas.height, this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.ctx, this.renderer, this.state);
+            handleSingleClick(event, this.canvas, this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.ctx, this.renderer, this.state);
         });
         this.canvas.addEventListener("dblclick", (event) => {
-            handleDoubleClick(event, this.canvas, this.canvas.width, this.canvas.height, this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.ctx, this.renderer, this.state);
+            handleDoubleClick(event, this.canvas, this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.ctx, this.renderer, this.state);
         });
         window.addEventListener("resize", async () => {
             requestReset(this.canvas, this.ctx, this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.renderer, this.state);
