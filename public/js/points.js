@@ -40,3 +40,4 @@ export class ComplexPoint extends Point {
         return new ComplexPoint(this.x - p.x, this.y - p.y);
     }
 }
+//# sourceMappingURL=points.js.map

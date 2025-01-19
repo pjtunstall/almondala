@@ -40,3 +40,4 @@ export function reset(canvas, ctx, state) {
     const renderer = new Renderer(imageData);
     return renderer;
 }
+//# sourceMappingURL=reset.js.map

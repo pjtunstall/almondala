@@ -1,4 +1,3 @@
-use rayon::prelude::*;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -16,7 +15,7 @@ pub fn calculate_mandelbrot(
     b_factor: f64,
 ) -> Vec<u8> {
     (0..width * height)
-        .into_par_iter()
+        .into_iter()
         .map(|index| {
             let x = index % width;
             let y = index / width;

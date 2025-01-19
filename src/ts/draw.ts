@@ -53,3 +53,46 @@ export default class Renderer {
     console.log(`${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`);
   }
 }
+
+// // Uncomment to benchmark. With `rayon`, the avarage duration is 903ms (standard deviation 51ms), without: 585ms (standard deviation 66ms).
+// async function benchmarkMandelbrot() {
+//   const start = performance.now();
+
+//   calculate_mandelbrot(
+//     1.618033988749895 * 600,
+//     600,
+//     1024,
+//     1024,
+//     -0.6,
+//     0,
+//     1.618033988749895,
+//     1,
+//     23,
+//     17,
+//     17
+//   );
+
+//   const end = performance.now();
+//   const duration = end - start;
+
+//   return duration;
+// }
+
+// const durations = [];
+// for (let i = 0; i < 100; i++) {
+//   const duration = await benchmarkMandelbrot();
+//   console.log(`${i}. ${duration}ms`);
+//   durations.push(duration);
+// }
+
+// const averageDuration =
+//   durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
+// console.log(`${averageDuration}ms (average)`);
+
+// const std = Math.sqrt(
+//   durations.reduce(
+//     (sum, duration) => sum + Math.pow(duration - averageDuration, 2),
+//     0
+//   ) / durations.length
+// );
+// console.log(std);

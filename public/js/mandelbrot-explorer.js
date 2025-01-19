@@ -37,3 +37,4 @@ export default class MandelbrotExplorer {
         requestAnimationFrame((timestamp) => handleKeys(timestamp, this.maxIterations, this.firstPassMaxIterations, this.fullMaxIterations, this.canvas.width, this.canvas.height, this.rFactor, this.gFactor, this.bFactor, this.canvas, this.ctx, this.renderer, this.state));
     }
 }
+//# sourceMappingURL=mandelbrot-explorer.js.map

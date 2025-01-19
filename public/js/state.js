@@ -5,3 +5,4 @@ export default class State {
     imageData = new ImageData(2, 2);
     ratio = 1.618033988749895;
 }
+//# sourceMappingURL=state.js.map
