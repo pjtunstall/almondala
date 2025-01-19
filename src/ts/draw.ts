@@ -28,8 +28,8 @@ export default class Renderer {
       height,
       maxIterations,
       fullMaxIterations,
-      state.midX,
-      state.midY,
+      state.mid.x,
+      state.mid.y,
       state.zoom,
       state.ratio,
       rFactor,
@@ -50,16 +50,7 @@ export default class Renderer {
 
     ctx.putImageData(this.imageData, 0, 0);
 
-    const canvasCenter = new CanvasPoint(
-      this.imageData.width / 2,
-      this.imageData.height / 2,
-      state
-    );
-    const complexcenter = canvasCenter.toComplexPoint();
-    console.log(
-      `${complexcenter.x} ${complexcenter.y < 0 ? "-" : "+"} ${Math.abs(
-        complexcenter.y
-      )}i`
-    );
+    const { x, y } = state.mid;
+    console.log(`${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`);
   }
 }

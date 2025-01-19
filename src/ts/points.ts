@@ -31,11 +31,11 @@ export class CanvasPoint extends Point {
   }
 
   toComplexPoint() {
-    const { zoom, midX, midY, ratio, imageData } = this.state;
+    const { zoom, mid, ratio, imageData } = this.state;
     const { width, height } = imageData;
 
-    const x = ratio * (this.x / width - 0.5) * 3 * zoom + midX;
-    const y = -(this.y / height - 0.5) * 3 * zoom + midY;
+    const x = ratio * (this.x / width - 0.5) * 3 * zoom + mid.x;
+    const y = -(this.y / height - 0.5) * 3 * zoom + mid.y;
 
     return new ComplexPoint(x, y);
   }
@@ -44,6 +44,10 @@ export class CanvasPoint extends Point {
 export class ComplexPoint extends Point {
   constructor(x: number, y: number) {
     super(x, y);
+  }
+
+  add(p: ComplexPoint): ComplexPoint {
+    return new ComplexPoint(this.x + p.x, this.y + p.y);
   }
 
   subtract(p: ComplexPoint): ComplexPoint {

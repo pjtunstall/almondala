@@ -10,30 +10,25 @@ export function handleDrag(event, canvas, maxIterations, fullMaxIterations, rFac
     const canvasRect = canvas.getBoundingClientRect();
     const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-    const current = new CanvasPoint(currentX, currentY, state);
-    const dragStart = new CanvasPoint(dragStartX, dragStartY, state);
-    const dragDelta = dragStart.subtract(current);
-    if (Point.dotProduct(dragDelta, dragDelta) < 5) {
+    const dragEnd = new CanvasPoint(currentX, currentY, state).toComplexPoint();
+    const dragStart = new CanvasPoint(dragStartX, dragStartY, state).toComplexPoint();
+    const dragDelta = dragStart.subtract(dragEnd);
+    console.log(Point.dotProduct(dragDelta, dragDelta));
+    if (Point.dotProduct(dragDelta, dragDelta) <= 0) {
         return false;
     }
-    const canvasCenter = new CanvasPoint(0, 0, state);
-    const complexDifference = canvasCenter.complexSubtract(dragDelta);
-    state.midX -= complexDifference.x;
-    state.midY -= complexDifference.y;
+    state.mid = state.mid.add(dragDelta);
     dragStartX = currentX;
     dragStartY = currentY;
     requestAnimationFrame(() => renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state));
     return true;
 }
 function handleClick(event, canvas, state) {
-    const oldCanvasCenter = new CanvasPoint(state.imageData.width / 2, state.imageData.height / 2, state);
     const canvasRect = canvas.getBoundingClientRect();
     const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-    const newCanvasCenter = new CanvasPoint(x, y, state);
-    const complexDifference = oldCanvasCenter.complexSubtract(newCanvasCenter);
-    state.midX -= complexDifference.x;
-    state.midY -= complexDifference.y;
+    const mid = new CanvasPoint(x, y, state).toComplexPoint();
+    state.mid = mid;
 }
 export function handleSingleClick(event, canvas, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, renderer, state) {
     if (handleDrag(event, canvas, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, renderer, state)) {

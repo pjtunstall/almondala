@@ -26,19 +26,21 @@ export function handleDrag(
   const canvasRect = canvas.getBoundingClientRect();
   const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-  const current = new CanvasPoint(currentX, currentY, state);
-  const dragStart = new CanvasPoint(dragStartX, dragStartY, state);
-  const dragDelta = dragStart.subtract(current);
+  const dragEnd = new CanvasPoint(currentX, currentY, state).toComplexPoint();
+  const dragStart = new CanvasPoint(
+    dragStartX,
+    dragStartY,
+    state
+  ).toComplexPoint();
+  const dragDelta = dragStart.subtract(dragEnd);
 
-  if (Point.dotProduct(dragDelta, dragDelta) < 5) {
+  console.log(Point.dotProduct(dragDelta, dragDelta));
+
+  if (Point.dotProduct(dragDelta, dragDelta) <= 0) {
     return false;
   }
 
-  const canvasCenter = new CanvasPoint(0, 0, state);
-  const complexDifference = canvasCenter.complexSubtract(dragDelta);
-
-  state.midX -= complexDifference.x;
-  state.midY -= complexDifference.y;
+  state.mid = state.mid.add(dragDelta);
 
   dragStartX = currentX;
   dragStartY = currentY;
@@ -63,21 +65,11 @@ function handleClick(
   canvas: HTMLCanvasElement,
   state: State
 ) {
-  const oldCanvasCenter = new CanvasPoint(
-    state.imageData.width / 2,
-    state.imageData.height / 2,
-    state
-  );
-
   const canvasRect = canvas.getBoundingClientRect();
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
-  const newCanvasCenter = new CanvasPoint(x, y, state);
-
-  const complexDifference = oldCanvasCenter.complexSubtract(newCanvasCenter);
-
-  state.midX -= complexDifference.x;
-  state.midY -= complexDifference.y;
+  const mid = new CanvasPoint(x, y, state).toComplexPoint();
+  state.mid = mid;
 }
 
 export function handleSingleClick(

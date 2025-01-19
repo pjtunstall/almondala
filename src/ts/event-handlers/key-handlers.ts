@@ -51,16 +51,16 @@ export function handleKeys(
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
-        state.midX -= state.zoom * 0.4;
+        state.mid.x -= state.zoom * 0.4;
         break;
       case "ArrowRight":
-        state.midX += state.zoom * 0.4;
+        state.mid.x += state.zoom * 0.4;
         break;
       case "ArrowUp":
-        state.midY += state.zoom * 0.4;
+        state.mid.y += state.zoom * 0.4;
         break;
       case "ArrowDown":
-        state.midY -= state.zoom * 0.4;
+        state.mid.y -= state.zoom * 0.4;
         break;
       case "x":
         state.zoom *= 0.8;
