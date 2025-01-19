@@ -7,7 +7,7 @@
     "rootDir": "./src/ts",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "sourceMap": false, // Set to true to enable source maps for debugging.
+    "sourceMap": true,
     "lib": ["DOM", "ESNext"]
   },
   "include": ["src/**/*", "public/wasm/**/*"],
