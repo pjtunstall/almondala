@@ -79,7 +79,7 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched any of these experiments is that I'm no longer trying to parallelize the Rust with the `rayon` crate. Apparently Rust multithreading is not available a WebAssembly emvironment. Indeed, benchmaring showed that `rayon` made the calculations 1.8 times slower.
+This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched any of these experiments is that I'm no longer trying to parallelize the Rust with the `rayon` crate. Apparently Rust multithreading is not available in a WebAssembly emvironment. Indeed, benchmaring showed that `rayon` made the calculations 1.8 times slower.
 
 - `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
