@@ -46,4 +46,3 @@ export function handleDoubleClick(event, canvas, maxIterations, fullMaxIteration
     state.zoom *= 0.64;
     requestAnimationFrame(() => renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state));
 }
-//# sourceMappingURL=mouse-handlers.js.map

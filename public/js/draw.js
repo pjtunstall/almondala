@@ -21,4 +21,3 @@ export default class Renderer {
         console.log(`${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`);
     }
 }
-//# sourceMappingURL=draw.js.map
