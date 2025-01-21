@@ -7,6 +7,7 @@
 - [Usage](#usage)
 - [Setup](#setup)
 - [Experimental branches](#experimental-branches)
+- [Benchmarking](#benchmarking)
 
 ## Description
 
@@ -79,7 +80,7 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched any of these experiments is that I'm no longer trying to parallelize the Rust with the `rayon` crate as benchmaring showed that `rayon` made the calculations 1.8 times slower. This is not how to do multithreading in WebAssembly.
+This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched any of these experiments is that I'm no longer trying to parallelize the Rust with the [rayon](https://docs.rs/rayon/latest/rayon/) crate (library). [Benchmarking](#benchmarking) showed, to my surprise, that `rayon` made the calculations 1.8 times slower. As I now realize, this is not how to do multithreading in WebAssembly.
 
 - `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
@@ -87,3 +88,41 @@ This repo includes several branches for exploring new features. At present they'
 - `shared`: an attempt at sharing memory betwee JS and Wasm. (Not yet working.)
 
 See their `README`s for more info.
+
+## Benchmarking
+
+Here is how I timed the Mandelbrot calculation. With [rayon](https://docs.rs/rayon/latest/rayon/), the avarage duration was 903ms (standard deviation 51ms). Without `rayon`, it was 585ms (standard deviation 66ms). It turns out that WebAssembly doesn't have access to native multithreading capabilities, except indirectly via JavaScript worker threads.
+
+```javascript
+const phi = 1.618033988749895;
+
+async function benchmarkMandelbrot() {
+  const start = performance.now();
+
+  calculate_mandelbrot(phi * 600, 600, 1024, 1024, -0.6, 0, phi, 1, 23, 17, 17);
+
+  const end = performance.now();
+  const duration = end - start;
+
+  return duration;
+}
+
+const durations = [];
+for (let i = 0; i < 100; i++) {
+  const duration = await benchmarkMandelbrot();
+  console.log(`${i}. ${duration}ms`);
+  durations.push(duration);
+}
+
+const averageDuration =
+  durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
+console.log(`${averageDuration}ms (average)`);
+
+const std = Math.sqrt(
+  durations.reduce(
+    (sum, duration) => sum + Math.pow(duration - averageDuration, 2),
+    0
+  ) / durations.length
+);
+console.log(std);
+```
