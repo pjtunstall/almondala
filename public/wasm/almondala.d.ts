@@ -1,12 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
-export function calculate_mandelbrot(width: number, height: number, max_iterations: number, full_max_iterations: number, mid_x: number, mid_y: number, zoom: number, ratio: number, r_factor: number, g_factor: number, b_factor: number): Uint8Array;
+export function calculate_mandelbrot(width: number, height: number, max_iterations: number, full_max_iterations: number, mid_x: number, mid_y: number, zoom: number, ratio: number, r_factor: number, g_factor: number, b_factor: number, power: number): Uint8Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly calculate_mandelbrot: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
+  readonly calculate_mandelbrot: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number) => [number, number];
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_start: () => void;

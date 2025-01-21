@@ -13,7 +13,7 @@ export function handleDrag(event, canvas, maxIterations, fullMaxIterations, rFac
     const dragEnd = new CanvasPoint(currentX, currentY, state).toComplexPoint();
     const dragStart = new CanvasPoint(dragStartX, dragStartY, state).toComplexPoint();
     const dragDelta = dragStart.subtract(dragEnd);
-    if (Point.dotProduct(dragDelta, dragDelta) <= 0) {
+    if (Point.dotProduct(dragDelta, dragDelta) === 0) {
         return false;
     }
     state.mid = state.mid.add(dragDelta);

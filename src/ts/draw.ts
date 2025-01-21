@@ -33,7 +33,8 @@ export default class Renderer {
       state.ratio,
       rFactor,
       gFactor,
-      bFactor
+      bFactor,
+      2
     );
 
     if (this.imageData.data.length !== pixels.length) {
