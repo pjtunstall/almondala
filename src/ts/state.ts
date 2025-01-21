@@ -5,4 +5,16 @@ export default class State {
   mid = new ComplexPoint(-0.6, 0);
   imageData = new ImageData(2, 2);
   ratio = 1.618033988749895;
+  power = 2;
+
+  incrementPowerBy(change: number) {
+    this.power += change;
+    this.resetView();
+  }
+
+  private resetView(): void {
+    this.zoom = 1;
+    this.mid.x = this.power === 2 ? -0.6 : 0;
+    this.mid.y = 0;
+  }
 }

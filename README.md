@@ -21,8 +21,9 @@
 
 - Keys:
   - Arrow keys to pan.
-  - X to zoom in.
-  - Z to zoom out.
+  - `X` to zoom in.
+  - `Z` to zoom out.
+  - `+` and `-` to increment/decrement the power to which each number in the sequence is raised.
   - SPACE to reset.
 - Mouse:
   - Click on a point of the Mandelbrot to move it to the center of the canvas.
@@ -80,7 +81,7 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched any of these experiments is that I'm no longer trying to parallelize the Rust with the [rayon](https://docs.rs/rayon/latest/rayon/) crate (library). [Benchmarking](#benchmarking) showed, to my surprise, that `rayon` made the calculations 1.8 times slower. As I now realize, this is not how to do multithreading in WebAssembly.
+This repo includes several branches for exploring new features. At present they're in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched any of these experiments is that I'm no longer trying to parallelize the Rust with the [rayon](https://docs.rs/rayon/latest/rayon/) crate (library). [Benchmarking](#benchmarking) showed that `rayon` made the calculations 1.8 times slower. As I now realize, this is because WebAssembly doesn't have direct support for multithreading at the hardware level and instead relies on JavaScript worker threads for parallelism.
 
 - `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox.)
@@ -91,7 +92,7 @@ See their `README`s for more info.
 
 ## Benchmarking
 
-Here is how I timed the Mandelbrot calculation. With [rayon](https://docs.rs/rayon/latest/rayon/), the avarage duration was 903ms (standard deviation 51ms). Without `rayon`, it was 585ms (standard deviation 66ms). It turns out that WebAssembly doesn't have access to native multithreading capabilities, except indirectly via JavaScript worker threads.
+Here is how I timed the Mandelbrot calculation. With [rayon](https://docs.rs/rayon/latest/rayon/), the mean duration was 903ms (standard deviation 51ms). Without `rayon`, it was 585ms (standard deviation 66ms).
 
 ```javascript
 const phi = 1.618033988749895;

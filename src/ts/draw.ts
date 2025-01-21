@@ -34,7 +34,7 @@ export default class Renderer {
       rFactor,
       gFactor,
       bFactor,
-      2
+      state.power
     );
 
     if (this.imageData.data.length !== pixels.length) {

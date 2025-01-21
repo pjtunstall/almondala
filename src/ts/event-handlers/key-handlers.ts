@@ -68,6 +68,14 @@ export function handleKeys(
       case "z":
         state.zoom *= 1.25;
         break;
+      case "+":
+        state.incrementPowerBy(1);
+        break;
+      case "-":
+        if (state.power > 1) {
+          state.incrementPowerBy(-1);
+        }
+        break;
       case " ":
         requestReset(
           canvas,
@@ -116,6 +124,8 @@ export function handleKeydown(key: string) {
     case "ArrowRight":
     case "x":
     case "z":
+    case "+":
+    case "-":
     case " ":
       keys[key] = true;
   }
@@ -129,6 +139,8 @@ export function handleKeyup(key: string) {
     case "ArrowRight":
     case "x":
     case "z":
+    case "+":
+    case "-":
     case " ":
       keys[key] = false;
   }
