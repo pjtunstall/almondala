@@ -15,22 +15,22 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, ful
     Object.keys(keys).forEach((key) => {
         switch (key) {
             case "ArrowLeft":
-                state.mid.x -= state.zoom * 0.4;
+                state.moveLeft();
                 break;
             case "ArrowRight":
-                state.mid.x += state.zoom * 0.4;
+                state.moveRight();
                 break;
             case "ArrowUp":
-                state.mid.y += state.zoom * 0.4;
+                state.moveUp();
                 break;
             case "ArrowDown":
-                state.mid.y -= state.zoom * 0.4;
+                state.moveDown();
                 break;
             case "x":
-                state.zoom *= 0.8;
+                state.scaleZoomBy(0.8);
                 break;
             case "z":
-                state.zoom *= 1.25;
+                state.scaleZoomBy(1.25);
                 break;
             case "+":
                 state.incrementPowerBy(1);
@@ -41,6 +41,7 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, ful
                 }
                 break;
             case " ":
+            case "Escape":
                 requestReset(canvas, ctx, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, renderer, state);
                 if (keys[key] === false) {
                     delete keys[key];
@@ -70,6 +71,7 @@ export function handleKeydown(key) {
         case "+":
         case "-":
         case " ":
+        case "Escape":
             keys[key] = true;
     }
 }
@@ -84,6 +86,7 @@ export function handleKeyup(key) {
         case "+":
         case "-":
         case " ":
+        case "Escape":
             keys[key] = false;
     }
 }

@@ -129,7 +129,7 @@ export function handleDoubleClick(
 ) {
   clearTimeout(singleClickTimeoutId);
   handleClick(event, canvas, state);
-  state.zoom *= 0.64;
+  state.scaleZoomBy(0.64);
   requestAnimationFrame(() =>
     renderer.draw(
       maxIterations,

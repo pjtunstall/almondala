@@ -5,8 +5,27 @@ export default class State {
     imageData = new ImageData(2, 2);
     ratio = 1.618033988749895;
     power = 2;
-    incrementPowerBy(change) {
-        this.power += change;
+    panDelta = 0.4;
+    moveLeft() {
+        this.mid.x -= this.zoom * this.panDelta;
+    }
+    moveRight() {
+        this.mid.x += this.zoom * this.panDelta;
+    }
+    moveUp() {
+        this.mid.y += this.zoom * this.panDelta;
+    }
+    moveDown() {
+        this.mid.y -= this.zoom * this.panDelta;
+    }
+    scaleZoomBy(factor) {
+        if (factor <= 1 && this.zoom < 2e-13) {
+            return;
+        }
+        this.zoom *= factor;
+    }
+    incrementPowerBy(increment) {
+        this.power += increment;
         this.resetView();
     }
     resetView() {

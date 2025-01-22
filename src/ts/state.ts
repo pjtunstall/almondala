@@ -6,9 +6,33 @@ export default class State {
   imageData = new ImageData(2, 2);
   ratio = 1.618033988749895;
   power = 2;
+  private panDelta = 0.4;
 
-  incrementPowerBy(change: number) {
-    this.power += change;
+  panLeft() {
+    this.mid.x -= this.zoom * this.panDelta;
+  }
+
+  panRight() {
+    this.mid.x += this.zoom * this.panDelta;
+  }
+
+  panUp() {
+    this.mid.y += this.zoom * this.panDelta;
+  }
+
+  panDown() {
+    this.mid.y -= this.zoom * this.panDelta;
+  }
+
+  scaleZoomBy(factor: number) {
+    if (factor <= 1 && this.zoom < 2e-13) {
+      return;
+    }
+    this.zoom *= factor;
+  }
+
+  incrementPowerBy(increment: number) {
+    this.power += increment;
     this.resetView();
   }
 

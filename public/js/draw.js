@@ -18,7 +18,7 @@ export default class Renderer {
         }
         ctx.putImageData(this.imageData, 0, 0);
         const { x, y } = state.mid;
-        console.log(`${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`);
+        console.log(`zoom: ${state.zoom}, center: ${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`);
     }
 }
 //# sourceMappingURL=draw.js.map
