@@ -5,17 +5,21 @@ export default class State {
     imageData = new ImageData(2, 2);
     ratio = 1.618033988749895;
     power = 2;
+    grayscale;
     panDelta = 0.4;
-    moveLeft() {
+    constructor(grayscale) {
+        this.grayscale = grayscale;
+    }
+    panLeft() {
         this.mid.x -= this.zoom * this.panDelta;
     }
-    moveRight() {
+    panRight() {
         this.mid.x += this.zoom * this.panDelta;
     }
-    moveUp() {
+    panUp() {
         this.mid.y += this.zoom * this.panDelta;
     }
-    moveDown() {
+    panDown() {
         this.mid.y -= this.zoom * this.panDelta;
     }
     scaleZoomBy(factor) {

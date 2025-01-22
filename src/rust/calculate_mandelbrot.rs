@@ -15,6 +15,7 @@ pub fn calculate_mandelbrot(
     g_factor: f64,
     b_factor: f64,
     power: i32,
+    grayscale: bool,
 ) -> Vec<u8> {
     (0..width * height)
         .into_iter()
@@ -35,14 +36,18 @@ pub fn calculate_mandelbrot(
                 escape_iteration += 1;
             }
 
-            hue(
-                escape_iteration,
-                max_iterations,
-                full_max_iterations,
-                r_factor,
-                g_factor,
-                b_factor,
-            )
+            if grayscale {
+                shade(escape_iteration, max_iterations, full_max_iterations)
+            } else {
+                hue(
+                    escape_iteration,
+                    max_iterations,
+                    full_max_iterations,
+                    r_factor,
+                    g_factor,
+                    b_factor,
+                )
+            }
         })
         .flatten()
         .collect()
@@ -61,9 +66,24 @@ fn hue(
     }
 
     let hue = escape_iteration as f64 / full_max_iterations as f64;
-    let r = (hue * r_factor * std::f64::consts::TAU).sin() * 128.0 + 128.0;
-    let b = (hue * g_factor * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0;
-    let g = (hue * b_factor * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0;
+    let r =
+        ((hue * r_factor * std::f64::consts::TAU).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+    let b = ((hue * g_factor * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0).clamp(0.0, 255.0)
+        as u8;
+    let g = ((hue * b_factor * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0).clamp(0.0, 255.0)
+        as u8;
 
-    vec![r as u8, g as u8, b as u8, 255]
+    vec![r, g, b, 255]
+}
+
+fn shade(escape_iteration: usize, max_iterations: usize, full_max_iterations: usize) -> Vec<u8> {
+    if escape_iteration == max_iterations {
+        return vec![0, 0, 0, 255];
+    }
+
+    let fraction = escape_iteration as f64 / full_max_iterations as f64;
+    let shade =
+        ((fraction * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+
+    vec![shade, shade, shade, 255]
 }

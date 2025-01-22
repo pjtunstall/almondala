@@ -25,7 +25,7 @@ export default class MandelbrotExplorer {
   renderer!: Renderer;
 
   constructor() {
-    this.state = new State();
+    this.state = new State(false);
     this.renderer = reset(this.canvas, this.ctx, this.state);
 
     if (!this.renderer) {

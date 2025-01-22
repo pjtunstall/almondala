@@ -6,7 +6,12 @@ export default class State {
   imageData = new ImageData(2, 2);
   ratio = 1.618033988749895;
   power = 2;
+  grayscale: boolean;
   private panDelta = 0.4;
+
+  constructor(grayscale: boolean) {
+    this.grayscale = grayscale;
+  }
 
   panLeft() {
     this.mid.x -= this.zoom * this.panDelta;

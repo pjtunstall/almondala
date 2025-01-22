@@ -18,7 +18,7 @@ export default function requestReset(
 
   cooldownTimer = setTimeout(() => {
     Object.assign(state, {
-      ...new State(),
+      ...new State(state.grayscale),
     });
     renderer.imageData = reset(canvas, ctx, state).imageData;
     renderer.draw(

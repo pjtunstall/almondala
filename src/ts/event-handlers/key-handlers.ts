@@ -38,14 +38,19 @@ export function handleKeys(
       state
     )
   );
-  if (timestamp - prev < 120) {
+  if (timestamp - prev < 128) {
     return;
   }
   prev = timestamp;
 
   if (Object.keys(keys).length === 0) {
-    prev = timestamp;
     return;
+  }
+
+  // Only toggle grayscale when the "g" key has been released.
+  if (keys["g"] === false) {
+    state.grayscale = !state.grayscale;
+    delete keys["g"];
   }
 
   Object.keys(keys).forEach((key) => {
@@ -93,6 +98,8 @@ export function handleKeys(
           delete keys[key];
         }
         return;
+      default: // E.g. if `keys["g"] === true`, indicating that the key is still being held.
+        return;
     }
 
     if (keys[key] === false) {
@@ -127,8 +134,10 @@ export function handleKeydown(key: string) {
     case "z":
     case "+":
     case "-":
+    case "g":
     case " ":
     case "Escape":
+      console.log("keydown", key);
       keys[key] = true;
   }
 }
@@ -143,8 +152,10 @@ export function handleKeyup(key: string) {
     case "z":
     case "+":
     case "-":
+    case "g":
     case " ":
     case "Escape":
+      console.log("keyup", key);
       keys[key] = false;
   }
 }

@@ -26,10 +26,11 @@ function getArrayU8FromWasm0(ptr, len) {
  * @param {number} g_factor
  * @param {number} b_factor
  * @param {number} power
+ * @param {boolean} grayscale
  * @returns {Uint8Array}
  */
-export function calculate_mandelbrot(width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, ratio, r_factor, g_factor, b_factor, power) {
-    const ret = wasm.calculate_mandelbrot(width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, ratio, r_factor, g_factor, b_factor, power);
+export function calculate_mandelbrot(width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, ratio, r_factor, g_factor, b_factor, power, grayscale) {
+    const ret = wasm.calculate_mandelbrot(width, height, max_iterations, full_max_iterations, mid_x, mid_y, zoom, ratio, r_factor, g_factor, b_factor, power, grayscale);
     var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
     return v1;

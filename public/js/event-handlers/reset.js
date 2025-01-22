@@ -6,7 +6,7 @@ export default function requestReset(canvas, ctx, maxIterations, fullMaxIteratio
         clearTimeout(cooldownTimer);
     cooldownTimer = setTimeout(() => {
         Object.assign(state, {
-            ...new State(),
+            ...new State(state.grayscale),
         });
         renderer.imageData = reset(canvas, ctx, state).imageData;
         renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state);

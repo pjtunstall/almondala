@@ -8,7 +8,7 @@ export default class Renderer {
     draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state) {
         const width = this.imageData.width;
         const height = this.imageData.height;
-        const pixels = calculate_mandelbrot(width, height, maxIterations, fullMaxIterations, state.mid.x, state.mid.y, state.zoom, state.ratio, rFactor, gFactor, bFactor, state.power);
+        const pixels = calculate_mandelbrot(width, height, maxIterations, fullMaxIterations, state.mid.x, state.mid.y, state.zoom, state.ratio, rFactor, gFactor, bFactor, state.power, state.grayscale);
         if (this.imageData.data.length !== pixels.length) {
             console.error("Lengths out of sync: imageData: ${this.imageData.length}, pixels.length: ${pixels.length}");
             return;
