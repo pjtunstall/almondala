@@ -25,7 +25,7 @@
   - `Z` to zoom out.
   - `+` and `-` to increment/decrement the power to which each number in the sequence is raised.
   - `G` to toggle color/grayscale.
-  - SPACE to reset.
+  - SPACE or ESCAPE to reset.
 - Mouse:
   - Click on a point of the Mandelbrot to move it to the center of the canvas.
   - Double click to move and zoom.
