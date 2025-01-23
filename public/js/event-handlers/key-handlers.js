@@ -36,14 +36,6 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, ful
             case "z":
                 state.scaleZoomBy(1.25);
                 break;
-            case "+":
-                state.incrementPowerBy(1);
-                break;
-            case "-":
-                if (state.power > 1) {
-                    state.incrementPowerBy(-1);
-                }
-                break;
             case " ":
             case "Escape":
                 requestReset(canvas, ctx, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, renderer, state);
@@ -74,8 +66,6 @@ export function handleKeydown(key) {
         case "ArrowRight":
         case "x":
         case "z":
-        case "+":
-        case "-":
         case "g":
         case " ":
         case "Escape":
@@ -91,8 +81,6 @@ export function handleKeyup(key) {
         case "ArrowRight":
         case "x":
         case "z":
-        case "+":
-        case "-":
         case "g":
         case " ":
         case "Escape":

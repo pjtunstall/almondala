@@ -87,7 +87,7 @@ canvas {
   background-color: rgb(240, 240, 240);
   padding: 8vmin;
   border-radius: 1vmin;
-  font-size: calc(1.3rem + 1vmin);
+  font-size: calc(1rem + 1vmin);
   border: 1vmin solid var(--primary-color);
   color: var(--dark-bg);
 }

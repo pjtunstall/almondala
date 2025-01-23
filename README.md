@@ -23,13 +23,15 @@
   - Arrow keys to pan.
   - `X` to zoom in.
   - `Z` to zoom out.
-  - `+` and `-` to increment/decrement the power to which each number in the sequence is raised.
   - `G` to toggle color/grayscale.
   - SPACE or ESCAPE to reset.
 - Mouse:
   - Click on a point of the Mandelbrot to move it to the center of the canvas.
   - Double click to move and zoom.
   - Drag a point to move it to a new location on the canvas.
+- Buttons.
+  - RAINBOW to toggle color/grayscale.
+  - `˄` and `˅` to increment/decrement the power to which each number in the sequence is raised.
 
 Resizing the window also resets the view.
 

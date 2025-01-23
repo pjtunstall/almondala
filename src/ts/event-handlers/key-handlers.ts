@@ -73,14 +73,6 @@ export function handleKeys(
       case "z":
         state.scaleZoomBy(1.25);
         break;
-      case "+":
-        state.incrementPowerBy(1);
-        break;
-      case "-":
-        if (state.power > 1) {
-          state.incrementPowerBy(-1);
-        }
-        break;
       case " ":
       case "Escape":
         requestReset(
@@ -132,8 +124,6 @@ export function handleKeydown(key: string) {
     case "ArrowRight":
     case "x":
     case "z":
-    case "+":
-    case "-":
     case "g":
     case " ":
     case "Escape":
@@ -150,8 +140,6 @@ export function handleKeyup(key: string) {
     case "ArrowRight":
     case "x":
     case "z":
-    case "+":
-    case "-":
     case "g":
     case " ":
     case "Escape":
