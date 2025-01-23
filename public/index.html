@@ -19,6 +19,29 @@
     <link rel="icon" href="favicon.ico" />
   </head>
   <body>
+    <div id="controls">
+      <button id="color">&#x1F308;</button>
+      <button id="info">&#x2139;</button>
+      <button id="power-up">&#x2C4;</button>
+      <button id="power-down">&#x2C5;</button>
+    </div>
+
+    <div class="modal">
+      <div class="modal-content">
+        <p style="text-align: left">
+          * Keys: arrow keys to pan, X and Z to zoom in and out, + and - to
+          increment/decrement the power, G to toggle color/grayscale, SPACE or
+          ESCAPE to reset.<br /><br />* Mouse: click on a point to move it to
+          the center of the canvas. Double click to move and zoom. Drag a point
+          to move it to a new location on the canvas.
+        </p>
+
+        <div class="close-button" onclick="onClose(event)">
+          <span class="x-icon">&#x2715;</span>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="js/main.js"></script>
     <script type="module" src="wasm/almondala.js"></script>
   </body>

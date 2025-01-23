@@ -29,7 +29,7 @@
 - Mouse:
   - Click on a point of the Mandelbrot to move it to the center of the canvas.
   - Double click to move and zoom.
-  - Drag a point of the Mandelbrot move it to a new location on the canvas.
+  - Drag a point to move it to a new location on the canvas.
 
 Resizing the window also resets the view.
 

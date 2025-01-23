@@ -41,10 +41,13 @@ export function reset(
   let width = 0.8 * document.body.clientWidth;
   let height = 0.8 * document.body.clientHeight;
   const phi = state.ratio;
+  const controls = document.getElementById("controls") as HTMLElement;
 
   if (width > height) {
+    controls.style.flexDirection = "column";
     width = Math.min(height * phi, width);
   } else {
+    controls.style.flexDirection = "row";
     height = Math.min(width * phi, height);
     state.zoom = 2;
   }

@@ -22,6 +22,15 @@ export default class MandelbrotExplorer {
         }
         this.renderer.draw(this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.ctx, this.state);
         document.body.append(this.canvas);
+        document.getElementById("controls")?.addEventListener("click", (event) => {
+            this.handleControls(event);
+        });
+        document.querySelector(".close-button")?.addEventListener("click", () => {
+            const modal = document.querySelector(".modal");
+            if (modal) {
+                modal.classList.remove("open");
+            }
+        });
         document.addEventListener("keydown", (event) => handleKeydown(event.key));
         document.addEventListener("keyup", (event) => handleKeyup(event.key));
         document.addEventListener("mousedown", (event) => handleMousedown(event, this.canvas));
@@ -35,6 +44,34 @@ export default class MandelbrotExplorer {
             requestReset(this.canvas, this.ctx, this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.renderer, this.state);
         });
         requestAnimationFrame((timestamp) => handleKeys(timestamp, this.maxIterations, this.firstPassMaxIterations, this.fullMaxIterations, this.canvas.width, this.canvas.height, this.rFactor, this.gFactor, this.bFactor, this.canvas, this.ctx, this.renderer, this.state));
+    }
+    handleControls(event) {
+        event.preventDefault();
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
+        target.blur();
+        switch (target.id) {
+            case "color":
+                this.state.grayscale = !this.state.grayscale;
+                break;
+            case "power-up":
+                this.state.incrementPowerBy(1);
+                break;
+            case "power-down":
+                if (this.state.power > 2) {
+                    this.state.incrementPowerBy(-1);
+                }
+                break;
+            case "info":
+                document.querySelector(".modal")?.classList.add("open");
+                document.body.classList.add("blurred");
+                break;
+            default:
+                return;
+        }
+        this.renderer.draw(this.maxIterations, this.fullMaxIterations, this.rFactor, this.gFactor, this.bFactor, this.ctx, this.state);
     }
 }
 //# sourceMappingURL=mandelbrot-explorer.js.map
