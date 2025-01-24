@@ -7,10 +7,6 @@ export default function requestReset(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   maxIterations: number,
-  fullMaxIterations: number,
-  rFactor: number,
-  gFactor: number,
-  bFactor: number,
   renderer: Renderer,
   state: State
 ) {
@@ -21,15 +17,7 @@ export default function requestReset(
       ...new State(state.grayscale),
     });
     renderer.imageData = reset(canvas, ctx, state).imageData;
-    renderer.draw(
-      maxIterations,
-      fullMaxIterations,
-      rFactor,
-      gFactor,
-      bFactor,
-      ctx,
-      state
-    );
+    renderer.draw(maxIterations, ctx, state);
   }, 256);
 }
 

@@ -1,9 +1,9 @@
 import requestReset from "./reset.js";
 let prev = 0;
 const keys = {};
-export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, fullMaxIterations, width, height, rFactor, gFactor, bFactor, canvas, ctx, renderer, state) {
+export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, canvas, ctx, renderer, state) {
     // The reason for using this key-handling mechanism--an asynchronous loop and `keys` object, rather than simply handling keypresses individually as each one occurs--is so that we can detect key chords (multiple simultaneous keypresses). It also allows us to throttle draw requests in one place. An object is used rather than a set because we don't just want to know if a key is currently down (in which case it's value will be `true`), but also whether it's been pressed and released since the previous iteration (in which case it will be `false`).
-    requestAnimationFrame((timestamp) => handleKeys(timestamp, maxIterations, firstPassMaxIterations, fullMaxIterations, width, height, rFactor, gFactor, bFactor, canvas, ctx, renderer, state));
+    requestAnimationFrame((timestamp) => handleKeys(timestamp, maxIterations, firstPassMaxIterations, canvas, ctx, renderer, state));
     if (timestamp - prev < 128) {
         return;
     }
@@ -38,7 +38,7 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, ful
                 break;
             case " ":
             case "Escape":
-                requestReset(canvas, ctx, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, renderer, state);
+                requestReset(canvas, ctx, maxIterations, renderer, state);
                 if (keys[key] === false) {
                     delete keys[key];
                 }
@@ -51,12 +51,12 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, ful
         }
     });
     if (Object.keys(keys).length === 0) {
-        maxIterations = fullMaxIterations;
+        maxIterations = state.fullMaxIterations;
     }
     else {
         maxIterations = firstPassMaxIterations;
     }
-    renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state);
+    renderer.draw(maxIterations, ctx, state);
 }
 export function handleKeydown(key) {
     switch (key) {

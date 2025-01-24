@@ -5,10 +5,10 @@ export default class Renderer {
     constructor(imageData) {
         this.imageData = imageData;
     }
-    draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state) {
+    draw(maxIterations, ctx, state) {
         const width = this.imageData.width;
         const height = this.imageData.height;
-        const pixels = calculate_mandelbrot(width, height, maxIterations, fullMaxIterations, state.mid.x, state.mid.y, state.zoom, state.ratio, rFactor, gFactor, bFactor, state.power, state.grayscale);
+        const pixels = calculate_mandelbrot(width, height, maxIterations, state.fullMaxIterations, state.mid.x, state.mid.y, state.zoom, state.ratio, state.rFactor, state.gFactor, state.bFactor, state.power, state.grayscale);
         if (this.imageData.data.length !== pixels.length) {
             console.error("Lengths out of sync: imageData: ${this.imageData.length}, pixels.length: ${pixels.length}");
             return;

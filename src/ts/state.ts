@@ -7,6 +7,10 @@ export default class State {
   ratio = 1.618033988749895;
   power = 2;
   grayscale: boolean;
+  fullMaxIterations = 1024;
+  rFactor = 23;
+  gFactor = 17;
+  bFactor = 17;
   private panDelta = 0.4;
 
   constructor(grayscale: boolean) {

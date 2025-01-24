@@ -10,15 +10,7 @@ export default class Renderer {
     this.imageData = imageData;
   }
 
-  draw(
-    maxIterations: number,
-    fullMaxIterations: number,
-    rFactor: number,
-    gFactor: number,
-    bFactor: number,
-    ctx: CanvasRenderingContext2D,
-    state: State
-  ) {
+  draw(maxIterations: number, ctx: CanvasRenderingContext2D, state: State) {
     const width = this.imageData.width;
     const height = this.imageData.height;
 
@@ -26,14 +18,14 @@ export default class Renderer {
       width,
       height,
       maxIterations,
-      fullMaxIterations,
+      state.fullMaxIterations,
       state.mid.x,
       state.mid.y,
       state.zoom,
       state.ratio,
-      rFactor,
-      gFactor,
-      bFactor,
+      state.rFactor,
+      state.gFactor,
+      state.bFactor,
       state.power,
       state.grayscale
     );

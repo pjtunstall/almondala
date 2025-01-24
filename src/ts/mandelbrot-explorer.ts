@@ -8,18 +8,15 @@ import {
   handleDoubleClick,
   handleMousedown,
 } from "./event-handlers/mouse-handlers.js";
+import handleButtons from "./event-handlers/button-handlers.js";
 import requestReset, { reset } from "./event-handlers/reset.js";
 import Renderer from "./draw.js";
 import State from "./state.js";
 
 export default class MandelbrotExplorer {
   state: State;
-  fullMaxIterations = 1024;
   firstPassMaxIterations = 512;
   maxIterations = 1024;
-  rFactor = 23;
-  gFactor = 17;
-  bFactor = 17;
   canvas = document.createElement("canvas") as HTMLCanvasElement;
   ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
   renderer!: Renderer;
@@ -33,19 +30,11 @@ export default class MandelbrotExplorer {
       return;
     }
 
-    this.renderer.draw(
-      this.maxIterations,
-      this.fullMaxIterations,
-      this.rFactor,
-      this.gFactor,
-      this.bFactor,
-      this.ctx,
-      this.state
-    );
+    this.renderer.draw(this.maxIterations, this.ctx, this.state);
     document.body.append(this.canvas);
 
     document.getElementById("controls")?.addEventListener("click", (event) => {
-      this.handleControls(event);
+      handleButtons(event, this.state, this.ctx, this.renderer);
     });
     document.querySelector(".close-button")?.addEventListener("click", () => {
       const modal = document.querySelector(".modal");
@@ -65,10 +54,6 @@ export default class MandelbrotExplorer {
         event,
         this.canvas,
         this.maxIterations,
-        this.fullMaxIterations,
-        this.rFactor,
-        this.gFactor,
-        this.bFactor,
         this.ctx,
         this.renderer,
         this.state
@@ -79,10 +64,6 @@ export default class MandelbrotExplorer {
         event,
         this.canvas,
         this.maxIterations,
-        this.fullMaxIterations,
-        this.rFactor,
-        this.gFactor,
-        this.bFactor,
         this.ctx,
         this.renderer,
         this.state
@@ -94,10 +75,6 @@ export default class MandelbrotExplorer {
         this.canvas,
         this.ctx,
         this.maxIterations,
-        this.fullMaxIterations,
-        this.rFactor,
-        this.gFactor,
-        this.bFactor,
         this.renderer,
         this.state
       );
@@ -108,12 +85,6 @@ export default class MandelbrotExplorer {
         timestamp,
         this.maxIterations,
         this.firstPassMaxIterations,
-        this.fullMaxIterations,
-        this.canvas.width,
-        this.canvas.height,
-        this.rFactor,
-        this.gFactor,
-        this.bFactor,
         this.canvas,
         this.ctx,
         this.renderer,
@@ -122,44 +93,36 @@ export default class MandelbrotExplorer {
     );
   }
 
-  handleControls(event: MouseEvent) {
-    event.preventDefault();
+  //   handleControls(event: MouseEvent) {
+  //     event.preventDefault();
 
-    const target = event.target as HTMLElement;
-    if (!(target instanceof HTMLElement)) {
-      return;
-    }
+  //     const target = event.target as HTMLElement;
+  //     if (!(target instanceof HTMLElement)) {
+  //       return;
+  //     }
 
-    target.blur();
+  //     target.blur();
 
-    switch (target.id) {
-      case "color":
-        this.state.grayscale = !this.state.grayscale;
-        break;
-      case "power-up":
-        this.state.incrementPowerBy(1);
-        break;
-      case "power-down":
-        if (this.state.power > 2) {
-          this.state.incrementPowerBy(-1);
-        }
-        break;
-      case "info":
-        document.querySelector(".modal")?.classList.add("open");
-        document.body.classList.add("blurred");
-        break;
-      default:
-        return;
-    }
+  //     switch (target.id) {
+  //       case "color":
+  //         this.state.grayscale = !this.state.grayscale;
+  //         break;
+  //       case "power-up":
+  //         this.state.incrementPowerBy(1);
+  //         break;
+  //       case "power-down":
+  //         if (this.state.power > 2) {
+  //           this.state.incrementPowerBy(-1);
+  //         }
+  //         break;
+  //       case "info":
+  //         document.querySelector(".modal")?.classList.add("open");
+  //         document.body.classList.add("blurred");
+  //         break;
+  //       default:
+  //         return;
+  //     }
 
-    this.renderer.draw(
-      this.maxIterations,
-      this.fullMaxIterations,
-      this.rFactor,
-      this.gFactor,
-      this.bFactor,
-      this.ctx,
-      this.state
-    );
-  }
+  //     this.renderer.draw(this.maxIterations, this.ctx, this.state);
+  //   }
 }

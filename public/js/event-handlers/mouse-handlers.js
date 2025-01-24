@@ -6,7 +6,7 @@ export function handleMousedown(event, canvas) {
     dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 }
-export function handleDrag(event, canvas, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, renderer, state) {
+export function handleDrag(event, canvas, maxIterations, ctx, renderer, state) {
     const canvasRect = canvas.getBoundingClientRect();
     const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
@@ -19,7 +19,7 @@ export function handleDrag(event, canvas, maxIterations, fullMaxIterations, rFac
     state.mid = state.mid.add(dragDelta);
     dragStartX = currentX;
     dragStartY = currentY;
-    requestAnimationFrame(() => renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state));
+    requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
     return true;
 }
 function handleClick(event, canvas, state) {
@@ -29,20 +29,20 @@ function handleClick(event, canvas, state) {
     const mid = new CanvasPoint(x, y, state).toComplexPoint();
     state.mid = mid;
 }
-export function handleSingleClick(event, canvas, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, renderer, state) {
-    if (handleDrag(event, canvas, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, renderer, state)) {
+export function handleSingleClick(event, canvas, maxIterations, ctx, renderer, state) {
+    if (handleDrag(event, canvas, maxIterations, ctx, renderer, state)) {
         return;
     }
     clearTimeout(singleClickTimeoutId);
     singleClickTimeoutId = window.setTimeout(() => {
         handleClick(event, canvas, state);
-        requestAnimationFrame(() => renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state));
+        requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
     }, 200);
 }
-export function handleDoubleClick(event, canvas, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, renderer, state) {
+export function handleDoubleClick(event, canvas, maxIterations, ctx, renderer, state) {
     clearTimeout(singleClickTimeoutId);
     handleClick(event, canvas, state);
     state.scaleZoomBy(0.64);
-    requestAnimationFrame(() => renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state));
+    requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
 }
 //# sourceMappingURL=mouse-handlers.js.map

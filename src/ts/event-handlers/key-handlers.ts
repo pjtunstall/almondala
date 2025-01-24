@@ -9,12 +9,6 @@ export function handleKeys(
   timestamp: number,
   maxIterations: number,
   firstPassMaxIterations: number,
-  fullMaxIterations: number,
-  width: number,
-  height: number,
-  rFactor: number,
-  gFactor: number,
-  bFactor: number,
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
@@ -26,12 +20,6 @@ export function handleKeys(
       timestamp,
       maxIterations,
       firstPassMaxIterations,
-      fullMaxIterations,
-      width,
-      height,
-      rFactor,
-      gFactor,
-      bFactor,
       canvas,
       ctx,
       renderer,
@@ -75,17 +63,7 @@ export function handleKeys(
         break;
       case " ":
       case "Escape":
-        requestReset(
-          canvas,
-          ctx,
-          maxIterations,
-          fullMaxIterations,
-          rFactor,
-          gFactor,
-          bFactor,
-          renderer,
-          state
-        );
+        requestReset(canvas, ctx, maxIterations, renderer, state);
         if (keys[key] === false) {
           delete keys[key];
         }
@@ -100,20 +78,12 @@ export function handleKeys(
   });
 
   if (Object.keys(keys).length === 0) {
-    maxIterations = fullMaxIterations;
+    maxIterations = state.fullMaxIterations;
   } else {
     maxIterations = firstPassMaxIterations;
   }
 
-  renderer.draw(
-    maxIterations,
-    fullMaxIterations,
-    rFactor,
-    gFactor,
-    bFactor,
-    ctx,
-    state
-  );
+  renderer.draw(maxIterations, ctx, state);
 }
 
 export function handleKeydown(key: string) {

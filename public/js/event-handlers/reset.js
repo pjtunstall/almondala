@@ -1,7 +1,7 @@
 import Renderer from ".././draw.js";
 import State from ".././state.js";
 let cooldownTimer = null;
-export default function requestReset(canvas, ctx, maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, renderer, state) {
+export default function requestReset(canvas, ctx, maxIterations, renderer, state) {
     if (cooldownTimer)
         clearTimeout(cooldownTimer);
     cooldownTimer = setTimeout(() => {
@@ -9,7 +9,7 @@ export default function requestReset(canvas, ctx, maxIterations, fullMaxIteratio
             ...new State(state.grayscale),
         });
         renderer.imageData = reset(canvas, ctx, state).imageData;
-        renderer.draw(maxIterations, fullMaxIterations, rFactor, gFactor, bFactor, ctx, state);
+        renderer.draw(maxIterations, ctx, state);
     }, 256);
 }
 export function reset(canvas, ctx, state) {

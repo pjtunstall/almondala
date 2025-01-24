@@ -15,10 +15,6 @@ export function handleDrag(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
   maxIterations: number,
-  fullMaxIterations: number,
-  rFactor: number,
-  gFactor: number,
-  bFactor: number,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
   state: State
@@ -43,17 +39,7 @@ export function handleDrag(
   dragStartX = currentX;
   dragStartY = currentY;
 
-  requestAnimationFrame(() =>
-    renderer.draw(
-      maxIterations,
-      fullMaxIterations,
-      rFactor,
-      gFactor,
-      bFactor,
-      ctx,
-      state
-    )
-  );
+  requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
 
   return true;
 }
@@ -74,44 +60,17 @@ export function handleSingleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
   maxIterations: number,
-  fullMaxIterations: number,
-  rFactor: number,
-  gFactor: number,
-  bFactor: number,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
   state: State
 ) {
-  if (
-    handleDrag(
-      event,
-      canvas,
-      maxIterations,
-      fullMaxIterations,
-      rFactor,
-      gFactor,
-      bFactor,
-      ctx,
-      renderer,
-      state
-    )
-  ) {
+  if (handleDrag(event, canvas, maxIterations, ctx, renderer, state)) {
     return;
   }
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = window.setTimeout(() => {
     handleClick(event, canvas, state);
-    requestAnimationFrame(() =>
-      renderer.draw(
-        maxIterations,
-        fullMaxIterations,
-        rFactor,
-        gFactor,
-        bFactor,
-        ctx,
-        state
-      )
-    );
+    requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
   }, 200);
 }
 
@@ -119,10 +78,6 @@ export function handleDoubleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
   maxIterations: number,
-  fullMaxIterations: number,
-  rFactor: number,
-  gFactor: number,
-  bFactor: number,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
   state: State
@@ -130,15 +85,5 @@ export function handleDoubleClick(
   clearTimeout(singleClickTimeoutId);
   handleClick(event, canvas, state);
   state.scaleZoomBy(0.64);
-  requestAnimationFrame(() =>
-    renderer.draw(
-      maxIterations,
-      fullMaxIterations,
-      rFactor,
-      gFactor,
-      bFactor,
-      ctx,
-      state
-    )
-  );
+  requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
 }

@@ -6,6 +6,10 @@ export default class State {
     ratio = 1.618033988749895;
     power = 2;
     grayscale;
+    fullMaxIterations = 1024;
+    rFactor = 23;
+    gFactor = 17;
+    bFactor = 17;
     panDelta = 0.4;
     constructor(grayscale) {
         this.grayscale = grayscale;
