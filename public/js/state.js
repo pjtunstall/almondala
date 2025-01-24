@@ -1,4 +1,5 @@
 import { ComplexPoint } from "./points.js";
+const panDelta = 0.4;
 export default class State {
     zoom = 1;
     mid = new ComplexPoint(-0.6, 0);
@@ -10,21 +11,20 @@ export default class State {
     rFactor = 23;
     gFactor = 17;
     bFactor = 17;
-    panDelta = 0.4;
     constructor(grayscale) {
         this.grayscale = grayscale;
     }
     panLeft() {
-        this.mid.x -= this.zoom * this.panDelta;
+        this.mid.x -= this.zoom * panDelta;
     }
     panRight() {
-        this.mid.x += this.zoom * this.panDelta;
+        this.mid.x += this.zoom * panDelta;
     }
     panUp() {
-        this.mid.y += this.zoom * this.panDelta;
+        this.mid.y += this.zoom * panDelta;
     }
     panDown() {
-        this.mid.y -= this.zoom * this.panDelta;
+        this.mid.y -= this.zoom * panDelta;
     }
     scaleZoomBy(factor) {
         if (factor <= 1 && this.zoom < 2e-13) {
