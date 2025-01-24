@@ -30,11 +30,11 @@ export default class MandelbrotExplorer {
       return;
     }
 
-    this.renderer.draw(this.maxIterations, this.ctx, this.state);
+    this.renderer.draw(this.maxIterations, this.state);
     document.body.append(this.canvas);
 
     document.getElementById("controls")?.addEventListener("click", (event) => {
-      handleButtons(event, this.state, this.ctx, this.renderer);
+      handleButtons(event, this.state, this.renderer);
     });
     document.querySelector(".close-button")?.addEventListener("click", () => {
       const modal = document.querySelector(".modal");
@@ -92,37 +92,4 @@ export default class MandelbrotExplorer {
       )
     );
   }
-
-  //   handleControls(event: MouseEvent) {
-  //     event.preventDefault();
-
-  //     const target = event.target as HTMLElement;
-  //     if (!(target instanceof HTMLElement)) {
-  //       return;
-  //     }
-
-  //     target.blur();
-
-  //     switch (target.id) {
-  //       case "color":
-  //         this.state.grayscale = !this.state.grayscale;
-  //         break;
-  //       case "power-up":
-  //         this.state.incrementPowerBy(1);
-  //         break;
-  //       case "power-down":
-  //         if (this.state.power > 2) {
-  //           this.state.incrementPowerBy(-1);
-  //         }
-  //         break;
-  //       case "info":
-  //         document.querySelector(".modal")?.classList.add("open");
-  //         document.body.classList.add("blurred");
-  //         break;
-  //       default:
-  //         return;
-  //     }
-
-  //     this.renderer.draw(this.maxIterations, this.ctx, this.state);
-  //   }
 }

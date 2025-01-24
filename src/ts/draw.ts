@@ -5,12 +5,14 @@ await init();
 
 export default class Renderer {
   imageData: ImageData;
+  ctx: CanvasRenderingContext2D;
 
-  constructor(imageData: ImageData) {
+  constructor(imageData: ImageData, ctx: CanvasRenderingContext2D) {
     this.imageData = imageData;
+    this.ctx = ctx;
   }
 
-  draw(maxIterations: number, ctx: CanvasRenderingContext2D, state: State) {
+  draw(maxIterations: number, state: State) {
     const width = this.imageData.width;
     const height = this.imageData.height;
 
@@ -41,7 +43,7 @@ export default class Renderer {
       this.imageData.data[i] = pixels[i];
     }
 
-    ctx.putImageData(this.imageData, 0, 0);
+    this.ctx.putImageData(this.imageData, 0, 0);
 
     const { x, y } = state.mid;
     console.log(

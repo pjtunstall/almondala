@@ -4,7 +4,6 @@ import State from "../state.js";
 export default function handleButtons(
   event: MouseEvent,
   state: State,
-  ctx: CanvasRenderingContext2D,
   renderer: Renderer
 ) {
   event.preventDefault();
@@ -36,5 +35,5 @@ export default function handleButtons(
       return;
   }
 
-  renderer.draw(state.fullMaxIterations, ctx, state);
+  renderer.draw(state.fullMaxIterations, state);
 }

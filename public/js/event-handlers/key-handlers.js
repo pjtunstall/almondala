@@ -56,7 +56,7 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, can
     else {
         maxIterations = firstPassMaxIterations;
     }
-    renderer.draw(maxIterations, ctx, state);
+    renderer.draw(maxIterations, state);
 }
 export function handleKeydown(key) {
     switch (key) {

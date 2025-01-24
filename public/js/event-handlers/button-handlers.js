@@ -1,4 +1,4 @@
-export default function handleButtons(event, state, ctx, renderer) {
+export default function handleButtons(event, state, renderer) {
     event.preventDefault();
     const target = event.target;
     if (!(target instanceof HTMLElement)) {
@@ -24,6 +24,6 @@ export default function handleButtons(event, state, ctx, renderer) {
         default:
             return;
     }
-    renderer.draw(state.fullMaxIterations, ctx, state);
+    renderer.draw(state.fullMaxIterations, state);
 }
 //# sourceMappingURL=button-handlers.js.map

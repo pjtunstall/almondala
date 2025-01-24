@@ -17,7 +17,7 @@ export default function requestReset(
       ...new State(state.grayscale),
     });
     renderer.imageData = reset(canvas, ctx, state).imageData;
-    renderer.draw(maxIterations, ctx, state);
+    renderer.draw(maxIterations, state);
   }, 256);
 }
 
@@ -61,7 +61,7 @@ export function reset(
     console.error("createImageData failed.");
   }
   state.imageData = imageData;
-  const renderer = new Renderer(imageData);
+  const renderer = new Renderer(imageData, ctx);
 
   return renderer;
 }

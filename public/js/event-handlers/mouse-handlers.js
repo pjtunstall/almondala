@@ -19,7 +19,7 @@ export function handleDrag(event, canvas, maxIterations, ctx, renderer, state) {
     state.mid = state.mid.add(dragDelta);
     dragStartX = currentX;
     dragStartY = currentY;
-    requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
+    requestAnimationFrame(() => renderer.draw(maxIterations, state));
     return true;
 }
 function handleClick(event, canvas, state) {
@@ -36,13 +36,13 @@ export function handleSingleClick(event, canvas, maxIterations, ctx, renderer, s
     clearTimeout(singleClickTimeoutId);
     singleClickTimeoutId = window.setTimeout(() => {
         handleClick(event, canvas, state);
-        requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
+        requestAnimationFrame(() => renderer.draw(maxIterations, state));
     }, 200);
 }
 export function handleDoubleClick(event, canvas, maxIterations, ctx, renderer, state) {
     clearTimeout(singleClickTimeoutId);
     handleClick(event, canvas, state);
     state.scaleZoomBy(0.64);
-    requestAnimationFrame(() => renderer.draw(maxIterations, ctx, state));
+    requestAnimationFrame(() => renderer.draw(maxIterations, state));
 }
 //# sourceMappingURL=mouse-handlers.js.map

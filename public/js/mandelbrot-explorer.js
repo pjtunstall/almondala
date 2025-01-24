@@ -17,10 +17,10 @@ export default class MandelbrotExplorer {
             console.error("Renderer initialization failed");
             return;
         }
-        this.renderer.draw(this.maxIterations, this.ctx, this.state);
+        this.renderer.draw(this.maxIterations, this.state);
         document.body.append(this.canvas);
         document.getElementById("controls")?.addEventListener("click", (event) => {
-            handleButtons(event, this.state, this.ctx, this.renderer);
+            handleButtons(event, this.state, this.renderer);
         });
         document.querySelector(".close-button")?.addEventListener("click", () => {
             const modal = document.querySelector(".modal");
