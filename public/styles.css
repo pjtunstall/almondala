@@ -1,7 +1,9 @@
 :root {
-  --transition-time: 0.3s;
-  --primary-color: rgb(131, 146, 1);
-  --secondary-color: rgb(196, 248, 7);
+  --transition-time: 0.1s;
+  /* --primary-color: rgb(131, 146, 1);
+  --secondary-color: rgb(196, 248, 7); */
+  --primary-color: rgb(250, 174, 41);
+  --secondary-color: rgb(253, 193, 91);
 }
 
 body {
@@ -41,6 +43,8 @@ canvas {
   color: white;
   border: none;
   border-radius: 5px;
+  box-shadow: 0 0 10px black;
+  text-shadow: 0 0 3px black;
   transition: var(--transition-time) ease-in-out;
 }
 
