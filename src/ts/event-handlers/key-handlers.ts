@@ -97,7 +97,6 @@ export function handleKeydown(key: string) {
     case "g":
     case " ":
     case "Escape":
-      console.log("keydown", key);
       keys[key] = true;
   }
 }
@@ -113,7 +112,6 @@ export function handleKeyup(key: string) {
     case "g":
     case " ":
     case "Escape":
-      console.log("keyup", key);
       keys[key] = false;
   }
 }

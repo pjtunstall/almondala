@@ -1,55 +1,17 @@
-"use strict";
-// import init, { calculate_mandelbrot } from "../wasm/almondala.js";
-// import State from "./state.js";
-// await init();
-// onmessage = function (message) {
-//     {} = message.data;
-// }
-// export default class Renderer {
-//   imageData: ImageData;
-//   constructor(imageData: ImageData) {
-//     this.imageData = imageData;
-//   }
-//   draw(
-//     maxIterations: number,
-//     fullMaxIterations: number,
-//     rFactor: number,
-//     gFactor: number,
-//     bFactor: number,
-//     ctx: CanvasRenderingContext2D,
-//     state: State
-//   ) {
-//     const width = this.imageData.width;
-//     const height = this.imageData.height;
-//     const pixels = calculate_mandelbrot(
-//       width,
-//       height,
-//       maxIterations,
-//       fullMaxIterations,
-//       state.mid.x,
-//       state.mid.y,
-//       state.zoom,
-//       state.ratio,
-//       rFactor,
-//       gFactor,
-//       bFactor,
-//       state.power,
-//       state.grayscale
-//     );
-//     if (this.imageData.data.length !== pixels.length) {
-//       console.error(
-//         "Lengths out of sync: imageData: ${this.imageData.length}, pixels.length: ${pixels.length}"
-//       );
-//       return;
-//     }
-//     for (let i = 0; i < pixels.length; i++) {
-//       this.imageData.data[i] = pixels[i];
-//     }
-//     ctx.putImageData(this.imageData, 0, 0);
-//     const { x, y } = state.mid;
-//     console.log(
-//       `zoom: ${state.zoom}, center: ${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`
-//     );
-//   }
-// }
+import init, { calculate_mandelbrot } from "../wasm/almondala.js";
+await init();
+self.postMessage({ init: true });
+onmessage = function (message) {
+    console.log("Message received in worker.");
+    console.log("Message data:", message.data);
+    const { tile, state, maxIterations } = message.data;
+    const { zoom, rFactor, bFactor, gFactor, power, grayscale } = state;
+    const { top, left, width, height } = tile;
+    const x = tile.left + tile.width / 2;
+    const y = tile.top + tile.height / 2;
+    const ratio = width / height;
+    const pixels = new Uint8ClampedArray(calculate_mandelbrot(width, height, maxIterations, state.fullMaxIterations, x, y, zoom, ratio, rFactor, gFactor, bFactor, power, grayscale));
+    console.log("pixels:", pixels);
+    self.postMessage({ pixels, top, left, width, height }, [pixels.buffer]);
+};
 //# sourceMappingURL=worker.js.map

@@ -61,7 +61,7 @@ export function reset(
     console.error("createImageData failed.");
   }
   state.imageData = imageData;
-  const renderer = new Renderer(imageData, ctx);
+  const renderer = new Renderer(imageData, canvas, ctx);
 
   return renderer;
 }
