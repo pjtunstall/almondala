@@ -17,7 +17,7 @@ export default function handleButtons(
 
   switch (target.id) {
     case "color":
-      state.grayscale = state.grayscale === 0 ? state.initialGrayscale : 0;
+      state.changeColor();
       break;
     case "power-up":
       state.incrementPowerBy(1);

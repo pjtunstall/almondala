@@ -15,6 +15,9 @@ export default class State {
     constructor(grayscale) {
         this.grayscale = grayscale;
     }
+    changeColor() {
+        this.grayscale = this.grayscale === 0 ? this.initialGrayscale : 0;
+    }
     panLeft() {
         this.mid.x -= this.zoom * panDelta;
     }
