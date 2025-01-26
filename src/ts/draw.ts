@@ -47,23 +47,23 @@ export default class Renderer {
     };
   }
 
-  draw(maxIterations: number, state: State) {
+  draw(maxIterations: number, state: State): boolean {
     if (!isWorkerInitialized) {
       console.error(
         "Request to render before worker is initialized. Attempt:",
         ++attempts
       );
       setTimeout(() => this.draw(maxIterations, state), 360);
-      return;
+      return false;
     }
 
     if (isRenderPending) {
       isRenderScheduled = true;
-      return;
+      return false;
     }
 
     isRenderPending = true;
-
     this.worker.postMessage({ type: "render", maxIterations, state });
+    return true;
   }
 }
