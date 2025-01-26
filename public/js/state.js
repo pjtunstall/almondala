@@ -7,6 +7,7 @@ export default class State {
     ratio = 1.618033988749895;
     power = 2;
     grayscale;
+    initialGrayscale = 23;
     fullMaxIterations = 1024;
     rFactor = 23;
     gFactor = 17;

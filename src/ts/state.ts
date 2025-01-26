@@ -8,13 +8,14 @@ export default class State {
   imageData = new ImageData(2, 2);
   ratio = 1.618033988749895;
   power = 2;
-  grayscale: boolean;
+  grayscale: number;
+  initialGrayscale = 23;
   fullMaxIterations = 1024;
   rFactor = 23;
   gFactor = 17;
   bFactor = 17;
 
-  constructor(grayscale: boolean) {
+  constructor(grayscale: number) {
     this.grayscale = grayscale;
   }
 

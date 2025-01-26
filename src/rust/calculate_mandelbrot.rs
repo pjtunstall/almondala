@@ -15,7 +15,7 @@ pub fn calculate_mandelbrot(
     g_factor: f64,
     b_factor: f64,
     power: i32,
-    grayscale: bool,
+    grayscale: f64,
 ) -> Vec<u8> {
     (0..width * height)
         .into_iter()
@@ -36,8 +36,13 @@ pub fn calculate_mandelbrot(
                 escape_iteration += 1;
             }
 
-            if grayscale {
-                shade(escape_iteration, max_iterations, full_max_iterations)
+            if grayscale != 0.0 {
+                shade(
+                    escape_iteration,
+                    max_iterations,
+                    full_max_iterations,
+                    grayscale,
+                )
             } else {
                 hue(
                     escape_iteration,
@@ -76,14 +81,19 @@ fn hue(
     vec![r, g, b, 255]
 }
 
-fn shade(escape_iteration: usize, max_iterations: usize, full_max_iterations: usize) -> Vec<u8> {
+fn shade(
+    escape_iteration: usize,
+    max_iterations: usize,
+    full_max_iterations: usize,
+    grayscale: f64,
+) -> Vec<u8> {
     if escape_iteration == max_iterations {
         return vec![0, 0, 0, 255];
     }
 
     let fraction = escape_iteration as f64 / full_max_iterations as f64;
-    let shade =
-        ((fraction * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+    let shade = ((fraction * grayscale * std::f64::consts::TAU).sin() * 128.0 + 128.0)
+        .clamp(0.0, 255.0) as u8;
 
     vec![shade, shade, shade, 255]
 }

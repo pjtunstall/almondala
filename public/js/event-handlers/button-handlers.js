@@ -7,7 +7,7 @@ export default function handleButtons(event, state, renderer) {
     target.blur();
     switch (target.id) {
         case "color":
-            state.grayscale = !state.grayscale;
+            state.grayscale = state.grayscale === 0 ? state.initialGrayscale : 0;
             break;
         case "power-up":
             state.incrementPowerBy(1);

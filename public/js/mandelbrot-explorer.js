@@ -11,7 +11,7 @@ export default class MandelbrotExplorer {
     ctx = this.canvas.getContext("2d");
     renderer;
     constructor() {
-        this.state = new State(true); // Begin with `grayscale` true.
+        this.state = new State(23); // Begin with a grayscale.
         this.renderer = reset(this.canvas, this.ctx, this.state);
         if (!this.renderer) {
             console.error("Renderer initialization failed");
