@@ -34,39 +34,40 @@ init().then(() => {
       grayscale,
     } = state;
 
-    const pixels = calculate_mandelbrot(
-      width,
-      height,
-      maxIterations,
-      fullMaxIterations,
-      mid.x,
-      mid.y,
-      zoom,
-      ratio,
-      rFactor,
-      gFactor,
-      bFactor,
-      power,
-      grayscale
+    const pixels = new Uint8ClampedArray(
+      calculate_mandelbrot(
+        width,
+        height,
+        maxIterations,
+        fullMaxIterations,
+        mid.x,
+        mid.y,
+        zoom,
+        ratio,
+        rFactor,
+        gFactor,
+        bFactor,
+        power,
+        grayscale
+      )
     );
 
     console.log("I believed I've calculated, pixels:", pixels);
 
-    const clampedPixels = new Uint8ClampedArray(pixels.buffer);
-    const newImageData = new ImageData(clampedPixels, width, height);
+    if (pixels.length !== width * height * 4) {
+      console.error(
+        "Lengths out of sync: pixels.length: ${pixels.length}, widtgh * height * 4: ${width * height * 4}"
+      );
+      return;
+    }
+
+    const newImageData = new ImageData(pixels, width, height);
 
     createImageBitmap(newImageData).then((imageBitmap) => {
       postMessage({ type: "render", width, height, newImageData }, [
         newImageData.data.buffer,
       ]);
     });
-
-    // if (imageData.data.length !== pixels.length) {
-    //   console.error(
-    //     "Lengths out of sync: imageData: ${this.imageData.length}, pixels.length: ${pixels.length}"
-    //   );
-    //   return;
-    // }
 
     // for (let i = 0; i < pixels.length; i++) {
     //   imageData.data[i] = pixels[i];

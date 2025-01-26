@@ -1,6 +1,7 @@
 let isWorkerInitialized = false;
 let isRenderPending = false;
 let isRenderScheduled = false;
+let attempts = 0;
 export default class Renderer {
     imageData;
     ctx;
@@ -34,7 +35,8 @@ export default class Renderer {
     }
     draw(maxIterations, state) {
         if (!isWorkerInitialized) {
-            console.error("Request to render before worker is initialized.");
+            console.error("Request to render before worker is initialized. Attempt:", ++attempts);
+            setTimeout(() => this.draw(maxIterations, state), 360);
             return;
         }
         if (isRenderPending) {

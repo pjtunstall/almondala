@@ -3,6 +3,7 @@ import State from "./state.js";
 let isWorkerInitialized = false;
 let isRenderPending = false;
 let isRenderScheduled = false;
+let attempts = 0;
 
 export default class Renderer {
   imageData: ImageData;
@@ -48,7 +49,11 @@ export default class Renderer {
 
   draw(maxIterations: number, state: State) {
     if (!isWorkerInitialized) {
-      console.error("Request to render before worker is initialized.");
+      console.error(
+        "Request to render before worker is initialized. Attempt:",
+        ++attempts
+      );
+      setTimeout(() => this.draw(maxIterations, state), 360);
       return;
     }
 
