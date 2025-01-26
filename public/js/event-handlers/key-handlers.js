@@ -13,7 +13,7 @@ export function handleKeys(timestamp, maxIterations, firstPassMaxIterations, can
     }
     // Only toggle grayscale when the "g" key has been released.
     if (keys["g"] === false) {
-        state.grayscale = state.grayscale === 0 ? state.initialGrayscale : 0;
+        state.changeColor();
         delete keys["g"];
     }
     Object.keys(keys).forEach((key) => {

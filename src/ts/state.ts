@@ -11,9 +11,9 @@ export default class State {
   grayscale: number;
   initialGrayscale = 23;
   fullMaxIterations = 1024;
-  rFactor = 23;
-  gFactor = 17;
-  bFactor = 17;
+  rFactor = 1;
+  gFactor = 1;
+  bFactor = 1;
 
   constructor(grayscale: number) {
     this.grayscale = grayscale;

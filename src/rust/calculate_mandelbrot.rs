@@ -71,12 +71,12 @@ fn hue(
     }
 
     let hue = escape_iteration as f64 / full_max_iterations as f64;
-    let r =
-        ((hue * r_factor * std::f64::consts::TAU).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
-    let b = ((hue * g_factor * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0).clamp(0.0, 255.0)
-        as u8;
-    let g = ((hue * b_factor * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0).clamp(0.0, 255.0)
-        as u8;
+    let r = (r_factor * ((hue * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0))
+        .clamp(0.0, 255.0) as u8;
+    let g = (g_factor * ((hue * 17.0 * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0))
+        .clamp(0.0, 255.0) as u8;
+    let b = (b_factor * ((hue * 17.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0))
+        .clamp(0.0, 255.0) as u8;
 
     vec![r, g, b, 255]
 }
