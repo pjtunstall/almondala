@@ -49,7 +49,7 @@ export function reset(
   const intrinsicHeight = Math.floor(height * dpr);
 
   if (width <= 0 || height <= 0) {
-    console.error("Invanid main canvas width and height:", width, height);
+    console.error("Invalid main canvas width and height:", width, height);
   }
 
   canvas.width = intrinsicWidth;
