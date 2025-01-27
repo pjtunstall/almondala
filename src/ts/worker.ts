@@ -10,9 +10,6 @@ init().then(() => {
   self.postMessage({ type: "init" });
   onmessage = function (message) {
     const data = message.data;
-    console.log(data);
-    console.log(data.state.imageData);
-    console.log(data.state.imageData.width);
 
     console.log(
       "I'm the worker and I am initialized, so I'm going to calculate."
@@ -20,9 +17,9 @@ init().then(() => {
 
     const maxIterations = data.maxIterations;
     const state = data.state;
-    let imageData = state.imageData;
-    const { width, height } = imageData;
     const {
+      width,
+      height,
       fullMaxIterations,
       mid,
       zoom,
@@ -56,14 +53,16 @@ init().then(() => {
 
     if (pixels.length !== width * height * 4) {
       console.error(
-        "Lengths out of sync: pixels.length: ${pixels.length}, widtgh * height * 4: ${width * height * 4}"
+        `Lengths out of sync: pixels.length: ${
+          pixels.length
+        }, width * height * 4: ${width * height * 4}`
       );
       return;
     }
 
-    const newImageData = new ImageData(pixels, width, height);
+    const imageData = new ImageData(pixels, width, height);
 
-    createImageBitmap(newImageData).then((imageBitmap) => {
+    createImageBitmap(imageData).then((imageBitmap) => {
       (self as DedicatedWorkerGlobalScope).postMessage(
         { type: "render", imageBitmap },
         [imageBitmap]

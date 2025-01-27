@@ -31,8 +31,7 @@ export class CanvasPoint extends Point {
   }
 
   toComplexPoint() {
-    const { zoom, mid, ratio, imageData } = this.state;
-    const { width, height } = imageData;
+    const { zoom, mid, ratio, width, height } = this.state;
 
     const x = ratio * (this.x / width - 0.5) * 3 * zoom + mid.x;
     const y = -(this.y / height - 0.5) * 3 * zoom + mid.y;

@@ -3,13 +3,11 @@ let isRenderPending = false;
 let isRenderScheduled = false;
 let attempts = 0;
 export default class Renderer {
-    imageData;
     ctx;
     worker = new Worker(new URL("./worker.js", import.meta.url), {
         type: "module",
     });
-    constructor(imageData, ctx) {
-        this.imageData = imageData;
+    constructor(ctx) {
         this.ctx = ctx;
         this.worker.onmessage = (event) => {
             const data = event.data;

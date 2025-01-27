@@ -6,14 +6,12 @@ let isRenderScheduled = false;
 let attempts = 0;
 
 export default class Renderer {
-  imageData: ImageData;
   ctx: CanvasRenderingContext2D;
   worker = new Worker(new URL("./worker.js", import.meta.url), {
     type: "module",
   });
 
-  constructor(imageData: ImageData, ctx: CanvasRenderingContext2D) {
-    this.imageData = imageData;
+  constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
     this.worker.onmessage = (event) => {
       const data = event.data;

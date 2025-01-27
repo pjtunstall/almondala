@@ -5,7 +5,8 @@ const panDelta = 0.4;
 export default class State {
   zoom = 1;
   mid = new ComplexPoint(-0.6, 0);
-  imageData = new ImageData(2, 2);
+  width = 0;
+  height = 0;
   ratio = 1.618033988749895;
   power = 2;
   grayscale: number;

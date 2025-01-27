@@ -8,7 +8,7 @@ export default function requestReset(canvas, ctx, maxIterations, renderer, state
         Object.assign(state, {
             ...new State(state.grayscale),
         });
-        renderer.imageData = reset(canvas, ctx, state).imageData;
+        reset(canvas, ctx, state);
         renderer.draw(maxIterations, state);
     }, 256);
 }
@@ -30,17 +30,16 @@ export function reset(canvas, ctx, state) {
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     const dpr = window.devicePixelRatio;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    if (canvas.width <= 0 || canvas.height <= 0) {
-        console.error("Canvas dimensions are invalid:", canvas.width, canvas.height);
+    const intrinsicWidth = Math.floor(width * dpr);
+    const intrinsicHeight = Math.floor(height * dpr);
+    if (width <= 0 || height <= 0) {
+        console.error("Invanid main canvas width and height:", width, height);
     }
-    const imageData = ctx.createImageData(canvas.width, canvas.height);
-    if (!imageData) {
-        console.error("createImageData failed.");
-    }
-    state.imageData = imageData;
-    const renderer = new Renderer(imageData, ctx);
+    canvas.width = intrinsicWidth;
+    canvas.height = intrinsicHeight;
+    state.width = intrinsicWidth;
+    state.height = intrinsicHeight;
+    const renderer = new Renderer(ctx);
     return renderer;
 }
 //# sourceMappingURL=reset.js.map
