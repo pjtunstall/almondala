@@ -36,7 +36,7 @@ export default class Renderer {
           return;
         }
 
-        this.ctx.putImageData(data.newImageData, 0, 0);
+        ctx.drawImage(data.imageBitmap, 0, 0);
         isRenderPending = false;
 
         // // I need to make state available here and pick a maxIterations. Maybe make draw a method of state.

@@ -1,7 +1,4 @@
-import init, { calculate_mandelbrot } from "../../public/wasm/almondala.js";
-// let offscreen: OffscreenCanvas;
-// let ctx: CanvasRenderingContext2D | null = null;
-let isInitialized = false;
+import init, { calculate_mandelbrot } from "../wasm/almondala.js";
 init().then(() => {
     console.log("wasm initialized");
     self.postMessage({ type: "init" });
@@ -24,20 +21,12 @@ init().then(() => {
         }
         const newImageData = new ImageData(pixels, width, height);
         createImageBitmap(newImageData).then((imageBitmap) => {
-            postMessage({ type: "render", width, height, newImageData }, [
-                newImageData.data.buffer,
-            ]);
+            self.postMessage({ type: "render", imageBitmap }, [imageBitmap]);
         });
-        // for (let i = 0; i < pixels.length; i++) {
-        //   imageData.data[i] = pixels[i];
-        // }
-        // // ctx.putImageData(imageData, 0, 0);
         // const { x, y } = state.mid;
         // console.log(
         //   `zoom: ${state.zoom}, center: ${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`
         // );
-        // // const bitmap = offscreen.transferToImageBitmap();
-        // self.postMessage({ type: "rendered", pixels }, [pixels.buffer]);
     };
 });
 //# sourceMappingURL=worker.js.map

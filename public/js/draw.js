@@ -24,7 +24,7 @@ export default class Renderer {
                     console.error("Worked is not initialized but still has sent us a rendered message. This shouldn't happen.");
                     return;
                 }
-                this.ctx.putImageData(data.newImageData, 0, 0);
+                ctx.drawImage(data.imageBitmap, 0, 0);
                 isRenderPending = false;
                 // // I need to make state available here and pick a maxIterations. Maybe make draw a method of state.
                 // if (isRenderScheduled) {
@@ -37,14 +37,15 @@ export default class Renderer {
         if (!isWorkerInitialized) {
             console.error("Request to render before worker is initialized. Attempt:", ++attempts);
             setTimeout(() => this.draw(maxIterations, state), 360);
-            return;
+            return false;
         }
         if (isRenderPending) {
             isRenderScheduled = true;
-            return;
+            return false;
         }
         isRenderPending = true;
         this.worker.postMessage({ type: "render", maxIterations, state });
+        return true;
     }
 }
 //# sourceMappingURL=draw.js.map
