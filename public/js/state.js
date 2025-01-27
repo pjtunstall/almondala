@@ -9,6 +9,7 @@ export default class State {
     power = 2;
     grayscale;
     initialGrayscale = 23;
+    maxIterations = 128;
     fullMaxIterations = 1024;
     rFactor = 1;
     gFactor = 1;
@@ -32,9 +33,10 @@ export default class State {
         this.mid.y -= this.zoom * panDelta;
     }
     scaleZoomBy(factor) {
-        if (factor <= 1 && this.zoom < 2e-13) {
-            return;
-        }
+        // // Zooming in further reaches the limits of floating point precision. But preventing it could give the impression that the controls are just not responding, unless some warning is given.
+        // if (factor <= 1 && this.zoom < 2e-13) {
+        //   return;
+        // }
         this.zoom *= factor;
     }
     incrementPowerBy(increment) {

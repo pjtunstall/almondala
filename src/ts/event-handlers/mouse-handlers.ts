@@ -39,7 +39,7 @@ export function handleDrag(
   dragStartX = currentX;
   dragStartY = currentY;
 
-  requestAnimationFrame(() => renderer.draw(maxIterations, state));
+  requestAnimationFrame(() => renderer.draw(state));
 
   return true;
 }
@@ -70,7 +70,7 @@ export function handleSingleClick(
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = window.setTimeout(() => {
     handleClick(event, canvas, state);
-    requestAnimationFrame(() => renderer.draw(maxIterations, state));
+    requestAnimationFrame(() => renderer.draw(state));
   }, 200);
 }
 
@@ -85,5 +85,5 @@ export function handleDoubleClick(
   clearTimeout(singleClickTimeoutId);
   handleClick(event, canvas, state);
   state.scaleZoomBy(0.64);
-  requestAnimationFrame(() => renderer.draw(maxIterations, state));
+  requestAnimationFrame(() => renderer.draw(state));
 }

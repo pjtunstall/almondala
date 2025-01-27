@@ -13,12 +13,23 @@ body {
   align-items: center;
   height: 100vh;
   background-color: black;
+  position: relative;
+  font-family: "Georgia", serif;
 }
 
 canvas {
-  position: fixed;
+  position: absolute;
   display: block;
   border: 1px solid white;
+}
+
+#overlay-text {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  font-size: 20px;
+  z-index: 1;
 }
 
 #controls {

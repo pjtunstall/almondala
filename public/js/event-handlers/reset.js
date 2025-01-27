@@ -9,7 +9,7 @@ export default function requestReset(canvas, ctx, maxIterations, renderer, state
             ...new State(state.grayscale),
         });
         reset(canvas, ctx, state);
-        renderer.draw(maxIterations, state);
+        renderer.draw(state);
     }, 256);
 }
 export function reset(canvas, ctx, state) {
@@ -33,7 +33,7 @@ export function reset(canvas, ctx, state) {
     const intrinsicWidth = Math.floor(width * dpr);
     const intrinsicHeight = Math.floor(height * dpr);
     if (width <= 0 || height <= 0) {
-        console.error("Invanid main canvas width and height:", width, height);
+        console.error("Invalid main canvas width and height:", width, height);
     }
     canvas.width = intrinsicWidth;
     canvas.height = intrinsicHeight;

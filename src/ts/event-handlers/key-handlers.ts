@@ -77,13 +77,7 @@ export function handleKeys(
     }
   });
 
-  if (Object.keys(keys).length === 0) {
-    maxIterations = state.fullMaxIterations;
-  } else {
-    maxIterations = firstPassMaxIterations;
-  }
-
-  renderer.draw(maxIterations, state);
+  renderer.draw(state);
 }
 
 export function handleKeydown(key: string) {

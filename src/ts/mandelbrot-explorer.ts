@@ -13,15 +13,18 @@ import requestReset, { reset } from "./event-handlers/reset.js";
 import Renderer from "./draw.js";
 import State from "./state.js";
 
+export let overlayText: HTMLElement;
+
 export default class MandelbrotExplorer {
   state: State;
   firstPassMaxIterations = 512;
   maxIterations = 1024;
   canvas = document.createElement("canvas") as HTMLCanvasElement;
   ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-  renderer!: Renderer;
+  renderer: Renderer;
 
   constructor() {
+    // Initialize the state and renderer
     this.state = new State(23); // Begin with a grayscale.
     this.renderer = reset(this.canvas, this.ctx, this.state);
 
@@ -30,8 +33,16 @@ export default class MandelbrotExplorer {
       return;
     }
 
-    this.renderer.draw(this.maxIterations, this.state);
-    document.body.append(this.canvas);
+    this.renderer.draw(this.state);
+
+    const overlayText = document.createElement("div");
+    overlayText.id = "overlay-text";
+    overlayText.textContent = `Max iterations: ${this.state.maxIterations}`;
+    document.body.appendChild(overlayText);
+
+    console.log(overlayText.id);
+
+    document.body.appendChild(this.canvas);
 
     document.getElementById("controls")?.addEventListener("click", (event) => {
       handleButtons(event, this.state, this.renderer);

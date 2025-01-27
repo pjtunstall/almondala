@@ -3,6 +3,7 @@ import { handleSingleClick, handleDoubleClick, handleMousedown, } from "./event-
 import handleButtons from "./event-handlers/button-handlers.js";
 import requestReset, { reset } from "./event-handlers/reset.js";
 import State from "./state.js";
+export let overlayText;
 export default class MandelbrotExplorer {
     state;
     firstPassMaxIterations = 512;
@@ -11,14 +12,20 @@ export default class MandelbrotExplorer {
     ctx = this.canvas.getContext("2d");
     renderer;
     constructor() {
+        // Initialize the state and renderer
         this.state = new State(23); // Begin with a grayscale.
         this.renderer = reset(this.canvas, this.ctx, this.state);
         if (!this.renderer) {
             console.error("Renderer initialization failed");
             return;
         }
-        this.renderer.draw(this.maxIterations, this.state);
-        document.body.append(this.canvas);
+        this.renderer.draw(this.state);
+        const overlayText = document.createElement("div");
+        overlayText.id = "overlay-text";
+        overlayText.textContent = `Max iterations: ${this.state.maxIterations}`;
+        document.body.appendChild(overlayText);
+        console.log(overlayText.id);
+        document.body.appendChild(this.canvas);
         document.getElementById("controls")?.addEventListener("click", (event) => {
             handleButtons(event, this.state, this.renderer);
         });

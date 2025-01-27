@@ -4,12 +4,12 @@ init().then(() => {
     self.postMessage({ type: "init" });
     onmessage = function (message) {
         const data = message.data;
-        console.log("I'm the worker and I am initialized, so I'm going to calculate.");
-        const maxIterations = data.maxIterations;
-        const state = data.state;
-        const { width, height, fullMaxIterations, mid, zoom, ratio, rFactor, gFactor, bFactor, power, grayscale, } = state;
+        // console.log(
+        //   "I'm the worker and I am initialized, so I'm going to calculate."
+        // );
+        const { width, height, maxIterations, fullMaxIterations, mid, zoom, ratio, rFactor, gFactor, bFactor, power, grayscale, } = data.state;
         const pixels = new Uint8ClampedArray(calculate_mandelbrot(width, height, maxIterations, fullMaxIterations, mid.x, mid.y, zoom, ratio, rFactor, gFactor, bFactor, power, grayscale));
-        console.log("I believed I've calculated, pixels:", pixels);
+        // console.log("I believed I've calculated, pixels:", pixels);
         if (pixels.length !== width * height * 4) {
             console.error(`Lengths out of sync: pixels.length: ${pixels.length}, width * height * 4: ${width * height * 4}`);
             return;

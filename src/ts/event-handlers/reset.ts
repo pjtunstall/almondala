@@ -17,7 +17,7 @@ export default function requestReset(
       ...new State(state.grayscale),
     });
     reset(canvas, ctx, state);
-    renderer.draw(maxIterations, state);
+    renderer.draw(state);
   }, 256);
 }
 

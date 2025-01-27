@@ -15,13 +15,13 @@ export default class Renderer {
     this.ctx = ctx;
     this.worker.onmessage = (event) => {
       const data = event.data;
-      console.log(
-        "Hi, I'm main and I just received a message with data:",
-        data
-      );
+      // console.log(
+      //   "Hi, I'm main and I just received a message with data:",
+      //   data
+      // );
 
       if (data.type === "init") {
-        console.log("Init message received in main.");
+        // console.log("Init message received in main.");
         isWorkerInitialized = true;
         // this.draw(2024, new State(17));
       }
@@ -45,13 +45,13 @@ export default class Renderer {
     };
   }
 
-  draw(maxIterations: number, state: State): boolean {
+  draw(state: State): boolean {
     if (!isWorkerInitialized) {
       console.error(
         "Request to render before worker is initialized. Attempt:",
         ++attempts
       );
-      setTimeout(() => this.draw(maxIterations, state), 360);
+      setTimeout(() => this.draw(state), 360);
       return false;
     }
 
@@ -61,7 +61,7 @@ export default class Renderer {
     }
 
     isRenderPending = true;
-    this.worker.postMessage({ type: "render", maxIterations, state });
+    this.worker.postMessage({ type: "render", state });
     return true;
   }
 }

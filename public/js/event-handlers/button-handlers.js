@@ -9,6 +9,23 @@ export default function handleButtons(event, state, renderer) {
         case "color":
             state.changeColor();
             break;
+        case "plus":
+            if (state.maxIterations < state.fullMaxIterations) {
+                state.maxIterations *= 2;
+                // if (overlayText) {
+                //   console.log(state.maxIterations);
+                //   overlayText.textContent = `Max iterations: ${state.maxIterations}`;
+                // }
+            }
+            break;
+        case "minus":
+            if (state.maxIterations > 2) {
+                state.maxIterations /= 2;
+                // if (overlayText) {
+                //   overlayText.textContent = `Max iterations: ${state.maxIterations}`;
+                // }
+            }
+            break;
         case "power-up":
             state.incrementPowerBy(1);
             break;
@@ -24,6 +41,6 @@ export default function handleButtons(event, state, renderer) {
         default:
             return;
     }
-    renderer.draw(state.fullMaxIterations, state);
+    renderer.draw(state);
 }
 //# sourceMappingURL=button-handlers.js.map
