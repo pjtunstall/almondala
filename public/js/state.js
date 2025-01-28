@@ -1,5 +1,5 @@
 import { ComplexPoint } from "./points.js";
-const panDelta = 0.4;
+const panDelta = 0.2;
 export default class State {
     zoom = 1;
     mid = new ComplexPoint(-0.6, 0);

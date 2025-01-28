@@ -4,7 +4,7 @@ const keys = {};
 export function handleKeys(timestamp, canvas, ctx, renderer, state) {
     // The reason for using this key-handling mechanism--an asynchronous loop and `keys` object, rather than simply handling keypresses individually as each one occurs--is so that we can detect key chords (multiple simultaneous keypresses). It also allows us to throttle draw requests in one place. An object is used rather than a set because we don't just want to know if a key is currently down (in which case it's value will be `true`), but also whether it's been pressed and released since the previous iteration (in which case it will be `false`).
     requestAnimationFrame((timestamp) => handleKeys(timestamp, canvas, ctx, renderer, state));
-    if (timestamp - prev < 128) {
+    if (timestamp - prev < 16) {
         return;
     }
     prev = timestamp;
@@ -31,10 +31,10 @@ export function handleKeys(timestamp, canvas, ctx, renderer, state) {
                 state.panDown();
                 break;
             case "x":
-                state.scaleZoomBy(0.8);
+                state.scaleZoomBy(0.9);
                 break;
             case "z":
-                state.scaleZoomBy(1.25);
+                state.scaleZoomBy(1 / 0.9);
                 break;
             case " ":
             case "Escape":
@@ -63,7 +63,6 @@ export function handleKeydown(key) {
         case "g":
         case " ":
         case "Escape":
-            console.log("keydown", key);
             keys[key] = true;
     }
 }
@@ -78,7 +77,6 @@ export function handleKeyup(key) {
         case "g":
         case " ":
         case "Escape":
-            console.log("keyup", key);
             keys[key] = false;
     }
 }

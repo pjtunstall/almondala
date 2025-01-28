@@ -1,6 +1,6 @@
 import init, { calculate_mandelbrot } from "../wasm/almondala.js";
 init().then(() => {
-    console.log("wasm initialized");
+    console.log("Wasm initialized");
     self.postMessage({ type: "init" });
     onmessage = function (message) {
         const data = message.data;

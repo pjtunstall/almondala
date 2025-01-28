@@ -16,7 +16,7 @@ export function handleKeys(
   requestAnimationFrame((timestamp) =>
     handleKeys(timestamp, canvas, ctx, renderer, state)
   );
-  if (timestamp - prev < 128) {
+  if (timestamp - prev < 16) {
     return;
   }
   prev = timestamp;
@@ -46,10 +46,10 @@ export function handleKeys(
         state.panDown();
         break;
       case "x":
-        state.scaleZoomBy(0.8);
+        state.scaleZoomBy(0.9);
         break;
       case "z":
-        state.scaleZoomBy(1.25);
+        state.scaleZoomBy(1 / 0.9);
         break;
       case " ":
       case "Escape":
@@ -81,7 +81,6 @@ export function handleKeydown(key: string) {
     case "g":
     case " ":
     case "Escape":
-      console.log("keydown", key);
       keys[key] = true;
   }
 }
@@ -97,7 +96,6 @@ export function handleKeyup(key: string) {
     case "g":
     case " ":
     case "Escape":
-      console.log("keyup", key);
       keys[key] = false;
   }
 }
