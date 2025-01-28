@@ -14,7 +14,6 @@ export function handleMousedown(event: MouseEvent, canvas: HTMLCanvasElement) {
 export function handleDrag(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  maxIterations: number,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
   state: State
@@ -59,12 +58,11 @@ function handleClick(
 export function handleSingleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  maxIterations: number,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
   state: State
 ) {
-  if (handleDrag(event, canvas, maxIterations, ctx, renderer, state)) {
+  if (handleDrag(event, canvas, ctx, renderer, state)) {
     return;
   }
   clearTimeout(singleClickTimeoutId);
@@ -77,7 +75,6 @@ export function handleSingleClick(
 export function handleDoubleClick(
   event: MouseEvent,
   canvas: HTMLCanvasElement,
-  maxIterations: number,
   ctx: CanvasRenderingContext2D,
   renderer: Renderer,
   state: State

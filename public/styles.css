@@ -23,7 +23,7 @@ canvas {
   border: 1px solid white;
 }
 
-#overlay-text {
+#iterations-text {
   position: absolute;
   top: 10px;
   left: 10px;

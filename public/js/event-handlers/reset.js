@@ -1,7 +1,7 @@
 import Renderer from ".././draw.js";
 import State from ".././state.js";
 let cooldownTimer = null;
-export default function requestReset(canvas, ctx, maxIterations, renderer, state) {
+export default function requestReset(canvas, ctx, renderer, state) {
     if (cooldownTimer)
         clearTimeout(cooldownTimer);
     cooldownTimer = setTimeout(() => {

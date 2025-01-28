@@ -15,8 +15,6 @@ import State from "./state.js";
 
 export default class MandelbrotExplorer {
   state: State;
-  firstPassMaxIterations = 512;
-  maxIterations = 1024;
   canvas = document.createElement("canvas") as HTMLCanvasElement;
   ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
   renderer: Renderer;
@@ -32,12 +30,10 @@ export default class MandelbrotExplorer {
 
     this.renderer.draw(this.state);
 
-    const overlayText = document.createElement("div");
-    overlayText.id = "overlay-text";
-    overlayText.textContent = `Max iterations: ${this.state.maxIterations}`;
-    document.body.appendChild(overlayText);
-
-    console.log(overlayText.id);
+    const iterationsText = document.createElement("div");
+    iterationsText.id = "iterations-text";
+    iterationsText.textContent = `Max iterations: ${this.state.maxIterations}`;
+    document.body.appendChild(iterationsText);
 
     document.body.appendChild(this.canvas);
 
@@ -61,7 +57,6 @@ export default class MandelbrotExplorer {
       handleSingleClick(
         event,
         this.canvas,
-        this.maxIterations,
         this.ctx,
         this.renderer,
         this.state
@@ -71,7 +66,6 @@ export default class MandelbrotExplorer {
       handleDoubleClick(
         event,
         this.canvas,
-        this.maxIterations,
         this.ctx,
         this.renderer,
         this.state
@@ -79,25 +73,11 @@ export default class MandelbrotExplorer {
     });
 
     window.addEventListener("resize", async () => {
-      requestReset(
-        this.canvas,
-        this.ctx,
-        this.maxIterations,
-        this.renderer,
-        this.state
-      );
+      requestReset(this.canvas, this.ctx, this.renderer, this.state);
     });
 
     requestAnimationFrame((timestamp) =>
-      handleKeys(
-        timestamp,
-        this.maxIterations,
-        this.firstPassMaxIterations,
-        this.canvas,
-        this.ctx,
-        this.renderer,
-        this.state
-      )
+      handleKeys(timestamp, this.canvas, this.ctx, this.renderer, this.state)
     );
   }
 }

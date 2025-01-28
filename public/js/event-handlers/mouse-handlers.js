@@ -6,7 +6,7 @@ export function handleMousedown(event, canvas) {
     dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 }
-export function handleDrag(event, canvas, maxIterations, ctx, renderer, state) {
+export function handleDrag(event, canvas, ctx, renderer, state) {
     const canvasRect = canvas.getBoundingClientRect();
     const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
@@ -29,8 +29,8 @@ function handleClick(event, canvas, state) {
     const mid = new CanvasPoint(x, y, state).toComplexPoint();
     state.mid = mid;
 }
-export function handleSingleClick(event, canvas, maxIterations, ctx, renderer, state) {
-    if (handleDrag(event, canvas, maxIterations, ctx, renderer, state)) {
+export function handleSingleClick(event, canvas, ctx, renderer, state) {
+    if (handleDrag(event, canvas, ctx, renderer, state)) {
         return;
     }
     clearTimeout(singleClickTimeoutId);
@@ -39,7 +39,7 @@ export function handleSingleClick(event, canvas, maxIterations, ctx, renderer, s
         requestAnimationFrame(() => renderer.draw(state));
     }, 200);
 }
-export function handleDoubleClick(event, canvas, maxIterations, ctx, renderer, state) {
+export function handleDoubleClick(event, canvas, ctx, renderer, state) {
     clearTimeout(singleClickTimeoutId);
     handleClick(event, canvas, state);
     state.scaleZoomBy(0.64);

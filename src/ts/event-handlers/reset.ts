@@ -6,7 +6,6 @@ let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 export default function requestReset(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
-  maxIterations: number,
   renderer: Renderer,
   state: State
 ) {
