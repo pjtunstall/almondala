@@ -76,8 +76,8 @@ export default class MandelbrotExplorer {
       requestReset(this.canvas, this.ctx, this.renderer, this.state);
     });
 
-    requestAnimationFrame((timestamp) =>
-      handleKeys(timestamp, this.canvas, this.ctx, this.renderer, this.state)
-    );
+    requestAnimationFrame((timestamp) => {
+      handleKeys(timestamp, this.canvas, this.ctx, this.renderer, this.state);
+    });
   }
 }

@@ -25,12 +25,6 @@ export function handleKeys(
     return;
   }
 
-  // Only toggle grayscale when the "g" key has been released.
-  if (keys["g"] === false) {
-    state.changeColor();
-    delete keys["g"];
-  }
-
   Object.keys(keys).forEach((key) => {
     switch (key) {
       case "ArrowLeft":
@@ -78,7 +72,6 @@ export function handleKeydown(key: string) {
     case "ArrowRight":
     case "x":
     case "z":
-    case "g":
     case " ":
     case "Escape":
       keys[key] = true;
@@ -93,7 +86,6 @@ export function handleKeyup(key: string) {
     case "ArrowRight":
     case "x":
     case "z":
-    case "g":
     case " ":
     case "Escape":
       keys[key] = false;

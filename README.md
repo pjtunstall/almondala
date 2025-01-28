@@ -23,7 +23,6 @@
   - Arrow keys to pan.
   - `X` to zoom in.
   - `Z` to zoom out.
-  - `G` to toggle color/grayscale.
   - SPACE or ESCAPE to reset.
 - Mouse:
   - Click on a point of the Mandelbrot to move it to the center of the canvas.
@@ -31,6 +30,7 @@
   - Drag a point to move it to a new location on the canvas.
 - Buttons.
   - RAINBOW to toggle color/grayscale.
+  - `+` and `-` to the adjust maximum number of iterations to check before coloring a pixel black.
   - `˄` and `˅` to increment/decrement the power to which each number in the sequence is raised.
 
 Resizing the window also resets the view.
