@@ -13,8 +13,6 @@ import requestReset, { reset } from "./event-handlers/reset.js";
 import Renderer from "./draw.js";
 import State from "./state.js";
 
-export let overlayText: HTMLElement;
-
 export default class MandelbrotExplorer {
   state: State;
   firstPassMaxIterations = 512;

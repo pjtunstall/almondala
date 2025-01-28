@@ -3,7 +3,7 @@ import { handleSingleClick, handleDoubleClick, handleMousedown, } from "./event-
 import handleButtons from "./event-handlers/button-handlers.js";
 import requestReset, { reset } from "./event-handlers/reset.js";
 import State from "./state.js";
-export let overlayText;
+// export let overlayText: HTMLElement;
 export default class MandelbrotExplorer {
     state;
     firstPassMaxIterations = 512;

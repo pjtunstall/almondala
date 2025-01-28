@@ -28,12 +28,12 @@ canvas {
   top: 10px;
   left: 10px;
   color: white;
+  text-shadow: 0 0 3px black;
   font-size: 20px;
   z-index: 1;
 }
 
 #controls {
-  z-index: 1;
   position: fixed;
   bottom: 0;
   right: 0;
@@ -41,6 +41,7 @@ canvas {
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+  z-index: 1;
 }
 
 #controls > button {

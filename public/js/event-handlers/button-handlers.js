@@ -12,18 +12,23 @@ export default function handleButtons(event, state, renderer) {
         case "plus":
             if (state.maxIterations < state.fullMaxIterations) {
                 state.maxIterations *= 2;
-                // if (overlayText) {
-                //   console.log(state.maxIterations);
-                //   overlayText.textContent = `Max iterations: ${state.maxIterations}`;
-                // }
+                const overlayText = document.getElementById("overlay-text");
+                if (overlayText) {
+                    overlayText.textContent = `Max iterations: ${state.maxIterations}`;
+                }
+                console.log("maxIteerations:", state.maxIterations);
+                console.log("overlayText:", overlayText);
             }
             break;
         case "minus":
             if (state.maxIterations > 2) {
                 state.maxIterations /= 2;
-                // if (overlayText) {
-                //   overlayText.textContent = `Max iterations: ${state.maxIterations}`;
-                // }
+                const overlayText = document.getElementById("overlay-text");
+                if (overlayText) {
+                    overlayText.textContent = `Max iterations: ${state.maxIterations}`;
+                }
+                console.log("maxIteerations:", state.maxIterations);
+                console.log("overlayText:", overlayText);
             }
             break;
         case "power-up":

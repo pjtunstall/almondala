@@ -22,18 +22,19 @@ export default function handleButtons(
     case "plus":
       if (state.maxIterations < state.fullMaxIterations) {
         state.maxIterations *= 2;
-        // if (overlayText) {
-        //   console.log(state.maxIterations);
-        //   overlayText.textContent = `Max iterations: ${state.maxIterations}`;
-        // }
+        const overlayText = document.getElementById("overlay-text");
+        if (overlayText) {
+          overlayText.textContent = `Max iterations: ${state.maxIterations}`;
+        }
       }
       break;
     case "minus":
       if (state.maxIterations > 2) {
         state.maxIterations /= 2;
-        // if (overlayText) {
-        //   overlayText.textContent = `Max iterations: ${state.maxIterations}`;
-        // }
+        const overlayText = document.getElementById("overlay-text");
+        if (overlayText) {
+          overlayText.textContent = `Max iterations: ${state.maxIterations}`;
+        }
       }
       break;
     case "power-up":
