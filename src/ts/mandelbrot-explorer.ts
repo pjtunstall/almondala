@@ -22,8 +22,7 @@ export default class MandelbrotExplorer {
   renderer: Renderer;
 
   constructor() {
-    // Initialize the state and renderer
-    this.state = new State(23); // Begin with a grayscale.
+    this.state = new State(23);
     this.renderer = reset(this.canvas, this.ctx, this.state);
 
     if (!this.renderer) {
