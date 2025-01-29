@@ -1,20 +1,14 @@
-import requestReset from "./reset.js";
 let prev = 0;
 const keys = {};
-export function handleKeys(timestamp, canvas, ctx, renderer, state) {
+export function handleKeys(timestamp, state) {
     // The reason for using this key-handling mechanism--an asynchronous loop and `keys` object, rather than simply handling keypresses individually as each one occurs--is so that we can detect key chords (multiple simultaneous keypresses). It also allows us to throttle draw requests in one place. An object is used rather than a set because we don't just want to know if a key is currently down (in which case it's value will be `true`), but also whether it's been pressed and released since the previous iteration (in which case it will be `false`).
-    requestAnimationFrame((timestamp) => handleKeys(timestamp, canvas, ctx, renderer, state));
+    requestAnimationFrame((timestamp) => handleKeys(timestamp, state));
     if (timestamp - prev < 16) {
         return;
     }
     prev = timestamp;
     if (Object.keys(keys).length === 0) {
         return;
-    }
-    // Only toggle grayscale when the "g" key has been released.
-    if (keys["g"] === false) {
-        state.changeColor();
-        delete keys["g"];
     }
     Object.keys(keys).forEach((key) => {
         switch (key) {
@@ -31,26 +25,26 @@ export function handleKeys(timestamp, canvas, ctx, renderer, state) {
                 state.panDown();
                 break;
             case "x":
-                state.scaleZoomBy(0.9);
+                state.scaleZoomBy(0.96);
                 break;
             case "z":
-                state.scaleZoomBy(1 / 0.9);
+                state.scaleZoomBy(1 / 0.96);
                 break;
             case " ":
             case "Escape":
-                requestReset(canvas, ctx, renderer, state);
+                state.requestReset();
                 if (keys[key] === false) {
                     delete keys[key];
                 }
                 return;
-            default: // E.g. if `keys["g"] === true`, indicating that the key is still being held.
+            default:
                 return;
         }
         if (keys[key] === false) {
             delete keys[key];
         }
     });
-    renderer.draw(state);
+    state.render();
 }
 export function handleKeydown(key) {
     switch (key) {
@@ -60,7 +54,6 @@ export function handleKeydown(key) {
         case "ArrowRight":
         case "x":
         case "z":
-        case "g":
         case " ":
         case "Escape":
             keys[key] = true;
@@ -74,7 +67,6 @@ export function handleKeyup(key) {
         case "ArrowRight":
         case "x":
         case "z":
-        case "g":
         case " ":
         case "Escape":
             keys[key] = false;

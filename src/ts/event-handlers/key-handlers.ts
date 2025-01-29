@@ -1,21 +1,11 @@
-import Renderer from "../draw.js";
-import requestReset from "./reset.js";
 import State from ".././state.js";
 
 let prev = 0;
 const keys: { [key: string]: boolean } = {};
 
-export function handleKeys(
-  timestamp: number,
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  renderer: Renderer,
-  state: State
-) {
+export function handleKeys(timestamp: number, state: State) {
   // The reason for using this key-handling mechanism--an asynchronous loop and `keys` object, rather than simply handling keypresses individually as each one occurs--is so that we can detect key chords (multiple simultaneous keypresses). It also allows us to throttle draw requests in one place. An object is used rather than a set because we don't just want to know if a key is currently down (in which case it's value will be `true`), but also whether it's been pressed and released since the previous iteration (in which case it will be `false`).
-  requestAnimationFrame((timestamp) =>
-    handleKeys(timestamp, canvas, ctx, renderer, state)
-  );
+  requestAnimationFrame((timestamp) => handleKeys(timestamp, state));
   if (timestamp - prev < 16) {
     return;
   }
@@ -40,19 +30,19 @@ export function handleKeys(
         state.panDown();
         break;
       case "x":
-        state.scaleZoomBy(0.9);
+        state.scaleZoomBy(0.96);
         break;
       case "z":
-        state.scaleZoomBy(1 / 0.9);
+        state.scaleZoomBy(1 / 0.96);
         break;
       case " ":
       case "Escape":
-        requestReset(canvas, ctx, renderer, state);
+        state.requestReset();
         if (keys[key] === false) {
           delete keys[key];
         }
         return;
-      default: // E.g. if `keys["g"] === true`, indicating that the key is still being held.
+      default:
         return;
     }
 
@@ -61,7 +51,7 @@ export function handleKeys(
     }
   });
 
-  renderer.draw(state);
+  state.render();
 }
 
 export function handleKeydown(key: string) {

@@ -22,7 +22,7 @@ export default class Renderer {
             }
             if (data.type === "render") {
                 if (!isWorkerInitialized) {
-                    console.error("Worked is not initialized but still has sent us a rendered message. This shouldn't happen.");
+                    console.error("Worker is not initialized but still has sent us a rendered message. This shouldn't happen.");
                     return;
                 }
                 ctx.drawImage(data.imageBitmap, 0, 0);

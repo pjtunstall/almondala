@@ -1,11 +1,6 @@
-import Renderer from "../draw.js";
 import State from "../state.js";
 
-export default function handleButtons(
-  event: MouseEvent,
-  state: State,
-  renderer: Renderer
-) {
+export default function handleButtons(event: MouseEvent, state: State) {
   event.preventDefault();
 
   const target = event.target as HTMLElement;
@@ -29,7 +24,7 @@ export default function handleButtons(
       }
       break;
     case "minus":
-      if (state.maxIterations > 2) {
+      if (state.maxIterations > 1) {
         state.maxIterations /= 2;
         const iterationsText = document.getElementById("iterations-text");
         if (iterationsText) {
@@ -53,5 +48,5 @@ export default function handleButtons(
       return;
   }
 
-  renderer.draw(state);
+  state.render();
 }

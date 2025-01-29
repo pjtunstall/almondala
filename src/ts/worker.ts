@@ -28,7 +28,7 @@ init().then(() => {
       bFactor,
       power,
       grayscale,
-    } = data.state;
+    } = data;
 
     const pixels = new Uint8ClampedArray(
       calculate_mandelbrot(

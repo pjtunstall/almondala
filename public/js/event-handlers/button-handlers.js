@@ -1,4 +1,4 @@
-export default function handleButtons(event, state, renderer) {
+export default function handleButtons(event, state) {
     event.preventDefault();
     const target = event.target;
     if (!(target instanceof HTMLElement)) {
@@ -19,7 +19,7 @@ export default function handleButtons(event, state, renderer) {
             }
             break;
         case "minus":
-            if (state.maxIterations > 2) {
+            if (state.maxIterations > 1) {
                 state.maxIterations /= 2;
                 const iterationsText = document.getElementById("iterations-text");
                 if (iterationsText) {
@@ -42,6 +42,6 @@ export default function handleButtons(event, state, renderer) {
         default:
             return;
     }
-    renderer.draw(state);
+    state.render();
 }
 //# sourceMappingURL=button-handlers.js.map

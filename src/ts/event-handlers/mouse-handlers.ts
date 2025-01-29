@@ -1,5 +1,4 @@
 import { CanvasPoint, Point } from "../points.js";
-import Renderer from "../draw.js";
 import State from ".././state.js";
 
 let dragStartX: number, dragStartY: number;
@@ -11,14 +10,8 @@ export function handleMousedown(event: MouseEvent, canvas: HTMLCanvasElement) {
   dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
 }
 
-export function handleDrag(
-  event: MouseEvent,
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  renderer: Renderer,
-  state: State
-) {
-  const canvasRect = canvas.getBoundingClientRect();
+export function handleDrag(event: MouseEvent, state: State) {
+  const canvasRect = state.canvas.getBoundingClientRect();
   const currentX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const currentY = (event.clientY - canvasRect.top) * window.devicePixelRatio;
   const dragEnd = new CanvasPoint(currentX, currentY, state).toComplexPoint();
@@ -38,49 +31,33 @@ export function handleDrag(
   dragStartX = currentX;
   dragStartY = currentY;
 
-  requestAnimationFrame(() => renderer.draw(state));
+  requestAnimationFrame(() => state.render());
 
   return true;
 }
 
-function handleClick(
-  event: MouseEvent,
-  canvas: HTMLCanvasElement,
-  state: State
-) {
-  const canvasRect = canvas.getBoundingClientRect();
+function handleClick(event: MouseEvent, state: State) {
+  const canvasRect = state.canvas.getBoundingClientRect();
   const x = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   const y = (event.clientY - canvasRect.top) * window.devicePixelRatio;
   const mid = new CanvasPoint(x, y, state).toComplexPoint();
   state.mid = mid;
 }
 
-export function handleSingleClick(
-  event: MouseEvent,
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  renderer: Renderer,
-  state: State
-) {
-  if (handleDrag(event, canvas, ctx, renderer, state)) {
+export function handleSingleClick(event: MouseEvent, state: State) {
+  if (handleDrag(event, state)) {
     return;
   }
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = window.setTimeout(() => {
-    handleClick(event, canvas, state);
-    requestAnimationFrame(() => renderer.draw(state));
+    handleClick(event, state);
+    requestAnimationFrame(() => state.render());
   }, 200);
 }
 
-export function handleDoubleClick(
-  event: MouseEvent,
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  renderer: Renderer,
-  state: State
-) {
+export function handleDoubleClick(event: MouseEvent, state: State) {
   clearTimeout(singleClickTimeoutId);
-  handleClick(event, canvas, state);
+  handleClick(event, state);
   state.scaleZoomBy(0.64);
-  requestAnimationFrame(() => renderer.draw(state));
+  requestAnimationFrame(() => state.render());
 }
