@@ -2,8 +2,7 @@ import { ComplexPoint } from "./points.js";
 const panDelta = 0.1;
 let cooldownTimer = null;
 let isWorkerInitialized = false;
-let isRenderPending = false;
-let isRenderScheduled = false;
+let isRenderInProgress = false;
 let attempts = 0;
 export const worker = new Worker(new URL("./worker.js", import.meta.url), {
     type: "module",
@@ -30,10 +29,8 @@ export default class State {
     bFactor = 1;
     canvas = canvas;
     ctx = ctx;
-    // initialState: State;
     constructor(grayscale) {
         this.grayscale = grayscale;
-        // this.initialState = { ...this };
     }
     changeColor() {
         this.grayscale = this.grayscale === 0 ? this.initialGrayscale : 0;
@@ -81,6 +78,7 @@ export default class State {
                 this.canvas.style.transition = "opacity 2s ease-in-out";
                 this.canvas.style.opacity = "1";
             }, 10);
+            isRenderInProgress = false;
             this.reset();
             this.render();
         }, 256);
@@ -112,6 +110,10 @@ export default class State {
         this.canvas.height = intrinsicHeight;
         this.width = intrinsicWidth;
         this.height = intrinsicHeight;
+        const iterationsText = document.getElementById("iterations-text");
+        if (iterationsText) {
+            iterationsText.textContent = `Max iterations: ${this.maxIterations}`;
+        }
     }
     render() {
         if (!isWorkerInitialized) {
@@ -119,11 +121,10 @@ export default class State {
             setTimeout(() => this.render(), 360);
             return false;
         }
-        if (isRenderPending) {
-            isRenderScheduled = true;
+        if (isRenderInProgress) {
             return false;
         }
-        isRenderPending = true;
+        isRenderInProgress = true;
         worker.postMessage({
             type: "render",
             width: this.width,
@@ -153,10 +154,7 @@ export default class State {
                 return;
             }
             ctx.drawImage(data.imageBitmap, 0, 0);
-            isRenderPending = false;
-            if (isRenderScheduled) {
-                this.render();
-            }
+            isRenderInProgress = false;
         }
     }
 }

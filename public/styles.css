@@ -14,7 +14,7 @@ body {
   height: 100vh;
   background-color: black;
   position: relative;
-  font-family: "Georgia", serif;
+  font-family: "Courier Code", Courier, "Lucida Sans Typewriter", monospace;
 }
 
 canvas {

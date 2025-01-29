@@ -3,8 +3,7 @@ import { ComplexPoint } from "./points.js";
 const panDelta = 0.1;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let isWorkerInitialized = false;
-let isRenderPending = false;
-let isRenderScheduled = false;
+let isRenderInProgress = false;
 let attempts = 0;
 
 export const worker = new Worker(new URL("./worker.js", import.meta.url), {
@@ -34,11 +33,9 @@ export default class State {
   bFactor = 1;
   canvas = canvas;
   ctx = ctx;
-  // initialState: State;
 
   constructor(grayscale: number) {
     this.grayscale = grayscale;
-    // this.initialState = { ...this };
   }
 
   changeColor() {
@@ -95,6 +92,7 @@ export default class State {
         this.canvas.style.transition = "opacity 2s ease-in-out";
         this.canvas.style.opacity = "1";
       }, 10);
+      isRenderInProgress = false;
       this.reset();
       this.render();
     }, 256);
@@ -132,6 +130,11 @@ export default class State {
 
     this.width = intrinsicWidth;
     this.height = intrinsicHeight;
+
+    const iterationsText = document.getElementById("iterations-text");
+    if (iterationsText) {
+      iterationsText.textContent = `Max iterations: ${this.maxIterations}`;
+    }
   }
 
   render(): boolean {
@@ -144,12 +147,11 @@ export default class State {
       return false;
     }
 
-    if (isRenderPending) {
-      isRenderScheduled = true;
+    if (isRenderInProgress) {
       return false;
     }
+    isRenderInProgress = true;
 
-    isRenderPending = true;
     worker.postMessage({
       type: "render",
       width: this.width,
@@ -185,11 +187,7 @@ export default class State {
       }
 
       ctx.drawImage(data.imageBitmap, 0, 0);
-      isRenderPending = false;
-
-      if (isRenderScheduled) {
-        this.render();
-      }
+      isRenderInProgress = false;
     }
   }
 }
