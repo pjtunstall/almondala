@@ -7,7 +7,6 @@ export default class MandelbrotExplorer {
     constructor() {
         this.state = new State(23);
         this.state.reset();
-        this.state.render();
         const iterationsText = document.createElement("div");
         iterationsText.id = "iterations-text";
         iterationsText.textContent = `Max iterations: ${this.state.maxIterations}`;

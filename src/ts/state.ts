@@ -34,11 +34,11 @@ export default class State {
   bFactor = 1;
   canvas = canvas;
   ctx = ctx;
-  initialState: State;
+  // initialState: State;
 
   constructor(grayscale: number) {
     this.grayscale = grayscale;
-    this.initialState = { ...this };
+    // this.initialState = { ...this };
   }
 
   changeColor() {
@@ -170,15 +170,10 @@ export default class State {
 
   handleWorkerMessage(event: any) {
     const data = event.data;
-    // console.log(
-    //   "Hi, I'm main and I just received a message with data:",
-    //   data
-    // );
 
     if (data.type === "init") {
-      // console.log("Init message received in main.");
       isWorkerInitialized = true;
-      // this.draw(2024, new State(17));
+      this.render();
     }
 
     if (data.type === "render") {
@@ -192,10 +187,9 @@ export default class State {
       ctx.drawImage(data.imageBitmap, 0, 0);
       isRenderPending = false;
 
-      // // I need to make state available here and pick a maxIterations. Maybe make draw a method of state.
-      // if (isRenderScheduled) {
-      //   this.draw(1024, new State(17));
-      // }
+      if (isRenderScheduled) {
+        this.render();
+      }
     }
   }
 }
