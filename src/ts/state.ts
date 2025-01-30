@@ -103,7 +103,7 @@ export default class State {
     spareCtx.drawImage(canvas, 0, 0);
 
     ctx.save();
-    ctx.translate((dx *= dpr), (dy *= dpr));
+    ctx.translate((dx *= dpr), (dy *= dpr * this.ratio));
     ctx.drawImage(spareCanvas, 0, 0);
     ctx.restore();
   }

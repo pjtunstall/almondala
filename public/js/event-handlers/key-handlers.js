@@ -10,22 +10,24 @@ export function handleKeys(timestamp, state) {
     if (Object.keys(keys).length === 0) {
         return;
     }
+    let dx = 0;
+    let dy = 0;
     Object.keys(keys).forEach((key) => {
         switch (key) {
             case "ArrowLeft":
-                requestAnimationFrame(() => state.fakePan(0.1, 0));
+                dx += 3;
                 state.panLeft();
                 break;
             case "ArrowRight":
-                requestAnimationFrame(() => state.fakePan(-0.1, 0));
+                dx -= 3;
                 state.panRight();
                 break;
             case "ArrowUp":
-                requestAnimationFrame(() => state.fakePan(0, 0.1));
+                dy == 3;
                 state.panUp();
                 break;
             case "ArrowDown":
-                requestAnimationFrame(() => state.fakePan(0, -0.1));
+                dy -= 3;
                 state.panDown();
                 break;
             case "x":
@@ -50,6 +52,7 @@ export function handleKeys(timestamp, state) {
             delete keys[key];
         }
     });
+    requestAnimationFrame(() => state.fakePan(dx, dy));
     state.render();
 }
 export function handleKeydown(key) {

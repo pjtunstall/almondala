@@ -5,6 +5,7 @@ let dragStartX: number, dragStartY: number;
 let singleClickTimeoutId: number;
 
 export function handleMousedown(event: MouseEvent, canvas: HTMLCanvasElement) {
+  event.preventDefault();
   const canvasRect = canvas.getBoundingClientRect();
   dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
   dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;

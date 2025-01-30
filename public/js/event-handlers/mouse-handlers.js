@@ -2,6 +2,7 @@ import { CanvasPoint, Point } from "../points.js";
 let dragStartX, dragStartY;
 let singleClickTimeoutId;
 export function handleMousedown(event, canvas) {
+    event.preventDefault();
     const canvasRect = canvas.getBoundingClientRect();
     dragStartX = (event.clientX - canvasRect.left) * window.devicePixelRatio;
     dragStartY = (event.clientY - canvasRect.top) * window.devicePixelRatio;

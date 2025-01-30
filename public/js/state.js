@@ -68,7 +68,6 @@ export default class State {
         spareCtx.drawImage(canvas, 0, 0);
         scaleFactor = 1 / scaleFactor;
         ctx.save();
-        // ctx.clearRect(0, 0, width, height);
         ctx.translate(width / 2, height / 2);
         ctx.scale(scaleFactor, scaleFactor);
         ctx.translate(-width / 2, -height / 2);
@@ -86,8 +85,7 @@ export default class State {
             return;
         spareCtx.drawImage(canvas, 0, 0);
         ctx.save();
-        // ctx.clearRect(0, 0, width, height);
-        ctx.translate((dx *= dpr), (dy *= dpr));
+        ctx.translate((dx *= dpr), (dy *= dpr * this.ratio));
         ctx.drawImage(spareCanvas, 0, 0);
         ctx.restore();
     }
