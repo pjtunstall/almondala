@@ -4,6 +4,7 @@ let cooldownTimer = null;
 let isWorkerInitialized = false;
 let isRenderInProgress = false;
 let attempts = 0;
+let scheduledRenderTimer;
 export const worker = new Worker(new URL("./worker.js", import.meta.url), {
     type: "module",
 });
@@ -78,7 +79,7 @@ export default class State {
                 this.canvas.style.transition = "opacity 2s ease-in-out";
                 this.canvas.style.opacity = "1";
             }, 10);
-            isRenderInProgress = false;
+            // isRenderInProgress = false;
             this.reset();
             this.render();
         }, 256);
@@ -122,6 +123,8 @@ export default class State {
             return false;
         }
         if (isRenderInProgress) {
+            clearTimeout(scheduledRenderTimer);
+            scheduledRenderTimer = setTimeout(() => this.render(), 32);
             return false;
         }
         isRenderInProgress = true;

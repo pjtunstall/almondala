@@ -5,6 +5,7 @@ let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let isWorkerInitialized = false;
 let isRenderInProgress = false;
 let attempts = 0;
+let scheduledRenderTimer: ReturnType<typeof setTimeout>;
 
 export const worker = new Worker(new URL("./worker.js", import.meta.url), {
   type: "module",
@@ -148,6 +149,8 @@ export default class State {
     }
 
     if (isRenderInProgress) {
+      clearTimeout(scheduledRenderTimer);
+      scheduledRenderTimer = setTimeout(() => this.render(), 32);
       return false;
     }
     isRenderInProgress = true;
