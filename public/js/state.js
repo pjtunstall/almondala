@@ -49,12 +49,12 @@ export default class State {
     panDown() {
         this.mid.y -= this.zoom * panDelta;
     }
-    scaleZoomBy(scaleFactor) {
+    scaleZoomBy(ds) {
         // // Zooming in further reaches the limits of floating point precision. But preventing it could give the impression that the controls are just not responding, unless some warning is given.
-        // if (scaleFactor <= 1 && this.zoom < 2e-13) {
+        // if (ds <= 1 && this.zoom < 2e-13) {
         //   return;
         // }
-        this.zoom *= scaleFactor;
+        this.zoom *= ds;
     }
     fakeRender(ds, dx, dy) {
         const width = canvas.width;

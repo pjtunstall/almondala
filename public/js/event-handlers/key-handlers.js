@@ -53,7 +53,8 @@ export function handleKeys(timestamp, state) {
             delete keys[key];
         }
     });
-    requestAnimationFrame(() => state.fakeRender(ds, dx, dy));
+    // // Uncomment to experiment with zooming and panning with canvas transformations as a placeholder till the calculation is ready. Needs coordinating better.
+    // requestAnimationFrame(() => state.fakeRender(ds, dx, dy));
     state.render();
 }
 export function handleKeydown(key) {
