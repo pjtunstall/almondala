@@ -15,6 +15,7 @@ body {
   background-color: black;
   position: relative;
   font-family: "Courier Code", Courier, "Lucida Sans Typewriter", monospace;
+  user-select: none;
 }
 
 canvas {
