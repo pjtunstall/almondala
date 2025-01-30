@@ -15,6 +15,7 @@ export function handleKeys(timestamp: number, state: State) {
     return;
   }
 
+  let ds = 1;
   let dx = 0;
   let dy = 0;
 
@@ -37,11 +38,11 @@ export function handleKeys(timestamp: number, state: State) {
         state.panDown();
         break;
       case "x":
-        requestAnimationFrame(() => state.fakeScaleZoomBy(0.96));
+        ds *= 1 / 0.96;
         state.scaleZoomBy(0.96);
         break;
       case "z":
-        requestAnimationFrame(() => state.fakeScaleZoomBy(1 / 0.96));
+        ds *= 0.96;
         state.scaleZoomBy(1 / 0.96);
         break;
       case " ":
@@ -60,7 +61,7 @@ export function handleKeys(timestamp: number, state: State) {
     }
   });
 
-  requestAnimationFrame(() => state.fakePan(dx, dy));
+  requestAnimationFrame(() => state.fakeRender(ds, dx, dy));
   state.render();
 }
 

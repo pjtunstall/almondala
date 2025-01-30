@@ -60,15 +60,15 @@ export default class State {
     this.mid.y -= this.zoom * panDelta;
   }
 
-  scaleZoomBy(scaleFactor: number) {
+  scaleZoomBy(ds: number) {
     // // Zooming in further reaches the limits of floating point precision. But preventing it could give the impression that the controls are just not responding, unless some warning is given.
-    // if (scaleFactor <= 1 && this.zoom < 2e-13) {
+    // if (ds <= 1 && this.zoom < 2e-13) {
     //   return;
     // }
-    this.zoom *= scaleFactor;
+    this.zoom *= ds;
   }
 
-  fakeScaleZoomBy(scaleFactor: number) {
+  fakeRender(ds: number, dx: number, dy: number) {
     const width = canvas.width;
     const height = canvas.height;
 
@@ -79,31 +79,12 @@ export default class State {
     if (!spareCtx) return;
 
     spareCtx.drawImage(canvas, 0, 0);
-
-    scaleFactor = 1 / scaleFactor;
 
     ctx.save();
     ctx.translate(width / 2, height / 2);
-    ctx.scale(scaleFactor, scaleFactor);
-    ctx.translate(-width / 2, -height / 2);
-    ctx.drawImage(spareCanvas, 0, 0);
-    ctx.restore();
-  }
-
-  fakePan(dx: number, dy: number) {
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const spareCanvas = document.createElement("canvas");
-    spareCanvas.width = width;
-    spareCanvas.height = height;
-    const spareCtx = spareCanvas.getContext("2d");
-    if (!spareCtx) return;
-
-    spareCtx.drawImage(canvas, 0, 0);
-
-    ctx.save();
+    ctx.scale(ds, ds);
     ctx.translate((dx *= dpr), (dy *= dpr * this.ratio));
+    ctx.translate(-width / 2, -height / 2);
     ctx.drawImage(spareCanvas, 0, 0);
     ctx.restore();
   }
