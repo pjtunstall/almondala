@@ -13,21 +13,27 @@ export function handleKeys(timestamp, state) {
     Object.keys(keys).forEach((key) => {
         switch (key) {
             case "ArrowLeft":
+                requestAnimationFrame(() => state.fakePan(25, 0));
                 state.panLeft();
                 break;
             case "ArrowRight":
+                requestAnimationFrame(() => state.fakePan(-25, 0));
                 state.panRight();
                 break;
             case "ArrowUp":
+                requestAnimationFrame(() => state.fakePan(0, 25));
                 state.panUp();
                 break;
             case "ArrowDown":
+                requestAnimationFrame(() => state.fakePan(0, -25));
                 state.panDown();
                 break;
             case "x":
+                requestAnimationFrame(() => state.fakeScaleZoomBy(0.96));
                 state.scaleZoomBy(0.96);
                 break;
             case "z":
+                requestAnimationFrame(() => state.fakeScaleZoomBy(1 / 0.96));
                 state.scaleZoomBy(1 / 0.96);
                 break;
             case " ":

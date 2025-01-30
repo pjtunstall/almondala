@@ -95,7 +95,7 @@ See their `README`s for more info.
 
 ## Benchmarking
 
-Here is how I timed the Mandelbrot calculation. With [rayon](https://docs.rs/rayon/latest/rayon/), the mean duration was 903ms (standard deviation 51ms). Without `rayon`, it was 585ms (standard deviation 66ms).
+Here is how I timed the Mandelbrot calculation. With [rayon](https://docs.rs/rayon/latest/rayon/), before I realized that a single instance of the Wasm module doesn't have access to multithreading, the mean duration was 903ms (standard deviation 51ms). Without `rayon`, it was 585ms (standard deviation 66ms).
 
 ```javascript
 const phi = 1.618033988749895;

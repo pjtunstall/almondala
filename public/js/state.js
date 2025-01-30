@@ -55,6 +55,41 @@ export default class State {
         // }
         this.zoom *= factor;
     }
+    fakeScaleZoomBy(s) {
+        const width = canvas.width;
+        const height = canvas.height;
+        const offscreenCanvas = document.createElement("canvas");
+        offscreenCanvas.width = width;
+        offscreenCanvas.height = height;
+        const offscreenCtx = offscreenCanvas.getContext("2d");
+        if (!offscreenCtx)
+            return;
+        offscreenCtx.drawImage(canvas, 0, 0);
+        s = 1 / s;
+        ctx.save();
+        ctx.clearRect(0, 0, width, height);
+        ctx.translate(width / 2, height / 2);
+        ctx.scale(s, s);
+        ctx.translate(-width / 2, -height / 2);
+        ctx.drawImage(offscreenCanvas, 0, 0);
+        ctx.restore();
+    }
+    fakePan(x, y) {
+        const width = canvas.width;
+        const height = canvas.height;
+        const offscreenCanvas = document.createElement("canvas");
+        offscreenCanvas.width = width;
+        offscreenCanvas.height = height;
+        const offscreenCtx = offscreenCanvas.getContext("2d");
+        if (!offscreenCtx)
+            return;
+        offscreenCtx.drawImage(canvas, 0, 0);
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(x, y);
+        ctx.drawImage(offscreenCanvas, 0, 0);
+        ctx.restore();
+    }
     incrementPowerBy(increment) {
         this.power += increment;
         this.resetView();
@@ -79,7 +114,7 @@ export default class State {
                 this.canvas.style.transition = "opacity 2s ease-in-out";
                 this.canvas.style.opacity = "1";
             }, 10);
-            // isRenderInProgress = false;
+            isRenderInProgress = false;
             this.reset();
             this.render();
         }, 256);
@@ -156,6 +191,7 @@ export default class State {
                 console.error("Worker is not initialized but still has sent us a rendered message. This shouldn't happen.");
                 return;
             }
+            ctx.resetTransform();
             ctx.drawImage(data.imageBitmap, 0, 0);
             isRenderInProgress = false;
         }

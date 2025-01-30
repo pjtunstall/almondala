@@ -67,6 +67,48 @@ export default class State {
     this.zoom *= factor;
   }
 
+  fakeScaleZoomBy(s: number) {
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const offscreenCanvas = document.createElement("canvas");
+    offscreenCanvas.width = width;
+    offscreenCanvas.height = height;
+    const offscreenCtx = offscreenCanvas.getContext("2d");
+    if (!offscreenCtx) return;
+
+    offscreenCtx.drawImage(canvas, 0, 0);
+
+    s = 1 / s;
+
+    ctx.save();
+    ctx.clearRect(0, 0, width, height);
+    ctx.translate(width / 2, height / 2);
+    ctx.scale(s, s);
+    ctx.translate(-width / 2, -height / 2);
+    ctx.drawImage(offscreenCanvas, 0, 0);
+    ctx.restore();
+  }
+
+  fakePan(x: number, y: number) {
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const offscreenCanvas = document.createElement("canvas");
+    offscreenCanvas.width = width;
+    offscreenCanvas.height = height;
+    const offscreenCtx = offscreenCanvas.getContext("2d");
+    if (!offscreenCtx) return;
+
+    offscreenCtx.drawImage(canvas, 0, 0);
+
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(x, y);
+    ctx.drawImage(offscreenCanvas, 0, 0);
+    ctx.restore();
+  }
+
   incrementPowerBy(increment: number) {
     this.power += increment;
     this.resetView();
@@ -189,6 +231,7 @@ export default class State {
         return;
       }
 
+      ctx.resetTransform();
       ctx.drawImage(data.imageBitmap, 0, 0);
       isRenderInProgress = false;
     }
