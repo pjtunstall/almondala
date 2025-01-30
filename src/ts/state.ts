@@ -1,5 +1,6 @@
 import { ComplexPoint } from "./points.js";
 
+const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let isWorkerInitialized = false;
@@ -59,53 +60,51 @@ export default class State {
     this.mid.y -= this.zoom * panDelta;
   }
 
-  scaleZoomBy(factor: number) {
+  scaleZoomBy(scaleFactor: number) {
     // // Zooming in further reaches the limits of floating point precision. But preventing it could give the impression that the controls are just not responding, unless some warning is given.
-    // if (factor <= 1 && this.zoom < 2e-13) {
+    // if (scaleFactor <= 1 && this.zoom < 2e-13) {
     //   return;
     // }
-    this.zoom *= factor;
+    this.zoom *= scaleFactor;
   }
 
-  fakeScaleZoomBy(s: number) {
+  fakeScaleZoomBy(scaleFactor: number) {
     const width = canvas.width;
     const height = canvas.height;
 
-    const offscreenCanvas = document.createElement("canvas");
-    offscreenCanvas.width = width;
-    offscreenCanvas.height = height;
-    const offscreenCtx = offscreenCanvas.getContext("2d");
-    if (!offscreenCtx) return;
+    const spareCanvas = document.createElement("canvas");
+    spareCanvas.width = width;
+    spareCanvas.height = height;
+    const spareCtx = spareCanvas.getContext("2d");
+    if (!spareCtx) return;
 
-    offscreenCtx.drawImage(canvas, 0, 0);
+    spareCtx.drawImage(canvas, 0, 0);
 
-    s = 1 / s;
+    scaleFactor = 1 / scaleFactor;
 
     ctx.save();
-    ctx.clearRect(0, 0, width, height);
     ctx.translate(width / 2, height / 2);
-    ctx.scale(s, s);
+    ctx.scale(scaleFactor, scaleFactor);
     ctx.translate(-width / 2, -height / 2);
-    ctx.drawImage(offscreenCanvas, 0, 0);
+    ctx.drawImage(spareCanvas, 0, 0);
     ctx.restore();
   }
 
-  fakePan(x: number, y: number) {
+  fakePan(dx: number, dy: number) {
     const width = canvas.width;
     const height = canvas.height;
 
-    const offscreenCanvas = document.createElement("canvas");
-    offscreenCanvas.width = width;
-    offscreenCanvas.height = height;
-    const offscreenCtx = offscreenCanvas.getContext("2d");
-    if (!offscreenCtx) return;
+    const spareCanvas = document.createElement("canvas");
+    spareCanvas.width = width;
+    spareCanvas.height = height;
+    const spareCtx = spareCanvas.getContext("2d");
+    if (!spareCtx) return;
 
-    offscreenCtx.drawImage(canvas, 0, 0);
+    spareCtx.drawImage(canvas, 0, 0);
 
     ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.translate(x, y);
-    ctx.drawImage(offscreenCanvas, 0, 0);
+    ctx.translate((dx *= dpr), (dy *= dpr));
+    ctx.drawImage(spareCanvas, 0, 0);
     ctx.restore();
   }
 
@@ -160,7 +159,6 @@ export default class State {
     this.canvas.style.width = `${width}px`;
     this.canvas.style.height = `${height}px`;
 
-    const dpr = window.devicePixelRatio;
     const intrinsicWidth = Math.floor(width * dpr);
     const intrinsicHeight = Math.floor(height * dpr);
 
