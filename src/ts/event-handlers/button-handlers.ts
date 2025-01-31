@@ -1,10 +1,14 @@
 import State from "../state.js";
 
-let prev = 0; // Previous timestamp for replay loop.
-let replayOut = true;
-let currentZoom = 1;
+let prev: number; // Previous timestamp for replay loop.
+let replayOut: boolean; // Is the next replay zoom going to be out or in?
+let zoomThatReplayStartsAt: number; // When the replay starts, it will be set equal to the current state.zoom. During the replay, state.zoom changes as we zoom out, but zoomThatReplayStartsAt remembers where the zoom began so that we can zoom back in to the same level if the replay button is pressed a second time.
 
-export default function handleButtons(event: MouseEvent, state: State) {
+export default function handleButtons(
+  event: MouseEvent,
+  state: State,
+  replayer: Replayer
+) {
   event.preventDefault();
 
   const target = event.target as HTMLElement;
@@ -20,13 +24,14 @@ export default function handleButtons(event: MouseEvent, state: State) {
       break;
     case "replay":
       if (replayOut) {
-        currentZoom = state.zoom;
+        zoomThatReplayStartsAt = state.zoom;
       }
-      if (currentZoom >= 1) {
+      if (zoomThatReplayStartsAt >= 1) {
         return;
       }
+      replayer.running = true;
       requestAnimationFrame((timestamp) => {
-        replay(timestamp, state, currentZoom);
+        replayer.replay(timestamp, state, zoomThatReplayStartsAt);
       });
       break;
     case "plus":
@@ -48,9 +53,11 @@ export default function handleButtons(event: MouseEvent, state: State) {
       }
       break;
     case "power-up":
+      zoomThatReplayStartsAt = 1;
       state.incrementPowerBy(1);
       break;
     case "power-down":
+      zoomThatReplayStartsAt = 1;
       if (state.power > 2) {
         state.incrementPowerBy(-1);
       }
@@ -66,20 +73,36 @@ export default function handleButtons(event: MouseEvent, state: State) {
   state.render();
 }
 
-function replay(timestamp: number, state: State, currentZoom: number) {
-  const zoomedAllTheWayOut = replayOut && state.zoom >= 1;
-  const zoomedAllTheWayIn = !replayOut && state.zoom <= currentZoom;
-  if (zoomedAllTheWayOut || zoomedAllTheWayIn) {
-    replayOut = !replayOut;
-    return;
-  }
-  requestAnimationFrame((timestamp) => replay(timestamp, state, currentZoom));
-  if (timestamp - prev < 16) {
-    return;
-  }
-  prev = timestamp;
+export class Replayer {
+  running = false;
 
-  replayOut ? state.zoomOut() : state.zoomIn();
-  state.fakeRender(replayOut ? 0.96 : 1 / 0.96, 0, 0);
-  state.render();
+  resetReplayVariables() {
+    prev = 0;
+    replayOut = true;
+    zoomThatReplayStartsAt = 1;
+  }
+
+  replay(timestamp: number, state: State, zoomThatReplayStartsAt: number) {
+    if (!this.running) {
+      return;
+    }
+    const zoomedAllTheWayOut = replayOut && state.zoom >= 1;
+    const zoomedAllTheWayIn =
+      !replayOut && state.zoom <= zoomThatReplayStartsAt;
+    if (zoomedAllTheWayOut || zoomedAllTheWayIn) {
+      replayOut = !replayOut;
+      return;
+    }
+    requestAnimationFrame((timestamp) =>
+      this.replay(timestamp, state, zoomThatReplayStartsAt)
+    );
+    if (timestamp - prev < 16) {
+      return;
+    }
+    prev = timestamp;
+
+    replayOut ? state.zoomOut() : state.zoomIn();
+    state.fakeRender(replayOut ? 0.96 : 1 / 0.96, 0, 0);
+    state.render();
+  }
 }

@@ -6,14 +6,9 @@ interface DedicatedWorkerGlobalScope {
 }
 
 init().then(() => {
-  console.log("Wasm initialized");
   self.postMessage({ type: "init" });
   onmessage = function (message) {
     const data = message.data;
-
-    // console.log(
-    //   "I'm the worker and I am initialized, so I'm going to calculate."
-    // );
 
     const {
       width,
@@ -47,8 +42,6 @@ init().then(() => {
         grayscale
       )
     );
-
-    // console.log("I believed I've calculated, pixels:", pixels);
 
     if (pixels.length !== width * height * 4) {
       console.error(
