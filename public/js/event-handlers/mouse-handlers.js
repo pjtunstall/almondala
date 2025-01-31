@@ -43,7 +43,7 @@ export function handleSingleClick(event, state) {
 export function handleDoubleClick(event, state) {
     clearTimeout(singleClickTimeoutId);
     handleClick(event, state);
-    state.scaleZoomBy(0.64);
+    state.zoomInBig();
     requestAnimationFrame(() => state.render());
 }
 //# sourceMappingURL=mouse-handlers.js.map

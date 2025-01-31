@@ -10,34 +10,25 @@ export function handleKeys(timestamp, state) {
     if (Object.keys(keys).length === 0) {
         return;
     }
-    let ds = 1;
-    let dx = 0;
-    let dy = 0;
     Object.keys(keys).forEach((key) => {
         switch (key) {
             case "ArrowLeft":
-                dx += 3;
                 state.panLeft();
                 break;
             case "ArrowRight":
-                dx -= 3;
                 state.panRight();
                 break;
             case "ArrowUp":
-                dy == 3;
                 state.panUp();
                 break;
             case "ArrowDown":
-                dy -= 3;
                 state.panDown();
                 break;
             case "x":
-                ds *= 1 / 0.96;
-                state.scaleZoomBy(0.96);
+                state.zoomIn();
                 break;
             case "z":
-                ds *= 0.96;
-                state.scaleZoomBy(1 / 0.96);
+                state.zoomOut();
                 break;
             case " ":
             case "Escape":
@@ -53,8 +44,6 @@ export function handleKeys(timestamp, state) {
             delete keys[key];
         }
     });
-    // // Uncomment to experiment with zooming and panning with canvas transformations as a placeholder till the calculation is ready. Needs coordinating better.
-    // requestAnimationFrame(() => state.fakeRender(ds, dx, dy));
     state.render();
 }
 export function handleKeydown(key) {

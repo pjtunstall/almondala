@@ -49,6 +49,15 @@ export default class State {
     panDown() {
         this.mid.y -= this.zoom * panDelta;
     }
+    zoomIn() {
+        this.scaleZoomBy(0.96);
+    }
+    zoomInBig() {
+        this.scaleZoomBy(Math.pow(0.96, 12));
+    }
+    zoomOut() {
+        this.scaleZoomBy(1 / 0.96);
+    }
     scaleZoomBy(ds) {
         // // Zooming in further reaches the limits of floating point precision. But preventing it could give the impression that the controls are just not responding, unless some warning is given.
         // if (ds <= 1 && this.zoom < 2e-13) {

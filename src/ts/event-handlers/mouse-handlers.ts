@@ -59,6 +59,6 @@ export function handleSingleClick(event: MouseEvent, state: State) {
 export function handleDoubleClick(event: MouseEvent, state: State) {
   clearTimeout(singleClickTimeoutId);
   handleClick(event, state);
-  state.scaleZoomBy(0.64);
+  state.zoomInBig();
   requestAnimationFrame(() => state.render());
 }
