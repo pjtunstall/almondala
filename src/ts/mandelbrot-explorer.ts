@@ -34,6 +34,13 @@ export default class MandelbrotExplorer {
       }
     });
 
+    const plus = document.getElementById("plus");
+    const minus = document.getElementById("minus");
+    plus?.addEventListener("mouseenter", () => toggleVisibility(true));
+    plus?.addEventListener("mouseleave", () => toggleVisibility(false));
+    minus?.addEventListener("mouseenter", () => toggleVisibility(true));
+    minus?.addEventListener("mouseleave", () => toggleVisibility(false));
+
     document.addEventListener("keydown", (event) => handleKeydown(event.key));
     document.addEventListener("keyup", (event) => handleKeyup(event.key));
     document.addEventListener("mousedown", (event) =>
@@ -78,4 +85,9 @@ export default class MandelbrotExplorer {
       this.state.handleWorkerMessage(event);
     };
   }
+}
+
+function toggleVisibility(show: boolean) {
+  let text = document.getElementById("iterations-text");
+  if (text) text.style.opacity = show ? "1" : "0";
 }
