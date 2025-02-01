@@ -1,12 +1,17 @@
-import { ComplexPoint } from "./points.js";
+import { CanvasPoint, ComplexPoint } from "./points.js";
+import Tile from "./tile.js";
 
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
+const rows = 1;
+const cols = 1;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let isWorkerInitialized = false;
 let isRenderInProgress = false;
 let attempts = 0;
 let scheduledRenderTimer: ReturnType<typeof setTimeout>;
+let renderId = 0;
+let lastResetId = renderId;
 
 export const worker = new Worker(new URL("./worker.js", import.meta.url), {
   type: "module",
@@ -35,6 +40,7 @@ export default class State {
   bFactor = 1;
   canvas = canvas;
   ctx = ctx;
+  tiles: Tile[] = [];
 
   constructor(grayscale: number) {
     this.grayscale = grayscale;
@@ -134,6 +140,7 @@ export default class State {
   }
 
   reset() {
+    lastResetId = renderId;
     let width = 0.8 * document.body.clientWidth;
     let height = 0.8 * document.body.clientHeight;
     const phi = this.ratio;
@@ -169,6 +176,8 @@ export default class State {
     if (iterationsText) {
       iterationsText.textContent = `Max iterations: ${this.maxIterations}`;
     }
+
+    this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
   }
 
   render(): boolean {
@@ -188,26 +197,45 @@ export default class State {
     }
     isRenderInProgress = true;
 
-    worker.postMessage({
-      type: "render",
-      width: this.width,
-      height: this.height,
-      maxIterations: this.maxIterations,
-      fullMaxIterations: this.fullMaxIterations,
-      mid: this.mid,
-      zoom: this.zoom,
-      ratio: this.ratio,
-      rFactor: this.rFactor,
-      gFactor: this.gFactor,
-      bFactor: this.bFactor,
-      power: this.power,
-      grayscale: this.grayscale,
+    // const topLeftCorner = new CanvasPoint(0, 0, this).toComplexPoint();
+
+    this.tiles.forEach((tile) => {
+      worker.postMessage({
+        type: "render",
+        id: renderId,
+        width: tile.width,
+        height: tile.height,
+        maxIterations: this.maxIterations,
+        fullMaxIterations: this.fullMaxIterations,
+        x: tile.x,
+        y: tile.y,
+        mid: new CanvasPoint(
+          tile.x + tile.width / 2,
+          tile.y + tile.height / 2,
+          this
+        ).toComplexPoint(),
+        zoom: this.zoom,
+        ratio: tile.width / tile.height,
+        rFactor: this.rFactor,
+        gFactor: this.gFactor,
+        bFactor: this.bFactor,
+        power: this.power,
+        grayscale: this.grayscale,
+      });
     });
+
+    renderId++;
+
     return true;
   }
 
   handleWorkerMessage(event: any) {
     const data = event.data;
+    const { id, x, y } = event.data;
+    if (id < renderId - 1) {
+      // if (id < lastResetId) {
+      return;
+    }
 
     if (data.type === "init") {
       isWorkerInitialized = true;
@@ -223,7 +251,7 @@ export default class State {
       }
 
       ctx.resetTransform();
-      ctx.drawImage(data.imageBitmap, 0, 0);
+      ctx.drawImage(data.imageBitmap, x, y);
       isRenderInProgress = false;
     }
   }

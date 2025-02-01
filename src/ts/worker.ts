@@ -11,10 +11,13 @@ init().then(() => {
     const data = message.data;
 
     const {
+      id,
       width,
       height,
       maxIterations,
       fullMaxIterations,
+      x,
+      y,
       mid,
       zoom,
       ratio,
@@ -56,7 +59,7 @@ init().then(() => {
 
     createImageBitmap(imageData).then((imageBitmap) => {
       (self as DedicatedWorkerGlobalScope).postMessage(
-        { type: "render", imageBitmap },
+        { type: "render", id, x, y, imageBitmap },
         [imageBitmap]
       );
     });

@@ -30,7 +30,8 @@
   - Drag a point to move it to a new location on the canvas.
 - Buttons.
   - RAINBOW to toggle color/grayscale.
-  - `+` and `-` to the adjust maximum number of iterations to check before coloring a pixel black.
+  - `⟲` to rewind or fast-forward zoom.
+  - `+` and `-` to the adjust maximum number of iterations to check before coloring a pixel black. Higher values give greater precision.
   - `˄` and `˅` to increment/decrement the power to which each number in the sequence is raised.
 
 Resizing the window also resets the view.
