@@ -11,13 +11,16 @@ init().then(() => {
     const data = message.data;
 
     const {
-      id,
-      width,
-      height,
+      worker_id,
+      render_id,
+      tile_width,
+      tile_height,
+      canvas_width,
+      canvas_height,
       maxIterations,
       fullMaxIterations,
-      x,
-      y,
+      tile_left,
+      tile_top,
       mid,
       zoom,
       ratio,
@@ -30,10 +33,14 @@ init().then(() => {
 
     const pixels = new Uint8ClampedArray(
       calculate_mandelbrot(
-        width,
-        height,
+        tile_width,
+        tile_height,
+        canvas_width,
+        canvas_height,
         maxIterations,
         fullMaxIterations,
+        tile_left,
+        tile_top,
         mid.x,
         mid.y,
         zoom,
@@ -46,20 +53,27 @@ init().then(() => {
       )
     );
 
-    if (pixels.length !== width * height * 4) {
+    if (pixels.length !== tile_width * tile_height * 4) {
       console.error(
         `Lengths out of sync: pixels.length: ${
           pixels.length
-        }, width * height * 4: ${width * height * 4}`
+        }, tile_width * tile_height * 4: ${tile_width * tile_height * 4}`
       );
       return;
     }
 
-    const imageData = new ImageData(pixels, width, height);
+    const imageData = new ImageData(pixels, tile_width, tile_height);
 
     createImageBitmap(imageData).then((imageBitmap) => {
       (self as DedicatedWorkerGlobalScope).postMessage(
-        { type: "render", id, x, y, imageBitmap },
+        {
+          type: "render",
+          worker_id,
+          render_id,
+          tile_left,
+          tile_top,
+          imageBitmap,
+        },
         [imageBitmap]
       );
     });

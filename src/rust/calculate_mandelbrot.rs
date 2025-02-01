@@ -3,10 +3,14 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn calculate_mandelbrot(
-    width: usize,
-    height: usize,
+    tile_width: usize,
+    tile_height: usize,
+    cansvas_width: usize,
+    canvas_height: usize,
     max_iterations: usize,
     full_max_iterations: usize,
+    tile_left: f64,
+    tile_top: f64,
     mid_x: f64,
     mid_y: f64,
     zoom: f64,
@@ -18,39 +22,45 @@ pub fn calculate_mandelbrot(
     grayscale: f64,
 ) -> Vec<u8> {
     if is_perimeter_all_black(
-        width,
-        height,
+        tile_width,
+        tile_height,
+        cansvas_width,
+        canvas_height,
         max_iterations,
+        tile_left,
+        tile_top,
         mid_x,
         mid_y,
         zoom,
         ratio,
         power,
     ) {
-        return vec![[0, 0, 0, 255]; width * height]
+        return vec![[0, 0, 0, 255]; tile_width * tile_height]
             .into_iter()
             .flatten()
             .collect();
     }
 
-    (0..width * height)
+    (0..tile_width * tile_height)
         .into_iter()
         .map(|index| {
-            let x = index % width;
-            let y = index / width;
+            let x = index % tile_width;
+            let y = index / tile_width;
 
-            let cx = ratio * (x as f64 / width as f64 - 0.5) * 3.0 * zoom + mid_x;
-            let cy = -(y as f64 / height as f64 - 0.5) * 3.0 * zoom + mid_y;
-
-            let c = Complex::new(cx, cy);
-            let mut z = Complex::new(0.0, 0.0);
-
-            let mut escape_iteration = 0;
-
-            while escape_iteration < max_iterations && z.norm_sqr() < 4.0 {
-                z = z.powi(power) + c;
-                escape_iteration += 1;
-            }
+            let escape_iteration = get_escape_iteration(
+                x,
+                y,
+                max_iterations,
+                cansvas_width,
+                canvas_height,
+                ratio,
+                tile_left,
+                tile_top,
+                mid_x,
+                mid_y,
+                zoom,
+                power,
+            );
 
             if grayscale != 0.0 {
                 shade(
@@ -78,16 +88,23 @@ fn get_escape_iteration(
     x: usize,
     y: usize,
     max_iterations: usize,
-    width: usize,
-    height: usize,
+    canvas_width: usize,
+    canvas_height: usize,
     ratio: f64,
+    left: f64,
+    top: f64,
     mid_x: f64,
     mid_y: f64,
     zoom: f64,
     power: i32,
 ) -> usize {
-    let cx = ratio * (x as f64 / width as f64 - 0.5) * 3.0 * zoom + mid_x;
-    let cy = -(y as f64 / height as f64 - 0.5) * 3.0 * zoom + mid_y;
+    // Calculate the absolute pixel position in the full canvas
+    let absolute_x = left + (x as f64);
+    let absolute_y = top + (y as f64);
+
+    // Use the absolute position to calculate the complex coordinates
+    let cx = mid_x + ratio * (absolute_x as f64 / canvas_width as f64 - 0.5) * 3.0 * zoom;
+    let cy = mid_y - (absolute_y as f64 / canvas_height as f64 - 0.5) * 3.0 * zoom;
 
     let c = Complex::new(cx, cy);
     let mut z = Complex::new(0.0, 0.0);
@@ -104,23 +121,29 @@ fn get_escape_iteration(
 
 fn is_perimeter_all_black(
     max_iterations: usize,
-    width: usize,
-    height: usize,
+    tile_width: usize,
+    tile_height: usize,
+    canvas_width: usize,
+    canvas_height: usize,
     ratio: f64,
+    tile_left: f64,
+    tile_top: f64,
     mid_x: f64,
     mid_y: f64,
     zoom: f64,
     power: i32,
 ) -> bool {
-    for x in 0..width {
+    for x in 0..tile_width {
         let y: usize = 0;
         if get_escape_iteration(
             x,
             y,
             max_iterations,
-            width,
-            height,
+            canvas_width,
+            canvas_height,
             ratio,
+            tile_left,
+            tile_top,
             mid_x,
             mid_y,
             zoom,
@@ -131,15 +154,17 @@ fn is_perimeter_all_black(
         }
     }
 
-    for y in 0..height {
+    for y in 0..tile_height {
         let x: usize = 0;
         if get_escape_iteration(
             x,
             y,
             max_iterations,
-            width,
-            height,
+            canvas_width,
+            canvas_height,
             ratio,
+            tile_left,
+            tile_top,
             mid_x,
             mid_y,
             zoom,
@@ -150,15 +175,17 @@ fn is_perimeter_all_black(
         }
     }
 
-    for x in 0..width {
-        let y: usize = height - 1;
+    for x in 0..tile_width {
+        let y: usize = tile_height - 1;
         if get_escape_iteration(
             x,
             y,
             max_iterations,
-            width,
-            height,
+            canvas_width,
+            canvas_height,
             ratio,
+            tile_left,
+            tile_top,
             mid_x,
             mid_y,
             zoom,
@@ -169,15 +196,17 @@ fn is_perimeter_all_black(
         }
     }
 
-    for y in 0..height {
-        let x: usize = width - 1;
+    for y in 0..tile_height {
+        let x: usize = tile_width - 1;
         if get_escape_iteration(
             x,
             y,
             max_iterations,
-            width,
-            height,
+            canvas_width,
+            canvas_height,
             ratio,
+            tile_left,
+            tile_top,
             mid_x,
             mid_y,
             zoom,

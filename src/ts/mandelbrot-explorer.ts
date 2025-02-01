@@ -9,7 +9,7 @@ import {
   handleMousedown,
 } from "./event-handlers/mouse-handlers.js";
 import handleButtons, { Replayer } from "./event-handlers/button-handlers.js";
-import State, { worker } from "./state.js";
+import State, { worker1, worker2 } from "./state.js";
 
 export default class MandelbrotExplorer {
   state: State;
@@ -81,7 +81,11 @@ export default class MandelbrotExplorer {
       handleKeys(timestamp, this.state);
     });
 
-    worker.onmessage = (event) => {
+    worker1.onmessage = (event) => {
+      this.state.handleWorkerMessage(event);
+    };
+
+    worker2.onmessage = (event) => {
       this.state.handleWorkerMessage(event);
     };
   }

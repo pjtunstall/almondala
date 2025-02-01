@@ -1,19 +1,22 @@
-import { CanvasPoint, ComplexPoint } from "./points.js";
+import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
 const rows = 1;
-const cols = 1;
+const cols = 2;
 let cooldownTimer = null;
-let isWorkerInitialized = false;
+let workersYetToInitialize = 2;
 let isRenderInProgress = false;
 let attempts = 0;
 let scheduledRenderTimer;
 let renderId = 0;
-let lastResetId = renderId;
-export const worker = new Worker(new URL("./worker.js", import.meta.url), {
+export const worker1 = new Worker(new URL("./worker.js", import.meta.url), {
     type: "module",
 });
+export const worker2 = new Worker(new URL("./worker.js", import.meta.url), {
+    type: "module",
+});
+const workers = [worker1, worker2];
 export const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 document.body.appendChild(canvas);
@@ -119,7 +122,6 @@ export default class State {
         }, 256);
     }
     reset() {
-        lastResetId = renderId;
         let width = 0.8 * document.body.clientWidth;
         let height = 0.8 * document.body.clientHeight;
         const phi = this.ratio;
@@ -152,8 +154,8 @@ export default class State {
         this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
     }
     render() {
-        if (!isWorkerInitialized) {
-            console.error("Request to render before worker is initialized. Attempt:", ++attempts);
+        if (workersYetToInitialize > 0) {
+            console.error("Request to render before workers are initialized. Attempt:", ++attempts);
             setTimeout(() => this.render(), 360);
             return false;
         }
@@ -163,48 +165,48 @@ export default class State {
             return false;
         }
         isRenderInProgress = true;
-        // const topLeftCorner = new CanvasPoint(0, 0, this).toComplexPoint();
-        this.tiles.forEach((tile) => {
-            worker.postMessage({
+        for (let i = 0; i < workers.length; i++) {
+            workers[i].postMessage({
                 type: "render",
-                id: renderId,
-                width: tile.width,
-                height: tile.height,
+                worker_id: i,
+                render_id: renderId,
+                tile_width: this.tiles[i].width,
+                tile_height: this.tiles[i].height,
+                canvas_width: this.width,
+                canvas_height: this.height,
                 maxIterations: this.maxIterations,
                 fullMaxIterations: this.fullMaxIterations,
-                x: tile.x,
-                y: tile.y,
-                mid: new CanvasPoint(tile.x + tile.width / 2, tile.y + tile.height / 2, this).toComplexPoint(),
+                tile_left: this.tiles[i].x,
+                tile_top: this.tiles[i].y,
+                mid: this.mid,
                 zoom: this.zoom,
-                ratio: tile.width / tile.height,
+                ratio: this.ratio,
                 rFactor: this.rFactor,
                 gFactor: this.gFactor,
                 bFactor: this.bFactor,
                 power: this.power,
                 grayscale: this.grayscale,
             });
-        });
+        }
         renderId++;
         return true;
     }
     handleWorkerMessage(event) {
         const data = event.data;
-        const { id, x, y } = event.data;
-        if (id < renderId - 1) {
-            // if (id < lastResetId) {
+        console.log(data);
+        const { worker_id, render_id, tile_left, tile_top } = event.data;
+        if (render_id < renderId - 1) {
             return;
         }
         if (data.type === "init") {
-            isWorkerInitialized = true;
-            this.render();
+            workersYetToInitialize--;
+            if (workersYetToInitialize === 0) {
+                this.render();
+            }
         }
         if (data.type === "render") {
-            if (!isWorkerInitialized) {
-                console.error("Worker is not initialized but still has sent us a rendered message. This shouldn't happen.");
-                return;
-            }
             ctx.resetTransform();
-            ctx.drawImage(data.imageBitmap, x, y);
+            ctx.drawImage(data.imageBitmap, tile_left, tile_top);
             isRenderInProgress = false;
         }
     }
