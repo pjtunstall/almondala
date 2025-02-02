@@ -18,6 +18,8 @@ export default function handleButtons(
 
   target.blur();
 
+  let exponentText;
+
   switch (target.id) {
     case "color":
       state.changeColor();
@@ -55,11 +57,19 @@ export default function handleButtons(
     case "power-up":
       zoomThatReplayStartsAt = 1;
       state.incrementPowerBy(1);
+      exponentText = document.getElementById("exponent-text");
+      if (exponentText) {
+        exponentText.textContent = `Exponent: ${state.power}`;
+      }
       break;
     case "power-down":
       zoomThatReplayStartsAt = 1;
       if (state.power > 2) {
         state.incrementPowerBy(-1);
+      }
+      exponentText = document.getElementById("exponent-text");
+      if (exponentText) {
+        exponentText.textContent = `Exponent: ${state.power}`;
       }
       break;
     case "info":

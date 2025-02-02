@@ -29,7 +29,7 @@ canvas.visible {
   opacity: 1;
 }
 
-#iterations-text {
+.text {
   position: absolute;
   top: 1.25vmin;
   left: 1.25vmin;
@@ -114,7 +114,7 @@ canvas.visible {
   transform: translate(-50%, -50%);
   background-color: rgb(240, 240, 240);
   padding: 8vmin;
-  border-radius: 1vmin;
+  border-radius: 0.5vmin;
   font-size: 3vmin;
   border: 1vmin solid var(--primary-color);
   color: var(--dark-bg);
