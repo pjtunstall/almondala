@@ -3,29 +3,20 @@ import { handleSingleClick, handleDoubleClick, handleMousedown, } from "./event-
 import handleButtons, { Replayer } from "./event-handlers/button-handlers.js";
 import State, { worker1, worker2 } from "./state.js";
 export default class MandelbrotExplorer {
-    state;
+    state = new State(23);
     replayer = new Replayer();
     constructor() {
-        this.state = new State(23);
         this.state.reset();
-        const replayText = document.createElement("div");
-        replayText.id = "replay-text";
-        replayText.classList.add("text");
-        replayText.textContent = "Replay zoom out";
-        document.body.appendChild(replayText);
+        const replayText = document.getElementById("replay-text");
+        const iterationsText = document.getElementById("iterations-text");
+        const exponentText = document.getElementById("exponent-text");
+        if (!replayText || !iterationsText || !exponentText) {
+            console.error("Couldn't find text elements");
+            return;
+        }
         const replay = document.getElementById("replay");
         replay?.addEventListener("mouseenter", () => toggleVisibility(replayText, true));
         replay?.addEventListener("mouseleave", () => toggleVisibility(replayText, false));
-        const iterationsText = document.createElement("div");
-        iterationsText.id = "iterations-text";
-        iterationsText.classList.add("text");
-        iterationsText.textContent = `Max iterations: ${this.state.maxIterations}`;
-        document.body.appendChild(iterationsText);
-        const exponentText = document.createElement("div");
-        exponentText.id = "exponent-text";
-        exponentText.classList.add("text");
-        exponentText.textContent = `Exponent: ${this.state.power}`;
-        document.body.appendChild(exponentText);
         document.getElementById("controls")?.addEventListener("click", (event) => {
             handleButtons(event, this.state, this.replayer);
         });
@@ -59,7 +50,6 @@ export default class MandelbrotExplorer {
         window.addEventListener("resize", async () => {
             this.state.requestReset();
         });
-        // Initialize variables associated with replay.
         this.replayer.resetReplayVariables();
         // Stop replay loop if new user input should interrupt it.
         const replayer = this.replayer;
