@@ -120,6 +120,11 @@ export default class State {
     this.zoom = 1;
     this.mid.x = this.power === 2 ? -0.6 : 0;
     this.mid.y = 0;
+
+    const exponentText = document.getElementById("exponent-text");
+    if (exponentText) {
+      exponentText.textContent = `Exponent: ${this.power}`;
+    }
   }
 
   requestReset() {
@@ -175,12 +180,17 @@ export default class State {
     this.width = intrinsicWidth;
     this.height = intrinsicHeight;
 
+    this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
+
     const iterationsText = document.getElementById("iterations-text");
     if (iterationsText) {
       iterationsText.textContent = `Max iterations: ${this.maxIterations}`;
     }
 
-    this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
+    const exponentText = document.getElementById("exponent-text");
+    if (exponentText) {
+      exponentText.textContent = `Exponent: ${this.power}`;
+    }
   }
 
   render(): boolean {
