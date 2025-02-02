@@ -198,22 +198,46 @@ export default class State {
         requestId++;
         return true;
     }
+    renderResults = {};
+    pendingRenders = new Set();
     handleWorkerMessage(event) {
         const data = event.data;
-        const { renderId, tileLeft, tileTop } = event.data;
-        if (renderId < requestId - 1) {
-            return;
-        }
+        const { renderId, tileLeft, tileTop } = data;
+        // if (renderId < requestId - 1) {
+        //   return;
+        // }
         if (data.type === "init") {
             workersYetToInitialize--;
             if (workersYetToInitialize === 0) {
                 this.render();
             }
+            return;
         }
         if (data.type === "render") {
-            ctx.resetTransform();
-            ctx.drawImage(data.imageBitmap, tileLeft, tileTop);
-            isRenderInProgress = false;
+            console.log(`Received renderId ${renderId} from worker, tileLeft: ${tileLeft}`);
+            // Ensure renderResults object is initialized for the current renderId
+            if (!this.renderResults[renderId]) {
+                this.renderResults[renderId] = {};
+            }
+            if (tileLeft === 0) {
+                this.renderResults[renderId].left = data.imageBitmap;
+            }
+            else {
+                this.renderResults[renderId].right = data.imageBitmap;
+            }
+            if (!this.pendingRenders.has(renderId)) {
+                this.pendingRenders.add(renderId);
+            }
+            if (this.renderResults[renderId].left &&
+                this.renderResults[renderId].right) {
+                console.log(`Rendering synchronized renderId ${renderId}`);
+                ctx.resetTransform();
+                ctx.drawImage(this.renderResults[renderId].left, 0, tileTop);
+                ctx.drawImage(this.renderResults[renderId].right, tileLeft, tileTop);
+                delete this.renderResults[renderId];
+                this.pendingRenders.delete(renderId);
+                isRenderInProgress = false;
+            }
         }
     }
 }

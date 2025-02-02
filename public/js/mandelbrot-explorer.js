@@ -51,7 +51,7 @@ export default class MandelbrotExplorer {
             this.state.requestReset();
         });
         this.replayer.resetReplayVariables();
-        // Stop replay loop if new user input should interrupt it.
+        // Stop replay loop if there's any new user input that should interrupt it.
         const replayer = this.replayer;
         ["click", "keydown", "resize"].forEach((eventType) => window.addEventListener(eventType, (event) => {
             const target = event.target;
