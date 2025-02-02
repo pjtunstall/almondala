@@ -9,7 +9,7 @@ let workersYetToInitialize = 2;
 let isRenderInProgress = false;
 let attempts = 0;
 let scheduledRenderTimer;
-let renderId = 0;
+let requestId = 0;
 export const worker1 = new Worker(new URL("./worker.js", import.meta.url), {
     type: "module",
 });
@@ -168,16 +168,15 @@ export default class State {
         for (let i = 0; i < workers.length; i++) {
             workers[i].postMessage({
                 type: "render",
-                worker_id: i,
-                render_id: renderId,
-                tile_width: this.tiles[i].width,
-                tile_height: this.tiles[i].height,
-                canvas_width: this.width,
-                canvas_height: this.height,
+                requestId: requestId,
+                tileWidth: this.tiles[i].width,
+                tileHeight: this.tiles[i].height,
+                canvasWidth: this.width,
+                canvasHeight: this.height,
                 maxIterations: this.maxIterations,
                 fullMaxIterations: this.fullMaxIterations,
-                tile_left: this.tiles[i].x,
-                tile_top: this.tiles[i].y,
+                tileLeft: this.tiles[i].x,
+                tileTop: this.tiles[i].y,
                 mid: this.mid,
                 zoom: this.zoom,
                 ratio: this.ratio,
@@ -188,16 +187,15 @@ export default class State {
                 grayscale: this.grayscale,
             });
         }
-        renderId++;
+        requestId++;
         return true;
     }
     handleWorkerMessage(event) {
         const data = event.data;
-        console.log(data);
-        const { render_id, tile_left, tile_top } = event.data;
-        // if (render_id < renderId - 1) {
-        //   return;
-        // }
+        const { renderId, tileLeft, tileTop } = event.data;
+        if (renderId < requestId - 1) {
+            return;
+        }
         if (data.type === "init") {
             workersYetToInitialize--;
             if (workersYetToInitialize === 0) {
@@ -206,7 +204,7 @@ export default class State {
         }
         if (data.type === "render") {
             ctx.resetTransform();
-            ctx.drawImage(data.imageBitmap, tile_left, tile_top);
+            ctx.drawImage(data.imageBitmap, tileLeft, tileTop);
             isRenderInProgress = false;
         }
     }

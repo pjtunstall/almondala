@@ -22,7 +22,6 @@ export default class Tile {
             for (let col = 0; col < numCols; col++) {
                 let x = col * baseColumnWidth + Math.min(col, extraWidth); // Add 1 extra pixel for the first `extraWidth` columns
                 let tileWidth = baseColumnWidth + (col < extraWidth ? 1 : 0); // Columns get 1 extra pixel if `col < extraWidth`
-                console.log(x, y, tileWidth, tileHeight, row);
                 yield new Tile(x, y, tileWidth, tileHeight, row);
             }
         }

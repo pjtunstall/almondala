@@ -11,16 +11,15 @@ init().then(() => {
     const data = message.data;
 
     const {
-      worker_id,
-      render_id,
-      tile_width,
-      tile_height,
-      canvas_width,
-      canvas_height,
+      requestId,
+      tileWidth,
+      tileHeight,
+      canvasWidth,
+      canvasHeight,
       maxIterations,
       fullMaxIterations,
-      tile_left,
-      tile_top,
+      tileLeft,
+      tileTop,
       mid,
       zoom,
       ratio,
@@ -33,14 +32,14 @@ init().then(() => {
 
     const pixels = new Uint8ClampedArray(
       calculate_mandelbrot(
-        tile_width,
-        tile_height,
-        canvas_width,
-        canvas_height,
+        tileWidth,
+        tileHeight,
+        canvasWidth,
+        canvasHeight,
         maxIterations,
         fullMaxIterations,
-        tile_left,
-        tile_top,
+        tileLeft,
+        tileTop,
         mid.x,
         mid.y,
         zoom,
@@ -53,25 +52,24 @@ init().then(() => {
       )
     );
 
-    if (pixels.length !== tile_width * tile_height * 4) {
+    if (pixels.length !== tileWidth * tileHeight * 4) {
       console.error(
         `Lengths out of sync: pixels.length: ${
           pixels.length
-        }, tile_width * tile_height * 4: ${tile_width * tile_height * 4}`
+        }, tile_width * tile_height * 4: ${tileWidth * tileHeight * 4}`
       );
       return;
     }
 
-    const imageData = new ImageData(pixels, tile_width, tile_height);
+    const imageData = new ImageData(pixels, tileWidth, tileHeight);
 
     createImageBitmap(imageData).then((imageBitmap) => {
       (self as DedicatedWorkerGlobalScope).postMessage(
         {
           type: "render",
-          worker_id,
-          render_id,
-          tile_left,
-          tile_top,
+          renderId: requestId,
+          tileLeft,
+          tileTop,
           imageBitmap,
         },
         [imageBitmap]
