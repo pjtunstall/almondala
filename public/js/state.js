@@ -194,10 +194,10 @@ export default class State {
     handleWorkerMessage(event) {
         const data = event.data;
         console.log(data);
-        const { worker_id, render_id, tile_left, tile_top } = event.data;
-        if (render_id < renderId - 1) {
-            return;
-        }
+        const { render_id, tile_left, tile_top } = event.data;
+        // if (render_id < renderId - 1) {
+        //   return;
+        // }
         if (data.type === "init") {
             workersYetToInitialize--;
             if (workersYetToInitialize === 0) {

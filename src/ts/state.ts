@@ -229,13 +229,13 @@ export default class State {
     return true;
   }
 
-  handleWorkerMessage(event: any) {
+  handleWorkerMessage(event: MessageEvent) {
     const data = event.data;
     console.log(data);
     const { render_id, tile_left, tile_top } = event.data;
-    if (render_id < renderId - 1) {
-      return;
-    }
+    // if (render_id < renderId - 1) {
+    //   return;
+    // }
 
     if (data.type === "init") {
       workersYetToInitialize--;
