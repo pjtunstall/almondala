@@ -14,9 +14,8 @@ pub fn is_perimeter_all_black(
     zoom: f64,
     power: i32,
 ) -> bool {
-    let top = check_top(
+    let top = check_edge(
         max_iterations,
-        tile_width,
         canvas_width,
         canvas_height,
         ratio,
@@ -26,11 +25,13 @@ pub fn is_perimeter_all_black(
         mid_y,
         zoom,
         power,
+        0,
+        0,
+        tile_width - 1,
+        0,
     );
-    let bottom = check_bottom(
+    let bottom = check_edge(
         max_iterations,
-        tile_width,
-        tile_height,
         canvas_width,
         canvas_height,
         ratio,
@@ -40,10 +41,13 @@ pub fn is_perimeter_all_black(
         mid_y,
         zoom,
         power,
+        0,
+        tile_height - 1,
+        tile_width - 1,
+        tile_height - 1,
     );
-    let left = check_left(
+    let left = check_edge(
         max_iterations,
-        tile_height,
         canvas_width,
         canvas_height,
         ratio,
@@ -53,11 +57,13 @@ pub fn is_perimeter_all_black(
         mid_y,
         zoom,
         power,
+        0,
+        0,
+        0,
+        tile_height - 1,
     );
-    let right = check_right(
+    let right = check_edge(
         max_iterations,
-        tile_width,
-        tile_height,
         canvas_width,
         canvas_height,
         ratio,
@@ -67,14 +73,17 @@ pub fn is_perimeter_all_black(
         mid_y,
         zoom,
         power,
+        tile_width - 1,
+        0,
+        tile_width - 1,
+        tile_height - 1,
     );
 
     top && bottom && left && right
 }
 
-fn check_top(
+fn check_edge(
     max_iterations: usize,
-    tile_width: usize,
     canvas_width: usize,
     canvas_height: usize,
     ratio: f64,
@@ -84,138 +93,30 @@ fn check_top(
     mid_y: f64,
     zoom: f64,
     power: i32,
+    start_x: usize,
+    start_y: usize,
+    end_x: usize,
+    end_y: usize,
 ) -> bool {
-    for x in 0..tile_width {
-        let y: usize = 0;
-        if escape::get_escape_iteration(
-            x,
-            y,
-            max_iterations,
-            canvas_width,
-            canvas_height,
-            ratio,
-            tile_left,
-            tile_top,
-            mid_x,
-            mid_y,
-            zoom,
-            power,
-        ) < max_iterations
-        {
-            return false;
-        }
-    }
-
-    true
-}
-
-fn check_bottom(
-    max_iterations: usize,
-    tile_width: usize,
-    tile_height: usize,
-    canvas_width: usize,
-    canvas_height: usize,
-    ratio: f64,
-    tile_left: f64,
-    tile_top: f64,
-    mid_x: f64,
-    mid_y: f64,
-    zoom: f64,
-    power: i32,
-) -> bool {
-    for x in 0..tile_width {
-        let y: usize = tile_height - 1;
-        if escape::get_escape_iteration(
-            x,
-            y,
-            max_iterations,
-            canvas_width,
-            canvas_height,
-            ratio,
-            tile_left,
-            tile_top,
-            mid_x,
-            mid_y,
-            zoom,
-            power,
-        ) < max_iterations
-        {
-            return false;
-        }
-    }
-
-    true
-}
-
-fn check_left(
-    max_iterations: usize,
-    tile_height: usize,
-    canvas_width: usize,
-    canvas_height: usize,
-    ratio: f64,
-    tile_left: f64,
-    tile_top: f64,
-    mid_x: f64,
-    mid_y: f64,
-    zoom: f64,
-    power: i32,
-) -> bool {
-    for y in 0..tile_height {
-        let x: usize = 0;
-        if escape::get_escape_iteration(
-            x,
-            y,
-            max_iterations,
-            canvas_width,
-            canvas_height,
-            ratio,
-            tile_left,
-            tile_top,
-            mid_x,
-            mid_y,
-            zoom,
-            power,
-        ) < max_iterations
-        {
-            return false;
-        }
-    }
-
-    true
-}
-
-fn check_right(
-    max_iterations: usize,
-    tile_width: usize,
-    tile_height: usize,
-    canvas_width: usize,
-    canvas_height: usize,
-    ratio: f64,
-    tile_left: f64,
-    tile_top: f64,
-    mid_x: f64,
-    mid_y: f64,
-    zoom: f64,
-    power: i32,
-) -> bool {
-    for y in 0..tile_height {
-        let x: usize = tile_width - 1;
-        if escape::get_escape_iteration(
-            x,
-            y,
-            max_iterations,
-            canvas_width,
-            canvas_height,
-            ratio,
-            tile_left,
-            tile_top,
-            mid_x,
-            mid_y,
-            zoom,
-            power,
-        ) < max_iterations
-        {
-            return false;
+    for x in start_x..=end_x {
+        for y in start_y..=end_y {
+            if escape::get_escape_iteration(
+                x,
+                y,
+                max_iterations,
+                canvas_width,
+                canvas_height,
+                ratio,
+                tile_left,
+                tile_top,
+                mid_x,
+                mid_y,
+                zoom,
+                power,
+            ) < max_iterations
+            {
+                return false;
+            }
         }
     }
 
