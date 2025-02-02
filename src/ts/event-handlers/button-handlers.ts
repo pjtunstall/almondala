@@ -101,6 +101,12 @@ export class Replayer {
       !replayOut && state.zoom <= zoomThatReplayStartsAt;
     if (zoomedAllTheWayOut || zoomedAllTheWayIn) {
       replayOut = !replayOut;
+      const replayText = document.getElementById("replay-text");
+      if (replayText) {
+        replayText.textContent = replayOut
+          ? "Replay zoom out"
+          : "Replay zoom in";
+      }
       return;
     }
     requestAnimationFrame((timestamp) =>
@@ -112,6 +118,7 @@ export class Replayer {
     prev = timestamp;
 
     replayOut ? state.zoomOut() : state.zoomIn();
+
     state.fakeRender(replayOut ? 0.96 : 1 / 0.96, 0, 0);
     state.render();
   }

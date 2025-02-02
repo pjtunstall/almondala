@@ -22,7 +22,7 @@ export default class MandelbrotExplorer {
     const replayText = document.createElement("div");
     replayText.id = "replay-text";
     replayText.classList.add("text");
-    replayText.textContent = "Replay zoom";
+    replayText.textContent = "Replay zoom out";
     document.body.appendChild(replayText);
 
     const replay = document.getElementById("replay");
