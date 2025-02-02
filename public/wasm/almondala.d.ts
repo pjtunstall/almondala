@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-export function calculate_mandelbrot(tile_width: number, tile_height: number, cansvas_width: number, canvas_height: number, max_iterations: number, full_max_iterations: number, tile_left: number, tile_top: number, mid_x: number, mid_y: number, zoom: number, ratio: number, r_factor: number, g_factor: number, b_factor: number, power: number, grayscale: number): Uint8Array;
+export function calculate_mandelbrot(tile_width: number, tile_height: number, canvas_width: number, canvas_height: number, max_iterations: number, full_max_iterations: number, tile_left: number, tile_top: number, mid_x: number, mid_y: number, zoom: number, ratio: number, r_factor: number, g_factor: number, b_factor: number, power: number, grayscale: number): Uint8Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 

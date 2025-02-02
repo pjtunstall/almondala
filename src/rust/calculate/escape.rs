@@ -1,22 +1,24 @@
 use num::complex::Complex;
 
-pub fn get_escape_iteration(
-    x: usize,
-    y: usize,
-    max_iterations: usize,
-    canvas_width: usize,
-    canvas_height: usize,
-    ratio: f64,
-    left: f64,
-    top: f64,
-    mid_x: f64,
-    mid_y: f64,
-    zoom: f64,
-    power: i32,
-) -> usize {
-    // Calculate the absolute pixel position in the full canvas
-    let absolute_x = left + (x as f64);
-    let absolute_y = top + (y as f64);
+use super::Params;
+
+pub fn get_escape_iteration(x: usize, y: usize, params: &Params) -> usize {
+    let Params {
+        canvas_width,
+        canvas_height,
+        max_iterations,
+        tile_left,
+        tile_top,
+        mid_x,
+        mid_y,
+        zoom,
+        ratio,
+        power,
+        ..
+    } = *params;
+
+    let absolute_x = tile_left + (x as f64);
+    let absolute_y = tile_top + (y as f64);
 
     // Use the absolute position to calculate the complex coordinates
     let cx = mid_x + ratio * (absolute_x as f64 / canvas_width as f64 - 0.5) * 3.0 * zoom;

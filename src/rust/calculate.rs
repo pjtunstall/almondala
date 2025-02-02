@@ -4,11 +4,26 @@ mod perimeter;
 
 use wasm_bindgen::prelude::*;
 
+pub struct Params {
+    max_iterations: usize,
+    tile_width: usize,
+    tile_height: usize,
+    canvas_width: usize,
+    canvas_height: usize,
+    ratio: f64,
+    tile_left: f64,
+    tile_top: f64,
+    mid_x: f64,
+    mid_y: f64,
+    zoom: f64,
+    power: i32,
+}
+
 #[wasm_bindgen]
 pub fn calculate_mandelbrot(
     tile_width: usize,
     tile_height: usize,
-    cansvas_width: usize,
+    canvas_width: usize,
     canvas_height: usize,
     max_iterations: usize,
     full_max_iterations: usize,
@@ -24,10 +39,10 @@ pub fn calculate_mandelbrot(
     power: i32,
     grayscale: f64,
 ) -> Vec<u8> {
-    if perimeter::is_perimeter_all_black(
+    let params = Params {
         tile_width,
         tile_height,
-        cansvas_width,
+        canvas_width,
         canvas_height,
         max_iterations,
         tile_left,
@@ -37,7 +52,9 @@ pub fn calculate_mandelbrot(
         zoom,
         ratio,
         power,
-    ) {
+    };
+
+    if perimeter::is_perimeter_all_black(&params) {
         return vec![[0, 0, 0, 255]; tile_width * tile_height]
             .into_iter()
             .flatten()
@@ -50,20 +67,7 @@ pub fn calculate_mandelbrot(
             let x = index % tile_width;
             let y = index / tile_width;
 
-            let escape_iteration = escape::get_escape_iteration(
-                x,
-                y,
-                max_iterations,
-                cansvas_width,
-                canvas_height,
-                ratio,
-                tile_left,
-                tile_top,
-                mid_x,
-                mid_y,
-                zoom,
-                power,
-            );
+            let escape_iteration = escape::get_escape_iteration(x, y, &params);
 
             if grayscale != 0.0 {
                 coloring::shade(
