@@ -5,9 +5,9 @@ const panDelta = 0.1;
 const rows = 1;
 const cols = 2;
 let cooldownTimer = null;
-let workersYetToInitialize = 2;
+// let workersYetToInitialize = 2;
 let isRenderInProgress = false;
-let attempts = 0;
+// let attempts = 0;
 let scheduledRenderTimer;
 let requestId = 0;
 export const worker1 = new Worker(new URL("./worker.js", import.meta.url), {
@@ -40,8 +40,16 @@ export default class State {
     canvas = canvas;
     ctx = ctx;
     tiles = [];
-    constructor(grayscale) {
+    initResolvers;
+    constructor(grayscale, initResolvers) {
+        this.initResolvers = initResolvers;
         this.grayscale = grayscale;
+        worker1.onmessage = (event) => {
+            this.handleWorkerMessage(event);
+        };
+        worker2.onmessage = (event) => {
+            this.handleWorkerMessage(event);
+        };
     }
     changeColor() {
         this.grayscale = this.grayscale === 0 ? this.initialGrayscale : 0;
@@ -110,7 +118,7 @@ export default class State {
             clearTimeout(cooldownTimer);
         cooldownTimer = setTimeout(() => {
             Object.assign(this, {
-                ...new State(this.grayscale),
+                ...new State(this.grayscale, this.initResolvers),
                 canvas: this.canvas,
                 ctx: this.ctx,
             });
@@ -162,11 +170,14 @@ export default class State {
         }
     }
     render() {
-        if (workersYetToInitialize > 0) {
-            console.error("Request to render before workers are initialized. Attempt:", ++attempts);
-            setTimeout(() => this.render(), 360);
-            return false;
-        }
+        // if (workersYetToInitialize > 0) {
+        //   console.error(
+        //     "Request to render before workers are initialized. Attempt:",
+        //     ++attempts
+        //   );
+        //   setTimeout(() => this.render(), 360);
+        //   return false;
+        // }
         if (isRenderInProgress) {
             clearTimeout(scheduledRenderTimer);
             scheduledRenderTimer = setTimeout(() => this.render(), 32);
@@ -207,15 +218,21 @@ export default class State {
         //   return;
         // }
         if (data.type === "init") {
-            workersYetToInitialize--;
-            if (workersYetToInitialize === 0) {
-                this.render();
+            // workersYetToInitialize--;
+            // if (workersYetToInitialize === 0) {
+            //   this.render();
+            // }
+            console.log("init received");
+            const resolver = this.initResolvers.pop();
+            if (!resolver) {
+                console.error("No resolver found");
+                return;
             }
+            resolver(data);
             return;
         }
         if (data.type === "render") {
             console.log(`Received renderId ${renderId} from worker, tileLeft: ${tileLeft}`);
-            // Ensure renderResults object is initialized for the current renderId
             if (!this.renderResults[renderId]) {
                 this.renderResults[renderId] = {};
             }

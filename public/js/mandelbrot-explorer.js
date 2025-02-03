@@ -1,12 +1,13 @@
 import { handleKeydown, handleKeyup, handleKeys, } from "./event-handlers/key-handlers.js";
 import { handleSingleClick, handleDoubleClick, handleMousedown, } from "./event-handlers/mouse-handlers.js";
 import handleButtons, { Replayer } from "./event-handlers/button-handlers.js";
-import State, { worker1, worker2 } from "./state.js";
 export default class MandelbrotExplorer {
-    state = new State(23);
+    state;
     replayer = new Replayer();
-    constructor() {
+    constructor(state) {
+        this.state = state;
         this.state.reset();
+        this.state.render();
         const replayText = document.getElementById("replay-text");
         const iterationsText = document.getElementById("iterations-text");
         const exponentText = document.getElementById("exponent-text");
@@ -67,12 +68,6 @@ export default class MandelbrotExplorer {
         requestAnimationFrame((timestamp) => {
             handleKeys(timestamp, this.state);
         });
-        worker1.onmessage = (event) => {
-            this.state.handleWorkerMessage(event);
-        };
-        worker2.onmessage = (event) => {
-            this.state.handleWorkerMessage(event);
-        };
     }
 }
 function toggleVisibility(element, show) {
