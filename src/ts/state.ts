@@ -94,7 +94,7 @@ export default class State {
     this.zoom *= ds;
   }
 
-  getWork(tile: Tile): Work {
+  private getWork(tile: Tile): Work {
     return {
       type: "render",
       resetId,
@@ -254,7 +254,7 @@ export default class State {
       });
   }
 
-  handleWorkerMessage(data: DataFromWorker) {
+  private handleWorkerMessage(data: DataFromWorker) {
     const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
 
     if (dataResetId !== resetId) {

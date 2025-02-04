@@ -54,7 +54,7 @@ export default class WorkerPool {
     }
   }
 
-  handleWorkerInitMessage(event: MessageEvent) {
+  private handleWorkerInitMessage(event: MessageEvent) {
     const data = event.data;
     if (data.type === "init") {
       const resolver = this.initResolvers.pop();
