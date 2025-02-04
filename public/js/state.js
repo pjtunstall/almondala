@@ -2,8 +2,8 @@ import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 4;
-const cols = 6;
+const rows = 1;
+const cols = 2;
 let cooldownTimer = null;
 export const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -65,6 +65,27 @@ export default class State {
         //   return;
         // }
         this.zoom *= ds;
+    }
+    getWork(tile) {
+        return {
+            type: "render",
+            tileWidth: tile.width,
+            tileHeight: tile.height,
+            canvasWidth: this.width,
+            canvasHeight: this.height,
+            maxIterations: this.maxIterations,
+            fullMaxIterations: this.fullMaxIterations,
+            tileLeft: tile.x,
+            tileTop: tile.y,
+            mid: this.mid,
+            zoom: this.zoom,
+            ratio: this.ratio,
+            rFactor: this.rFactor,
+            gFactor: this.gFactor,
+            bFactor: this.bFactor,
+            power: this.power,
+            grayscale: this.grayscale,
+        };
     }
     fakeRender(ds, dx, dy) {
         const width = canvas.width;
@@ -157,30 +178,14 @@ export default class State {
             this.wantsRender = true;
             return;
         }
-        let promises = this.tiles.map((tile) => this.workerPool.addWork({
-            type: "render",
-            tileWidth: tile.width,
-            tileHeight: tile.height,
-            canvasWidth: this.width,
-            canvasHeight: this.height,
-            maxIterations: this.maxIterations,
-            fullMaxIterations: this.fullMaxIterations,
-            tileLeft: tile.x,
-            tileTop: tile.y,
-            mid: this.mid,
-            zoom: this.zoom,
-            ratio: this.ratio,
-            rFactor: this.rFactor,
-            gFactor: this.gFactor,
-            bFactor: this.bFactor,
-            power: this.power,
-            grayscale: this.grayscale,
-        }));
+        let promises = this.tiles.map((tile) => this.workerPool.addWork(this.getWork(tile)));
         this.pendingRenders = Promise.all(promises)
             .then((responses) => {
-            for (let r of responses) {
-                this.handleWorkerMessage(r);
-            }
+            requestAnimationFrame(() => {
+                for (let r of responses) {
+                    this.handleWorkerMessage(r);
+                }
+            });
         })
             .catch((reason) => {
             console.error(reason);

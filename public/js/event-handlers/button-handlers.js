@@ -13,6 +13,11 @@ export default function handleButtons(event, state, replayer) {
             state.changeColor();
             break;
         case "replay":
+            if (replayer.running) {
+                replayer.running = false;
+                replayer.resetReplayVariables();
+                return;
+            }
             if (replayOut) {
                 zoomThatReplayStartsAt = state.zoom;
             }
@@ -82,6 +87,7 @@ export class Replayer {
                     ? "Replay zoom out"
                     : "Replay zoom in";
             }
+            this.running = false;
             return;
         }
         requestAnimationFrame((timestamp) => this.replay(timestamp, state, zoomThatReplayStartsAt));

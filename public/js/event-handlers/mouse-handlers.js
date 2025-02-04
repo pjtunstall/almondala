@@ -20,7 +20,7 @@ export function handleDrag(event, state) {
     state.mid = state.mid.add(dragDelta);
     dragStartX = currentX;
     dragStartY = currentY;
-    requestAnimationFrame(() => state.render());
+    state.render();
     return true;
 }
 function handleClick(event, state) {
@@ -37,13 +37,13 @@ export function handleSingleClick(event, state) {
     clearTimeout(singleClickTimeoutId);
     singleClickTimeoutId = window.setTimeout(() => {
         handleClick(event, state);
-        requestAnimationFrame(() => state.render());
+        state.render();
     }, 200);
 }
 export function handleDoubleClick(event, state) {
     clearTimeout(singleClickTimeoutId);
     handleClick(event, state);
     state.zoomInBig();
-    requestAnimationFrame(() => state.render());
+    state.render();
 }
 //# sourceMappingURL=mouse-handlers.js.map

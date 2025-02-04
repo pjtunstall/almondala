@@ -32,7 +32,7 @@ export function handleDrag(event: MouseEvent, state: State) {
   dragStartX = currentX;
   dragStartY = currentY;
 
-  requestAnimationFrame(() => state.render());
+  state.render();
 
   return true;
 }
@@ -52,7 +52,7 @@ export function handleSingleClick(event: MouseEvent, state: State) {
   clearTimeout(singleClickTimeoutId);
   singleClickTimeoutId = window.setTimeout(() => {
     handleClick(event, state);
-    requestAnimationFrame(() => state.render());
+    state.render();
   }, 200);
 }
 
@@ -60,5 +60,5 @@ export function handleDoubleClick(event: MouseEvent, state: State) {
   clearTimeout(singleClickTimeoutId);
   handleClick(event, state);
   state.zoomInBig();
-  requestAnimationFrame(() => state.render());
+  state.render();
 }

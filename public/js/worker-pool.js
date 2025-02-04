@@ -28,7 +28,7 @@ export default class WorkerPool {
                 console.error("'init' messsage received, but no resolver found");
                 return;
             }
-            resolver(data); // Successfully initialized.
+            resolver(data); // Worker reports that it's successfully initialized the Wasm module.
             return;
         }
         else {

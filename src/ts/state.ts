@@ -4,8 +4,8 @@ import WorkerPool, { Work } from "./worker-pool.js";
 
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 4;
-const cols = 6;
+const rows = 1;
+const cols = 2;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
@@ -79,6 +79,28 @@ export default class State {
     //   return;
     // }
     this.zoom *= ds;
+  }
+
+  getWork(tile: Tile): Work {
+    return {
+      type: "render",
+      tileWidth: tile.width,
+      tileHeight: tile.height,
+      canvasWidth: this.width,
+      canvasHeight: this.height,
+      maxIterations: this.maxIterations,
+      fullMaxIterations: this.fullMaxIterations,
+      tileLeft: tile.x,
+      tileTop: tile.y,
+      mid: this.mid,
+      zoom: this.zoom,
+      ratio: this.ratio,
+      rFactor: this.rFactor,
+      gFactor: this.gFactor,
+      bFactor: this.bFactor,
+      power: this.power,
+      grayscale: this.grayscale,
+    } as Work;
   }
 
   fakeRender(ds: number, dx: number, dy: number) {
@@ -190,32 +212,16 @@ export default class State {
     }
 
     let promises = this.tiles.map((tile) =>
-      this.workerPool.addWork({
-        type: "render",
-        tileWidth: tile.width,
-        tileHeight: tile.height,
-        canvasWidth: this.width,
-        canvasHeight: this.height,
-        maxIterations: this.maxIterations,
-        fullMaxIterations: this.fullMaxIterations,
-        tileLeft: tile.x,
-        tileTop: tile.y,
-        mid: this.mid,
-        zoom: this.zoom,
-        ratio: this.ratio,
-        rFactor: this.rFactor,
-        gFactor: this.gFactor,
-        bFactor: this.bFactor,
-        power: this.power,
-        grayscale: this.grayscale,
-      } as Work)
+      this.workerPool.addWork(this.getWork(tile))
     );
 
     this.pendingRenders = Promise.all(promises)
       .then((responses) => {
-        for (let r of responses as any) {
-          this.handleWorkerMessage(r);
-        }
+        requestAnimationFrame(() => {
+          for (let r of responses as any) {
+            this.handleWorkerMessage(r);
+          }
+        });
       })
       .catch((reason) => {
         console.error(reason);
