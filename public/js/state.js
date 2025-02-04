@@ -199,16 +199,16 @@ export default class State {
         // if (renderId < requestId - 1) {
         //   return;
         // }
-        if (data.type === "init") {
-            console.log("init received");
-            const resolver = this.workerPool.initResolvers.pop();
-            if (!resolver) {
-                console.error("No resolver found");
-                return;
-            }
-            resolver(data);
-            return;
-        }
+        // if (data.type === "init") {
+        //   console.log("init received");
+        //   const resolver = this.workerPool.initResolvers.pop();
+        //   if (!resolver) {
+        //     console.error("No resolver found");
+        //     return;
+        //   }
+        //   resolver(data);
+        //   return;
+        // }
         if (data.type === "render") {
             console.log(`Received renderId ${renderId} from worker, tileLeft: ${tileLeft}`);
             if (!this.renderResults[renderId]) {

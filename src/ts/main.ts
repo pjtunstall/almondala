@@ -4,8 +4,8 @@ import WorkerPool from "./worker-pool.js";
 
 const numWorkers = 2;
 const workerPool = new WorkerPool(numWorkers);
-let state = new State(23, workerPool);
 
 await Promise.all(workerPool.initPromises);
 
+let state = new State(23, workerPool);
 new MandelbrotExplorer(state);
