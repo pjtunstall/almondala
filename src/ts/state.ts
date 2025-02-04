@@ -10,15 +10,6 @@ let isRenderInProgress = false;
 let scheduledRenderTimer: ReturnType<typeof setTimeout>;
 let requestId = 0;
 
-export const worker1 = new Worker(new URL("./worker.js", import.meta.url), {
-  type: "module",
-});
-export const worker2 = new Worker(new URL("./worker.js", import.meta.url), {
-  type: "module",
-});
-
-const workers = [worker1, worker2];
-
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 document.body.appendChild(canvas);
@@ -44,18 +35,22 @@ export default class State {
   ctx = ctx;
   tiles: Tile[] = [];
   initResolvers: ((value: unknown) => void)[];
+  workers: Worker[];
 
-  constructor(grayscale: number, initResolvers: ((value: unknown) => void)[]) {
-    this.initResolvers = initResolvers;
+  constructor(
+    grayscale: number,
+    initResolvers: ((value: unknown) => void)[],
+    workers: Worker[]
+  ) {
     this.grayscale = grayscale;
+    this.initResolvers = initResolvers;
+    this.workers = workers;
 
-    worker1.onmessage = (event) => {
-      this.handleWorkerMessage(event);
-    };
-
-    worker2.onmessage = (event) => {
-      this.handleWorkerMessage(event);
-    };
+    for (const worker of workers) {
+      worker.onmessage = (event) => {
+        this.handleWorkerMessage(event);
+      };
+    }
   }
 
   changeColor() {
@@ -140,7 +135,7 @@ export default class State {
 
     cooldownTimer = setTimeout(() => {
       Object.assign(this, {
-        ...new State(this.grayscale, this.initResolvers),
+        ...new State(this.grayscale, this.initResolvers, this.workers),
         canvas: this.canvas,
         ctx: this.ctx,
       });
@@ -209,8 +204,8 @@ export default class State {
     }
     isRenderInProgress = true;
 
-    for (let i = 0; i < workers.length; i++) {
-      workers[i].postMessage({
+    for (let i = 0; i < this.workers.length; i++) {
+      this.workers[i].postMessage({
         type: "render",
         requestId: requestId,
         tileWidth: this.tiles[i].width,

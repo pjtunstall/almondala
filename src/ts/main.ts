@@ -1,19 +1,27 @@
 import MandelbrotExplorer from "./mandelbrot-explorer.js";
 import State from "./state.js";
 
+const numWorkers = 2;
+
+const workers: Worker[] = [];
 const initResolvers: ((value: unknown) => void)[] = [];
+const initPromises: Promise<unknown>[] = [];
 
-const initPromise1 = new Promise((resolve) => {
-  initResolvers.push(resolve);
-});
-const initPromise2 = new Promise((resolve) => {
-  initResolvers.push(resolve);
-});
+for (let i = 0; i < numWorkers; i++) {
+  workers.push(
+    new Worker(new URL("./worker.js", import.meta.url), {
+      type: "module",
+    })
+  );
+  initPromises.push(
+    new Promise((resolve) => {
+      initResolvers.push(resolve);
+    })
+  );
+}
 
-const promises = [initPromise1, initPromise2];
+let state = new State(23, initResolvers, workers);
 
-let state = new State(23, initResolvers);
-
-await Promise.all(promises);
+await Promise.all(initPromises);
 
 new MandelbrotExplorer(state);
