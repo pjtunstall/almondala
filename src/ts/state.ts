@@ -1,15 +1,12 @@
 import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
-import WorkerPool from "./worker-pool.js";
+import WorkerPool, { Work } from "./worker-pool.js";
 
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 1;
-const cols = 2;
+const rows = 4;
+const cols = 6;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
-let isRenderInProgress = false;
-let scheduledRenderTimer: ReturnType<typeof setTimeout>;
-let requestId = 0;
 
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -36,16 +33,12 @@ export default class State {
   ctx = ctx;
   tiles: Tile[] = [];
   workerPool: WorkerPool;
+  pendingRenders: Promise<void> | null = null;
+  wantsRender = false;
 
   constructor(grayscale: number, workerPool: WorkerPool) {
     this.grayscale = grayscale;
     this.workerPool = workerPool;
-
-    for (const worker of this.workerPool.idleWorkers) {
-      worker.onmessage = (event: MessageEvent) => {
-        this.handleWorkerMessage(event);
-      };
-    }
   }
 
   changeColor() {
@@ -140,7 +133,6 @@ export default class State {
         this.canvas.style.transition = "opacity 2s ease-in-out";
         this.canvas.style.opacity = "1";
       }, 10);
-      isRenderInProgress = false;
       this.reset();
       this.render();
     }, 256);
@@ -191,26 +183,23 @@ export default class State {
     }
   }
 
-  render(): boolean {
-    if (isRenderInProgress) {
-      clearTimeout(scheduledRenderTimer);
-      scheduledRenderTimer = setTimeout(() => this.render(), 32);
-      return false;
+  render() {
+    if (this.pendingRenders) {
+      this.wantsRender = true;
+      return;
     }
-    isRenderInProgress = true;
 
-    for (let i = 0; i < this.workerPool.numWorkers; i++) {
-      this.workerPool.idleWorkers[i].postMessage({
+    let promises = this.tiles.map((tile) =>
+      this.workerPool.addWork({
         type: "render",
-        requestId: requestId,
-        tileWidth: this.tiles[i].width,
-        tileHeight: this.tiles[i].height,
+        tileWidth: tile.width,
+        tileHeight: tile.height,
         canvasWidth: this.width,
         canvasHeight: this.height,
         maxIterations: this.maxIterations,
         fullMaxIterations: this.fullMaxIterations,
-        tileLeft: this.tiles[i].x,
-        tileTop: this.tiles[i].y,
+        tileLeft: tile.x,
+        tileTop: tile.y,
         mid: this.mid,
         zoom: this.zoom,
         ratio: this.ratio,
@@ -219,59 +208,33 @@ export default class State {
         bFactor: this.bFactor,
         power: this.power,
         grayscale: this.grayscale,
+      } as Work)
+    );
+
+    this.pendingRenders = Promise.all(promises)
+      .then((responses) => {
+        for (let r of responses as any) {
+          this.handleWorkerMessage(r);
+        }
+      })
+      .catch((reason) => {
+        console.error(reason);
+      })
+      .finally(() => {
+        this.pendingRenders = null;
+        if (this.wantsRender) {
+          this.wantsRender = false;
+          this.render();
+        }
       });
-    }
-
-    requestId++;
-
-    return true;
   }
 
-  renderResults: {
-    [key: number]: { left?: ImageBitmap; right?: ImageBitmap };
-  } = {};
-  pendingRenders: Set<number> = new Set();
-
-  handleWorkerMessage(event: MessageEvent) {
-    const data = event.data;
-    const { renderId, tileLeft, tileTop } = data;
-
-    // if (renderId < requestId - 1) {
-    //   return;
-    // }
+  handleWorkerMessage(data: any) {
+    const { tileLeft, tileTop, imageBitmap } = data;
 
     if (data.type === "render") {
-      console.log(
-        `Received renderId ${renderId} from worker, tileLeft: ${tileLeft}`
-      );
-
-      if (!this.renderResults[renderId]) {
-        this.renderResults[renderId] = {};
-      }
-
-      if (tileLeft === 0) {
-        this.renderResults[renderId].left = data.imageBitmap;
-      } else {
-        this.renderResults[renderId].right = data.imageBitmap;
-      }
-
-      if (!this.pendingRenders.has(renderId)) {
-        this.pendingRenders.add(renderId);
-      }
-
-      if (
-        this.renderResults[renderId].left &&
-        this.renderResults[renderId].right
-      ) {
-        console.log(`Rendering synchronized renderId ${renderId}`);
-        ctx.resetTransform();
-        ctx.drawImage(this.renderResults[renderId].left!, 0, tileTop);
-        ctx.drawImage(this.renderResults[renderId].right!, tileLeft, tileTop);
-        delete this.renderResults[renderId];
-
-        this.pendingRenders.delete(renderId);
-        isRenderInProgress = false;
-      }
+      ctx.resetTransform();
+      ctx.drawImage(imageBitmap, tileLeft, tileTop);
     }
   }
 }
