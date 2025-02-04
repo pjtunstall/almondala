@@ -2,8 +2,8 @@ import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 16;
-const cols = 10;
+const rows = 8;
+const cols = 5;
 let cooldownTimer = null;
 let resetId = 0;
 const canvas = document.createElement("canvas");
@@ -12,6 +12,9 @@ document.body.appendChild(canvas);
 window.onload = function () {
     canvas.classList.add("visible");
 };
+// const buffer = document.createElement("canvas") as HTMLCanvasElement;
+// const bufferCtx = canvas.getContext("2d") as CanvasRenderingContext2D;
+// buffer.style.display = "none";
 export default class State {
     zoom = 1;
     mid = new ComplexPoint(-0.6, 0);
@@ -164,6 +167,8 @@ export default class State {
         }
         this.canvas.width = intrinsicWidth;
         this.canvas.height = intrinsicHeight;
+        // buffer.width = intrinsicWidth;
+        // buffer.height = intrinsicHeight;
         this.width = intrinsicWidth;
         this.height = intrinsicHeight;
         this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
@@ -186,12 +191,15 @@ export default class State {
         });
         this.pendingRenders = Promise.all(promises)
             .then((responses) => {
-            ctx.resetTransform();
             requestAnimationFrame(() => {
                 for (let data of responses) {
                     this.handleWorkerMessage(data);
                 }
             });
+            // requestAnimationFrame(() => {
+            //   ctx.resetTransform();
+            //   ctx.drawImage(buffer, 0, 0);
+            // });
         })
             .finally(() => {
             this.pendingRenders = null;
@@ -207,6 +215,7 @@ export default class State {
             return;
         }
         if (data.type === "render") {
+            // bufferCtx.drawImage(imageBitmap, tileLeft, tileTop);
             ctx.drawImage(imageBitmap, tileLeft, tileTop);
         }
     }
