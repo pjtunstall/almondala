@@ -2,6 +2,14 @@ import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
 import WorkerPool, { Work } from "./worker-pool.js";
 
+interface DataFromWorker {
+  type: string;
+  dataResetId: number;
+  tileLeft: number;
+  tileTop: number;
+  imageBitmap: ImageBitmap;
+}
+
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
 const rows = 16;
@@ -15,9 +23,6 @@ document.body.appendChild(canvas);
 window.onload = function () {
   canvas.classList.add("visible");
 };
-
-const scratchCanvas = document.createElement("canvas") as HTMLCanvasElement;
-const scratchCtx = scratchCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 export default class State {
   zoom = 1;
@@ -184,8 +189,6 @@ export default class State {
 
     this.canvas.style.width = `${width}px`;
     this.canvas.style.height = `${height}px`;
-    scratchCanvas.style.width = `${width}px`;
-    scratchCanvas.style.height = `${height}px`;
 
     const intrinsicWidth = Math.floor(width * dpr);
     const intrinsicHeight = Math.floor(height * dpr);
@@ -196,8 +199,6 @@ export default class State {
 
     this.canvas.width = intrinsicWidth;
     this.canvas.height = intrinsicHeight;
-    scratchCanvas.width = intrinsicWidth;
-    scratchCanvas.height = intrinsicHeight;
 
     this.width = intrinsicWidth;
     this.height = intrinsicHeight;
@@ -227,12 +228,11 @@ export default class State {
 
     this.pendingRenders = Promise.all(promises)
       .then((responses) => {
-        for (let r of responses as any) {
-          this.handleWorkerMessage(r);
-        }
+        ctx.resetTransform();
         requestAnimationFrame(() => {
-          ctx.resetTransform();
-          ctx.drawImage(scratchCanvas, 0, 0);
+          for (let data of responses as DataFromWorker[]) {
+            this.handleWorkerMessage(data);
+          }
         });
       })
       .finally(() => {
@@ -244,7 +244,7 @@ export default class State {
       });
   }
 
-  handleWorkerMessage(data: any) {
+  handleWorkerMessage(data: DataFromWorker) {
     const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
 
     if (dataResetId !== resetId) {
@@ -252,7 +252,7 @@ export default class State {
     }
 
     if (data.type === "render") {
-      scratchCtx.drawImage(imageBitmap, tileLeft, tileTop);
+      ctx.drawImage(imageBitmap, tileLeft, tileTop);
     }
   }
 }

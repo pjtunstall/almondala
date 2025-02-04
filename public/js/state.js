@@ -12,8 +12,6 @@ document.body.appendChild(canvas);
 window.onload = function () {
     canvas.classList.add("visible");
 };
-const scratchCanvas = document.createElement("canvas");
-const scratchCtx = scratchCanvas.getContext("2d");
 export default class State {
     zoom = 1;
     mid = new ComplexPoint(-0.6, 0);
@@ -159,8 +157,6 @@ export default class State {
         this.ratio = width / height;
         this.canvas.style.width = `${width}px`;
         this.canvas.style.height = `${height}px`;
-        scratchCanvas.style.width = `${width}px`;
-        scratchCanvas.style.height = `${height}px`;
         const intrinsicWidth = Math.floor(width * dpr);
         const intrinsicHeight = Math.floor(height * dpr);
         if (width <= 0 || height <= 0) {
@@ -168,8 +164,6 @@ export default class State {
         }
         this.canvas.width = intrinsicWidth;
         this.canvas.height = intrinsicHeight;
-        scratchCanvas.width = intrinsicWidth;
-        scratchCanvas.height = intrinsicHeight;
         this.width = intrinsicWidth;
         this.height = intrinsicHeight;
         this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
@@ -192,12 +186,11 @@ export default class State {
         });
         this.pendingRenders = Promise.all(promises)
             .then((responses) => {
-            for (let r of responses) {
-                this.handleWorkerMessage(r);
-            }
+            ctx.resetTransform();
             requestAnimationFrame(() => {
-                ctx.resetTransform();
-                ctx.drawImage(scratchCanvas, 0, 0);
+                for (let data of responses) {
+                    this.handleWorkerMessage(data);
+                }
             });
         })
             .finally(() => {
@@ -214,7 +207,7 @@ export default class State {
             return;
         }
         if (data.type === "render") {
-            scratchCtx.drawImage(imageBitmap, tileLeft, tileTop);
+            ctx.drawImage(imageBitmap, tileLeft, tileTop);
         }
     }
 }
