@@ -4,6 +4,7 @@ type ErrorOrNull = Error | null;
 
 export interface Work {
   type: "render";
+  resetId: number;
   tileWidth: number;
   tileHeight: number;
   canvasWidth: number;

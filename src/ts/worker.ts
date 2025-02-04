@@ -10,9 +10,8 @@ init().then(() => {
   onmessage = function (message) {
     const data = message.data;
 
-    console.log(data);
-
     const {
+      resetId,
       tileWidth,
       tileHeight,
       canvasWidth,
@@ -68,6 +67,7 @@ init().then(() => {
       (self as DedicatedWorkerGlobalScope).postMessage(
         {
           type: "render",
+          dataResetId: resetId,
           tileLeft,
           tileTop,
           imageBitmap,

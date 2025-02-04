@@ -7,6 +7,7 @@ const panDelta = 0.1;
 const rows = 1;
 const cols = 2;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
+let resetId = 0;
 
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -84,6 +85,7 @@ export default class State {
   getWork(tile: Tile): Work {
     return {
       type: "render",
+      resetId,
       tileWidth: tile.width,
       tileHeight: tile.height,
       canvasWidth: this.width,
@@ -161,6 +163,7 @@ export default class State {
   }
 
   reset() {
+    resetId++;
     let width = 0.8 * document.body.clientWidth;
     let height = 0.8 * document.body.clientHeight;
     const phi = this.ratio;
@@ -236,7 +239,11 @@ export default class State {
   }
 
   handleWorkerMessage(data: any) {
-    const { tileLeft, tileTop, imageBitmap } = data;
+    const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
+
+    if (dataResetId !== resetId) {
+      return;
+    }
 
     if (data.type === "render") {
       ctx.resetTransform();

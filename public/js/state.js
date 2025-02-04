@@ -5,6 +5,7 @@ const panDelta = 0.1;
 const rows = 1;
 const cols = 2;
 let cooldownTimer = null;
+let resetId = 0;
 export const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 document.body.appendChild(canvas);
@@ -69,6 +70,7 @@ export default class State {
     getWork(tile) {
         return {
             type: "render",
+            resetId,
             tileWidth: tile.width,
             tileHeight: tile.height,
             canvasWidth: this.width,
@@ -135,9 +137,11 @@ export default class State {
             }, 10);
             this.reset();
             this.render();
+            console.log("resetId 0n timeout", resetId);
         }, 256);
     }
     reset() {
+        resetId++;
         let width = 0.8 * document.body.clientWidth;
         let height = 0.8 * document.body.clientHeight;
         const phi = this.ratio;
@@ -199,7 +203,12 @@ export default class State {
         });
     }
     handleWorkerMessage(data) {
-        const { tileLeft, tileTop, imageBitmap } = data;
+        const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
+        console.log("dataResetId of data from worker:", dataResetId);
+        console.log("resetId:", resetId);
+        if (dataResetId !== resetId) {
+            return;
+        }
         if (data.type === "render") {
             ctx.resetTransform();
             ctx.drawImage(imageBitmap, tileLeft, tileTop);
