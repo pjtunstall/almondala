@@ -43,9 +43,9 @@ export default class State {
   canvas = canvas;
   ctx = ctx;
   tiles: Tile[] = [];
-  initResolvers: any;
+  initResolvers: ((value: unknown) => void)[];
 
-  constructor(grayscale: number, initResolvers: any) {
+  constructor(grayscale: number, initResolvers: ((value: unknown) => void)[]) {
     this.initResolvers = initResolvers;
     this.grayscale = grayscale;
 
