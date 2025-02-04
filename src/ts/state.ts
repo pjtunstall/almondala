@@ -4,17 +4,20 @@ import WorkerPool, { Work } from "./worker-pool.js";
 
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 32;
-const cols = 20;
+const rows = 16;
+const cols = 10;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let resetId = 0;
 
-export const canvas = document.createElement("canvas") as HTMLCanvasElement;
+const canvas = document.createElement("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 document.body.appendChild(canvas);
 window.onload = function () {
   canvas.classList.add("visible");
 };
+
+const scratchCanvas = document.createElement("canvas") as HTMLCanvasElement;
+const scratchCtx = scratchCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 export default class State {
   zoom = 1;
@@ -181,6 +184,8 @@ export default class State {
 
     this.canvas.style.width = `${width}px`;
     this.canvas.style.height = `${height}px`;
+    scratchCanvas.style.width = `${width}px`;
+    scratchCanvas.style.height = `${height}px`;
 
     const intrinsicWidth = Math.floor(width * dpr);
     const intrinsicHeight = Math.floor(height * dpr);
@@ -191,6 +196,8 @@ export default class State {
 
     this.canvas.width = intrinsicWidth;
     this.canvas.height = intrinsicHeight;
+    scratchCanvas.width = intrinsicWidth;
+    scratchCanvas.height = intrinsicHeight;
 
     this.width = intrinsicWidth;
     this.height = intrinsicHeight;
@@ -214,20 +221,19 @@ export default class State {
       return;
     }
 
-    let promises = this.tiles.map((tile) =>
-      this.workerPool.addWork(this.getWork(tile))
-    );
+    let promises = this.tiles.map((tile) => {
+      return this.workerPool.addWork(this.getWork(tile));
+    });
 
     this.pendingRenders = Promise.all(promises)
       .then((responses) => {
+        for (let r of responses as any) {
+          this.handleWorkerMessage(r);
+        }
         requestAnimationFrame(() => {
-          for (let r of responses as any) {
-            this.handleWorkerMessage(r);
-          }
+          ctx.resetTransform();
+          ctx.drawImage(scratchCanvas, 0, 0);
         });
-      })
-      .catch((reason) => {
-        console.error(reason);
       })
       .finally(() => {
         this.pendingRenders = null;
@@ -246,8 +252,7 @@ export default class State {
     }
 
     if (data.type === "render") {
-      ctx.resetTransform();
-      ctx.drawImage(imageBitmap, tileLeft, tileTop);
+      scratchCtx.drawImage(imageBitmap, tileLeft, tileTop);
     }
   }
 }
