@@ -2,8 +2,8 @@ import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 1;
-const cols = 2;
+const rows = 32;
+const cols = 20;
 let cooldownTimer = null;
 let resetId = 0;
 export const canvas = document.createElement("canvas");
@@ -137,7 +137,6 @@ export default class State {
             }, 10);
             this.reset();
             this.render();
-            console.log("resetId 0n timeout", resetId);
         }, 256);
     }
     reset() {
@@ -204,8 +203,6 @@ export default class State {
     }
     handleWorkerMessage(data) {
         const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
-        console.log("dataResetId of data from worker:", dataResetId);
-        console.log("resetId:", resetId);
         if (dataResetId !== resetId) {
             return;
         }

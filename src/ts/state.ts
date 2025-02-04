@@ -4,8 +4,8 @@ import WorkerPool, { Work } from "./worker-pool.js";
 
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
-const rows = 1;
-const cols = 2;
+const rows = 32;
+const cols = 20;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let resetId = 0;
 
