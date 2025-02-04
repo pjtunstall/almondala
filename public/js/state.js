@@ -31,13 +31,11 @@ export default class State {
     canvas = canvas;
     ctx = ctx;
     tiles = [];
-    initResolvers;
-    workers;
-    constructor(grayscale, initResolvers, workers) {
+    workerPool;
+    constructor(grayscale, workerPool) {
         this.grayscale = grayscale;
-        this.initResolvers = initResolvers;
-        this.workers = workers;
-        for (const worker of workers) {
+        this.workerPool = workerPool;
+        for (const worker of this.workerPool.idleWorkers) {
             worker.onmessage = (event) => {
                 this.handleWorkerMessage(event);
             };
@@ -110,7 +108,7 @@ export default class State {
             clearTimeout(cooldownTimer);
         cooldownTimer = setTimeout(() => {
             Object.assign(this, {
-                ...new State(this.grayscale, this.initResolvers, this.workers),
+                ...new State(this.grayscale, this.workerPool),
                 canvas: this.canvas,
                 ctx: this.ctx,
             });
@@ -168,8 +166,8 @@ export default class State {
             return false;
         }
         isRenderInProgress = true;
-        for (let i = 0; i < this.workers.length; i++) {
-            this.workers[i].postMessage({
+        for (let i = 0; i < this.workerPool.numWorkers; i++) {
+            this.workerPool.idleWorkers[i].postMessage({
                 type: "render",
                 requestId: requestId,
                 tileWidth: this.tiles[i].width,
@@ -203,7 +201,7 @@ export default class State {
         // }
         if (data.type === "init") {
             console.log("init received");
-            const resolver = this.initResolvers.pop();
+            const resolver = this.workerPool.initResolvers.pop();
             if (!resolver) {
                 console.error("No resolver found");
                 return;

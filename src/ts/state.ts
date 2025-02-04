@@ -1,5 +1,6 @@
 import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
+import WorkerPool from "./worker-pool.js";
 
 const dpr = window.devicePixelRatio;
 const panDelta = 0.1;
@@ -34,20 +35,14 @@ export default class State {
   canvas = canvas;
   ctx = ctx;
   tiles: Tile[] = [];
-  initResolvers: ((value: unknown) => void)[];
-  workers: Worker[];
+  workerPool: WorkerPool;
 
-  constructor(
-    grayscale: number,
-    initResolvers: ((value: unknown) => void)[],
-    workers: Worker[]
-  ) {
+  constructor(grayscale: number, workerPool: WorkerPool) {
     this.grayscale = grayscale;
-    this.initResolvers = initResolvers;
-    this.workers = workers;
+    this.workerPool = workerPool;
 
-    for (const worker of workers) {
-      worker.onmessage = (event) => {
+    for (const worker of this.workerPool.idleWorkers) {
+      worker.onmessage = (event: MessageEvent) => {
         this.handleWorkerMessage(event);
       };
     }
@@ -135,7 +130,7 @@ export default class State {
 
     cooldownTimer = setTimeout(() => {
       Object.assign(this, {
-        ...new State(this.grayscale, this.initResolvers, this.workers),
+        ...new State(this.grayscale, this.workerPool),
         canvas: this.canvas,
         ctx: this.ctx,
       });
@@ -204,8 +199,8 @@ export default class State {
     }
     isRenderInProgress = true;
 
-    for (let i = 0; i < this.workers.length; i++) {
-      this.workers[i].postMessage({
+    for (let i = 0; i < this.workerPool.numWorkers; i++) {
+      this.workerPool.idleWorkers[i].postMessage({
         type: "render",
         requestId: requestId,
         tileWidth: this.tiles[i].width,
@@ -247,7 +242,7 @@ export default class State {
 
     if (data.type === "init") {
       console.log("init received");
-      const resolver = this.initResolvers.pop();
+      const resolver = this.workerPool.initResolvers.pop();
       if (!resolver) {
         console.error("No resolver found");
         return;
