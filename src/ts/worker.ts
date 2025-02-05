@@ -1,8 +1,9 @@
 import init, { calculate_mandelbrot } from "../../public/wasm/almondala.js";
+import { DataFromWorker } from "./state.js";
 
 declare const self: Worker;
 interface DedicatedWorkerGlobalScope {
-  postMessage(message: any, transfer?: Transferable[]): void;
+  postMessage(message: DataFromWorker, transfer?: Transferable[]): void;
 }
 
 init().then(() => {
@@ -75,10 +76,5 @@ init().then(() => {
         [imageBitmap]
       );
     });
-
-    // const { x, y } = state.mid;
-    // console.log(
-    //   `zoom: ${state.zoom}, center: ${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`
-    // );
   };
 });

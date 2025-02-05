@@ -19,10 +19,6 @@ init().then(() => {
                 imageBitmap,
             }, [imageBitmap]);
         });
-        // const { x, y } = state.mid;
-        // console.log(
-        //   `zoom: ${state.zoom}, center: ${x} ${y < 0 ? "-" : "+"} ${Math.abs(y)}i`
-        // );
     };
 });
 //# sourceMappingURL=worker.js.map

@@ -136,11 +136,6 @@ console.log(std);
 
 ## Further
 
-Todo:
-
-- Prune remaining `any`s.
-- Have a reusable spare canvas instead of making a new one for each fake render.
-
 Further developments may include:
 
 - Refactor:
@@ -151,6 +146,6 @@ Further developments may include:
   - Test UI: creation & existence of elements, fuzz test, explore determinstic simulation testing.
 - Avoid recalculating perimeters of tiles.
 - Add a share button to share views of a chosen location.
-- Look out for opportunities to use more of the characteristic TS object types: enum, interface, union, intersection, extension.
+- Look out for suitable places to use the characteristic TS object types: enum, interface, union, intersection, extension.
 - Explore different color schemes to offer as options.
 - Share memory between Wasm and JS.

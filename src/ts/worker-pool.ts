@@ -80,7 +80,11 @@ export default class WorkerPool {
     }
   }
 
-  private workerDone(worker: Worker, error: ErrorOrNull, response: any) {
+  private workerDone(
+    worker: Worker,
+    error: ErrorOrNull,
+    response: MessageEvent | null
+  ) {
     const [resolver, rejector] = this.busyWorkersMap.get(worker);
     this.busyWorkersMap.delete(worker);
     if (this.workQueue.length === 0) {

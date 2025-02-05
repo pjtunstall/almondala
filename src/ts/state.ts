@@ -2,7 +2,7 @@ import { ComplexPoint } from "./points.js";
 import Tile from "./tile.js";
 import WorkerPool, { Work } from "./worker-pool.js";
 
-interface DataFromWorker {
+export interface DataFromWorker {
   type: string;
   dataResetId: number;
   tileLeft: number;
@@ -114,23 +114,12 @@ export default class State {
   }
 
   fakeRender(ds: number, dx: number, dy: number) {
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const spareCanvas = document.createElement("canvas");
-    spareCanvas.width = width;
-    spareCanvas.height = height;
-    const spareCtx = spareCanvas.getContext("2d");
-    if (!spareCtx) return;
-
-    spareCtx.drawImage(canvas, 0, 0);
-
     ctx.save();
-    ctx.translate(width / 2, height / 2);
+    ctx.translate(this.width / 2, this.height / 2);
     ctx.scale(ds, ds);
     ctx.translate((dx *= dpr), (dy *= dpr * this.ratio));
-    ctx.translate(-width / 2, -height / 2);
-    ctx.drawImage(spareCanvas, 0, 0);
+    ctx.translate(-this.width / 2, -this.height / 2);
+    ctx.drawImage(canvas, 0, 0);
     ctx.restore();
   }
 
