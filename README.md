@@ -145,14 +145,19 @@ console.log(std);
 
 Further developments may include:
 
-- Refactor:
-  - Split up the monster State class?
-- Test:
-  - Test Rust.
-  - Test UI: creation & existence of elements, fuzz test, explore determinstic simulation testing.
-- Avoid recalculating perimeters of tiles.
-- Add a share button to share views of a chosen location.
-- Add a save button to save an image of the current canvas.
-- Look out for suitable places to use the characteristic TS object types: enum, interface, union, intersection, extension.
-- Explore different color schemes to offer as options.
-- Share memory between Wasm and JS.
+- CODE
+  - Refactor:
+    - Split up theState class: separate the UI from the mathematical state?
+    - Look out for suitable places to use the characteristic TS object types: enum, interface, union, intersection, extension.
+  - Test:
+    - Test Rust.
+    - Test UI: creation & existence of elements, fuzz test, explore determinstic simulation testing.
+  - Optimize:
+    - Reuse perimeter calculation of tiles, also shared edges.
+    - Share memory between Wasm and JS.
+- FEATURES
+  - More buttons:
+    - Share state by encoding it in the URL.
+    - Save image.
+  - Touchscreen gestures: pinch and zoom.
+  - Explore different color schemes to offer as options.
