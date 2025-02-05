@@ -14,7 +14,7 @@ export interface Work {
   tileLeft: number;
   tileTop: number;
   mid: ComplexPoint;
-  zoom: number;
+  scale: number;
   ratio: number;
   rFactor: number;
   gFactor: number;

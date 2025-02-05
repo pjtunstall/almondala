@@ -24,7 +24,7 @@ function getArrayU8FromWasm0(ptr, len) {
  * @param {number} tile_top
  * @param {number} mid_x
  * @param {number} mid_y
- * @param {number} zoom
+ * @param {number} scale
  * @param {number} ratio
  * @param {number} r_factor
  * @param {number} g_factor
@@ -33,8 +33,8 @@ function getArrayU8FromWasm0(ptr, len) {
  * @param {number} grayscale
  * @returns {Uint8Array}
  */
-export function calculate_mandelbrot(tile_width, tile_height, canvas_width, canvas_height, max_iterations, full_max_iterations, tile_left, tile_top, mid_x, mid_y, zoom, ratio, r_factor, g_factor, b_factor, power, grayscale) {
-    const ret = wasm.calculate_mandelbrot(tile_width, tile_height, canvas_width, canvas_height, max_iterations, full_max_iterations, tile_left, tile_top, mid_x, mid_y, zoom, ratio, r_factor, g_factor, b_factor, power, grayscale);
+export function calculate_mandelbrot(tile_width, tile_height, canvas_width, canvas_height, max_iterations, full_max_iterations, tile_left, tile_top, mid_x, mid_y, scale, ratio, r_factor, g_factor, b_factor, power, grayscale) {
+    const ret = wasm.calculate_mandelbrot(tile_width, tile_height, canvas_width, canvas_height, max_iterations, full_max_iterations, tile_left, tile_top, mid_x, mid_y, scale, ratio, r_factor, g_factor, b_factor, power, grayscale);
     var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
     return v1;

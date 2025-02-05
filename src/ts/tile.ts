@@ -25,21 +25,23 @@ export default class Tile {
     numRows: number,
     numCols: number
   ) {
-    let baseColumnWidth = Math.floor(width / numCols);
-    let baseRowHeight = Math.floor(height / numRows);
-
-    let extraWidth = width % numCols;
-    let extraHeight = height % numRows;
+    const columnWidth = Math.ceil(width / numCols);
+    const rowHeight = Math.ceil(height / numRows);
 
     for (let row = 0; row < numRows; row++) {
-      let y = row * baseRowHeight + Math.min(row, extraHeight); // Add 1 extra pixel for the first `extraHeight` rows.
-      let tileHeight = baseRowHeight + (row < extraHeight ? 1 : 0); // Rows get 1 extra pixel if `row < extraHeight`.
-
+      const tileHeight =
+        row < numRows - 1 ? rowHeight : height - rowHeight * (numRows - 1);
       for (let col = 0; col < numCols; col++) {
-        let x = col * baseColumnWidth + Math.min(col, extraWidth); // Add 1 extra pixel for the first `extraWidth` columns.
-        let tileWidth = baseColumnWidth + (col < extraWidth ? 1 : 0); // Columns get 1 extra pixel if `col < extraWidth`.
+        const tileWidth =
+          col < numCols - 1 ? columnWidth : width - columnWidth * (numCols - 1);
 
-        yield new Tile(x, y, tileWidth, tileHeight, row);
+        yield new Tile(
+          col * columnWidth,
+          row * rowHeight,
+          tileWidth,
+          tileHeight,
+          row
+        );
       }
     }
   }

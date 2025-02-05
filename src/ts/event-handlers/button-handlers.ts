@@ -29,7 +29,7 @@ export default function handleButtons(
         return;
       }
       if (replayOut) {
-        zoomThatReplayStartsAt = state.zoom;
+        zoomThatReplayStartsAt = state.scale;
       }
       if (zoomThatReplayStartsAt >= 1) {
         return;
@@ -91,9 +91,9 @@ export class Replayer {
     if (!this.running) {
       return;
     }
-    const zoomedAllTheWayOut = replayOut && state.zoom >= 1;
+    const zoomedAllTheWayOut = replayOut && state.scale >= 1;
     const zoomedAllTheWayIn =
-      !replayOut && state.zoom <= zoomThatReplayStartsAt;
+      !replayOut && state.scale <= zoomThatReplayStartsAt;
     if (zoomedAllTheWayOut || zoomedAllTheWayIn) {
       replayOut = !replayOut;
       const replayText = document.getElementById("replay-text");

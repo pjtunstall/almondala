@@ -11,7 +11,7 @@ pub fn get_escape_iteration(x: usize, y: usize, params: &Params) -> usize {
         tile_top,
         mid_x,
         mid_y,
-        zoom,
+        scale,
         ratio,
         power,
         ..
@@ -21,8 +21,8 @@ pub fn get_escape_iteration(x: usize, y: usize, params: &Params) -> usize {
     let absolute_y = tile_top + (y as f64);
 
     // Use the absolute position to calculate the complex coordinates
-    let cx = mid_x + ratio * (absolute_x as f64 / canvas_width as f64 - 0.5) * 3.0 * zoom;
-    let cy = mid_y - (absolute_y as f64 / canvas_height as f64 - 0.5) * 3.0 * zoom;
+    let cx = mid_x + ratio * (absolute_x as f64 / canvas_width as f64 - 0.5) * 3.0 * scale;
+    let cy = mid_y - (absolute_y as f64 / canvas_height as f64 - 0.5) * 3.0 * scale;
 
     let c = Complex::new(cx, cy);
     let mut z = Complex::new(0.0, 0.0);

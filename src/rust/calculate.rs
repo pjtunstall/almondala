@@ -15,7 +15,7 @@ pub struct Params {
     tile_top: f64,
     mid_x: f64,
     mid_y: f64,
-    zoom: f64,
+    scale: f64,
     power: i32,
 }
 
@@ -31,7 +31,7 @@ pub fn calculate_mandelbrot(
     tile_top: f64,
     mid_x: f64,
     mid_y: f64,
-    zoom: f64,
+    scale: f64,
     ratio: f64,
     r_factor: f64,
     g_factor: f64,
@@ -49,7 +49,7 @@ pub fn calculate_mandelbrot(
         tile_top,
         mid_x,
         mid_y,
-        zoom,
+        scale,
         ratio,
         power,
     };

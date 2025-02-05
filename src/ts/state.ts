@@ -25,7 +25,7 @@ window.onload = function () {
 };
 
 export default class State {
-  zoom = 1;
+  scale = 1;
   mid = new ComplexPoint(-0.6, 0);
   width = 0;
   height = 0;
@@ -55,39 +55,39 @@ export default class State {
   }
 
   panLeft() {
-    this.mid.x -= this.zoom * panDelta;
+    this.mid.x -= this.scale * panDelta;
   }
 
   panRight() {
-    this.mid.x += this.zoom * panDelta;
+    this.mid.x += this.scale * panDelta;
   }
 
   panUp() {
-    this.mid.y += this.zoom * panDelta;
+    this.mid.y += this.scale * panDelta;
   }
 
   panDown() {
-    this.mid.y -= this.zoom * panDelta;
+    this.mid.y -= this.scale * panDelta;
   }
 
   zoomIn() {
-    this.scaleZoomBy(0.96);
+    this.scaleBy(0.96);
   }
 
   zoomInBig() {
-    this.scaleZoomBy(Math.pow(0.96, 12));
+    this.scaleBy(Math.pow(0.96, 12));
   }
 
   zoomOut() {
-    this.scaleZoomBy(1 / 0.96);
+    this.scaleBy(1 / 0.96);
   }
 
-  private scaleZoomBy(ds: number) {
+  private scaleBy(ds: number) {
     // // Zooming in further reaches the limits of floating point precision. But preventing it could give the impression that the controls are just not responding, unless some warning is given.
     // if (ds <= 1 && this.zoom < 2e-13) {
     //   return;
     // }
-    this.zoom *= ds;
+    this.scale *= ds;
   }
 
   private getWork(tile: Tile): Work {
@@ -103,7 +103,7 @@ export default class State {
       tileLeft: tile.x,
       tileTop: tile.y,
       mid: this.mid,
-      zoom: this.zoom,
+      scale: this.scale,
       ratio: this.ratio,
       rFactor: this.rFactor,
       gFactor: this.gFactor,
@@ -129,7 +129,7 @@ export default class State {
   }
 
   private resetView(): void {
-    this.zoom = 1;
+    this.scale = 1;
     this.mid.x = this.power === 2 ? -0.6 : 0;
     this.mid.y = 0;
 
@@ -172,7 +172,7 @@ export default class State {
     } else {
       controls.style.flexDirection = "row";
       height = Math.min(width * phi, height);
-      this.zoom = 2;
+      this.scale = 2;
     }
     this.ratio = width / height;
 
