@@ -147,11 +147,11 @@ Further developments may include:
 
 - CODE
   - Refactor:
-    - Split up theState class: separate the UI from the mathematical state?
+    - Split up the State class (separate the UI from the mathematical state) and, more generally, review the code in the light of best practices?
     - Look out for suitable places to use the characteristic TS object types: enum, interface, union, intersection, extension.
   - Test:
-    - Test Rust.
-    - Test UI: creation & existence of elements, fuzz test, explore determinstic simulation testing.
+    - Test Rust: calculate some known values, fuzz test set inclusion for values in known regions.
+    - Test UI: creation & existence of elements, fuzz test with random input events, explore determinstic simulation testing.
   - Optimize:
     - Reuse perimeter calculation of tiles, also shared edges.
     - Share memory between Wasm and JS.
@@ -161,3 +161,4 @@ Further developments may include:
     - Save image.
   - Touchscreen gestures: pinch and zoom.
   - Explore different color schemes to offer as options.
+  - Investigate how to safely represent numbers with [https://en.wikipedia.org/wiki/Arbitrary-precision_arithmetic](arbitrary precision). At the moment, zoom is limited by to the precision of 64-bit floats.
