@@ -4,6 +4,7 @@ type ErrorOrNull = Error | null;
 
 export interface Work {
   type: "render";
+  batchId: number;
   resetId: number;
   tileWidth: number;
   tileHeight: number;

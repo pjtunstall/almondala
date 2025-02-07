@@ -4,6 +4,7 @@ import WorkerPool, { Work } from "./worker-pool.js";
 
 export interface DataFromWorker {
   type: string;
+  dataBatchId: number;
   dataResetId: number;
   tileLeft: number;
   tileTop: number;
@@ -16,6 +17,7 @@ const rows = 8;
 const cols = 5;
 let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
 let resetId = 0;
+let batchId = 0;
 
 const canvas = document.createElement("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -93,6 +95,7 @@ export default class State {
   private getWork(tile: Tile): Work {
     return {
       type: "render",
+      batchId,
       resetId,
       tileWidth: tile.width,
       tileHeight: tile.height,
@@ -215,10 +218,12 @@ export default class State {
       return this.workerPool.addWork(this.getWork(tile));
     });
 
+    batchId++;
+
     this.pendingRenders = Promise.all(promises)
       .then((responses) => {
         requestAnimationFrame(() => {
-          for (let data of responses as DataFromWorker[]) {
+          for (const data of responses as DataFromWorker[]) {
             this.handleWorkerMessage(data);
           }
         });
@@ -233,7 +238,7 @@ export default class State {
   }
 
   private handleWorkerMessage(data: DataFromWorker) {
-    const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
+    const { dataBatchId, dataResetId, tileLeft, tileTop, imageBitmap } = data;
 
     if (dataResetId !== resetId) {
       return;

@@ -6,6 +6,7 @@ const rows = 8;
 const cols = 5;
 let cooldownTimer = null;
 let resetId = 0;
+let batchId = 0;
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 document.body.appendChild(canvas);
@@ -70,6 +71,7 @@ export default class State {
     getWork(tile) {
         return {
             type: "render",
+            batchId,
             resetId,
             tileWidth: tile.width,
             tileHeight: tile.height,
@@ -175,10 +177,11 @@ export default class State {
         let promises = this.tiles.map((tile) => {
             return this.workerPool.addWork(this.getWork(tile));
         });
+        batchId++;
         this.pendingRenders = Promise.all(promises)
             .then((responses) => {
             requestAnimationFrame(() => {
-                for (let data of responses) {
+                for (const data of responses) {
                     this.handleWorkerMessage(data);
                 }
             });
@@ -192,7 +195,7 @@ export default class State {
         });
     }
     handleWorkerMessage(data) {
-        const { dataResetId, tileLeft, tileTop, imageBitmap } = data;
+        const { dataBatchId, dataResetId, tileLeft, tileTop, imageBitmap } = data;
         if (dataResetId !== resetId) {
             return;
         }

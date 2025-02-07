@@ -147,14 +147,17 @@ Further developments may include:
 
 - CODE
   - Refactor:
-    - Split up the State class (separate the UI from the mathematical state) and, more generally, review the code in the light of best practices?
+    - Split up the State class (separate the UI from the mathematical state)? And, more generally, review the code in the light of best practices.
     - Look out for suitable places to use the characteristic TS object types: enum, interface, union, intersection, extension.
   - Test:
     - Test Rust: calculate some known values, fuzz test set inclusion for values in known regions.
     - Test UI: creation & existence of elements, fuzz test with random input events, explore determinstic simulation testing.
+    - Try it out on as many combinations of devices, screen sizes, aspect ratios, resolutions, operating systems, and browsers and possible.
   - Optimize:
+    - Try out different ways to order and time how the tile data is made visible.
     - Reuse perimeter calculation of tiles, also shared edges.
     - Share memory between Wasm and JS.
+    - Try making calculations cancellable so that some could skipped as an alternative to processing multiple slow requests that come close together. Be sure to benchmark to see if it actually helps. In Rust, this could be done with an async runtime like [tokio](https://docs.rs/tokio/latest/tokio/). On the JavaScript end, look into [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
 - FEATURES
   - More buttons:
     - Share state by encoding it in the URL.

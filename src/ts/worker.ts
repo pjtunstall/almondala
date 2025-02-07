@@ -12,6 +12,7 @@ init().then(() => {
     const data = message.data;
 
     const {
+      batchId,
       resetId,
       tileWidth,
       tileHeight,
@@ -68,6 +69,7 @@ init().then(() => {
       (self as DedicatedWorkerGlobalScope).postMessage(
         {
           type: "render",
+          dataBatchId: batchId,
           dataResetId: resetId,
           tileLeft,
           tileTop,
