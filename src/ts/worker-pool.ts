@@ -49,6 +49,8 @@ export default class WorkerPool {
           this.initResolvers.push(resolve);
         })
       );
+
+      // Once all initPromises have resolved, this will be replaced with a handler to deal with the actual work.
       worker.onmessage = (event: MessageEvent) => {
         this.handleWorkerInitMessage(event);
       };
@@ -60,16 +62,16 @@ export default class WorkerPool {
     if (data.type === "init") {
       const resolver = this.initResolvers.pop();
       if (!resolver) {
-        console.error("'init' messsage received, but no resolver found");
-        return;
+        throw new Error("'init' messsage received, but no resolver found");
       }
       resolver(data); // Worker reports that it's successfully initialized the Wasm module.
       return;
     } else {
-      console.error("Expected message type 'init', got", data.type);
+      throw new Error("Expected message type 'init', got", data.type);
     }
   }
 
+  // Called from the `main` module after all initPromises have resolved.
   changeOnmessageHandlers() {
     for (const worker of this.idleWorkers) {
       worker.onmessage = (event: MessageEvent) => {

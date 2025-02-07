@@ -41,7 +41,6 @@ export default class State {
   gFactor = 1;
   bFactor = 1;
   canvas = canvas;
-  ctx = ctx;
   tiles: Tile[] = [];
   workerPool: WorkerPool;
   pendingRenders: Promise<void> | null = null;
@@ -148,14 +147,12 @@ export default class State {
     cooldownTimer = setTimeout(() => {
       Object.assign(this, {
         ...new State(this.grayscale, this.workerPool),
-        canvas: this.canvas,
-        ctx: this.ctx,
       });
-      this.canvas.style.transition = "none";
-      this.canvas.style.opacity = "0";
+      canvas.style.transition = "none";
+      canvas.style.opacity = "0";
       setTimeout(() => {
-        this.canvas.style.transition = "opacity 2s ease-in-out";
-        this.canvas.style.opacity = "1";
+        canvas.style.transition = "opacity 2s ease-in-out";
+        canvas.style.opacity = "1";
       }, 10);
       this.reset();
       this.render();
@@ -179,8 +176,8 @@ export default class State {
     }
     this.ratio = width / height;
 
-    this.canvas.style.width = `${width}px`;
-    this.canvas.style.height = `${height}px`;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
 
     const intrinsicWidth = Math.floor(width * dpr);
     const intrinsicHeight = Math.floor(height * dpr);
@@ -189,13 +186,13 @@ export default class State {
       console.error("Invalid main canvas width and height:", width, height);
     }
 
-    this.canvas.width = intrinsicWidth;
-    this.canvas.height = intrinsicHeight;
+    canvas.width = intrinsicWidth;
+    canvas.height = intrinsicHeight;
 
     this.width = intrinsicWidth;
     this.height = intrinsicHeight;
 
-    this.tiles = [...Tile.tiles(this.width, this.height, rows, cols)];
+    this.tiles = [...Tile.tiles(intrinsicWidth, intrinsicHeight, rows, cols)];
 
     const iterationsText = document.getElementById("iterations-text");
     if (iterationsText) {

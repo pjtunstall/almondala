@@ -24,8 +24,9 @@ export default class MandelbrotExplorer {
     const iterationsText = document.getElementById("iterations-text");
     const exponentText = document.getElementById("exponent-text");
     if (!replayText || !iterationsText || !exponentText) {
-      console.error("Couldn't find text elements");
-      return;
+      throw new Error(
+        `Couldn't find text elements: replay: ${replayText}, iterations: ${iterationsText}, exponent: ${exponentText}`
+      );
     }
 
     const replay = document.getElementById("replay");
@@ -100,10 +101,11 @@ export default class MandelbrotExplorer {
     ["click", "keydown", "resize"].forEach((eventType) =>
       window.addEventListener(eventType, (event) => {
         const target = event.target as HTMLElement;
-        if (!(target instanceof HTMLElement)) {
-          return;
-        }
-        if (target.id === "replay" || target.id === "color") {
+        if (
+          !(target instanceof HTMLElement) ||
+          target.id === "replay" ||
+          target.id === "color"
+        ) {
           return;
         }
         replayer.running = false;
