@@ -222,6 +222,10 @@ export default class State {
 
     this.pendingRenders = Promise.all(promises)
       .then((responses) => {
+        const { dataBatchId, dataResetId } = responses[0] as DataFromWorker;
+        if (dataResetId !== resetId || (batchId - dataBatchId) % 8 !== 1) {
+          return;
+        }
         requestAnimationFrame(() => {
           for (const data of responses as DataFromWorker[]) {
             this.handleWorkerMessage(data);
@@ -238,11 +242,7 @@ export default class State {
   }
 
   private handleWorkerMessage(data: DataFromWorker) {
-    const { dataBatchId, dataResetId, tileLeft, tileTop, imageBitmap } = data;
-
-    if (dataResetId !== resetId) {
-      return;
-    }
+    const { tileLeft, tileTop, imageBitmap } = data;
 
     if (data.type === "render") {
       ctx.drawImage(imageBitmap, tileLeft, tileTop);
