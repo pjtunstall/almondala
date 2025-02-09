@@ -1,6 +1,6 @@
 let prev; // Previous timestamp for replay loop.
 let replayOut; // Is the next replay zoom going to be out or in?
-let zoomThatReplayStartsAt; // When the replay starts, it will be set equal to the current state.zoom. During the replay, state.zoom changes as we zoom out, but zoomThatReplayStartsAt remembers where the zoom began so that we can zoom back in to the same level if the replay button is pressed a second time.
+let scaleThatReplayStartsAt; // When the replay starts, it will be set equal to the current state.zoom. During the replay, state.zoom changes as we zoom out, but scaleThatReplayStartsAt remembers where the zoom began so that we can zoom back in to the same level if the replay button is pressed a second time.
 export default function handleButtons(event, state, replayer) {
     event.preventDefault();
     const target = event.target;
@@ -19,14 +19,14 @@ export default function handleButtons(event, state, replayer) {
                 return;
             }
             if (replayOut) {
-                zoomThatReplayStartsAt = state.scale;
+                scaleThatReplayStartsAt = state.scale;
             }
-            if (zoomThatReplayStartsAt >= 1) {
+            if (scaleThatReplayStartsAt >= 1) {
                 return;
             }
             replayer.running = true;
             requestAnimationFrame((timestamp) => {
-                replayer.replay(timestamp, state, zoomThatReplayStartsAt);
+                replayer.replay(timestamp, state, scaleThatReplayStartsAt);
             });
             break;
         case "plus":
@@ -48,11 +48,11 @@ export default function handleButtons(event, state, replayer) {
             }
             break;
         case "power-up":
-            zoomThatReplayStartsAt = 1;
+            scaleThatReplayStartsAt = 1;
             state.incrementPowerBy(1);
             break;
         case "power-down":
-            zoomThatReplayStartsAt = 1;
+            scaleThatReplayStartsAt = 1;
             if (state.power > 2) {
                 state.incrementPowerBy(-1);
             }
@@ -71,14 +71,14 @@ export class Replayer {
     resetReplayVariables() {
         prev = 0;
         replayOut = true;
-        zoomThatReplayStartsAt = 1;
+        scaleThatReplayStartsAt = 1;
     }
-    replay(timestamp, state, zoomThatReplayStartsAt) {
+    replay(timestamp, state, scaleThatReplayStartsAt) {
         if (!this.running) {
             return;
         }
         const zoomedAllTheWayOut = replayOut && state.scale >= 1;
-        const zoomedAllTheWayIn = !replayOut && state.scale <= zoomThatReplayStartsAt;
+        const zoomedAllTheWayIn = !replayOut && state.scale <= scaleThatReplayStartsAt;
         if (zoomedAllTheWayOut || zoomedAllTheWayIn) {
             replayOut = !replayOut;
             const replayText = document.getElementById("replay-text");
@@ -90,7 +90,7 @@ export class Replayer {
             this.running = false;
             return;
         }
-        requestAnimationFrame((timestamp) => this.replay(timestamp, state, zoomThatReplayStartsAt));
+        requestAnimationFrame((timestamp) => this.replay(timestamp, state, scaleThatReplayStartsAt));
         if (timestamp - prev < 16) {
             return;
         }
