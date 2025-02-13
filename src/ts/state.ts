@@ -33,26 +33,22 @@ export default class State {
   height = 0;
   ratio = 1.618033988749895;
   power = 2;
-  grayscale: number;
-  initialGrayscale = 23;
+  grayscale: boolean;
   maxIterations = 128;
   fullMaxIterations = 1024;
-  rFactor = 1;
-  gFactor = 1;
-  bFactor = 1;
   canvas = canvas;
   tiles: Tile[] = [];
   workerPool: WorkerPool;
   pendingRenders: Promise<void> | null = null;
   wantsRender = false;
 
-  constructor(grayscale: number, workerPool: WorkerPool) {
+  constructor(grayscale: boolean, workerPool: WorkerPool) {
     this.grayscale = grayscale;
     this.workerPool = workerPool;
   }
 
   changeColor() {
-    this.grayscale = this.grayscale === 0 ? this.initialGrayscale : 0;
+    this.grayscale = !this.grayscale;
   }
 
   panLeft() {
@@ -101,15 +97,11 @@ export default class State {
       canvasWidth: this.width,
       canvasHeight: this.height,
       maxIterations: this.maxIterations,
-      fullMaxIterations: this.fullMaxIterations,
       tileLeft: tile.x,
       tileTop: tile.y,
       mid: this.mid,
       scale: this.scale,
       ratio: this.ratio,
-      rFactor: this.rFactor,
-      gFactor: this.gFactor,
-      bFactor: this.bFactor,
       power: this.power,
       grayscale: this.grayscale,
     } as Work;

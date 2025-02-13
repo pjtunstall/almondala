@@ -26,18 +26,14 @@ pub fn calculate_mandelbrot(
     canvas_width: usize,
     canvas_height: usize,
     max_iterations: usize,
-    full_max_iterations: usize,
     tile_left: f64,
     tile_top: f64,
     mid_x: f64,
     mid_y: f64,
     scale: f64,
     ratio: f64,
-    r_factor: f64,
-    g_factor: f64,
-    b_factor: f64,
     power: i32,
-    grayscale: f64,
+    grayscale: bool,
 ) -> Vec<u8> {
     let params = Params {
         tile_width,
@@ -62,31 +58,19 @@ pub fn calculate_mandelbrot(
     }
 
     (0..tile_width * tile_height)
-        .into_iter()
-        .map(|index| {
+        .flat_map(|index| {
             let x = index % tile_width;
             let y = index / tile_width;
 
             let escape_iteration = escape::get_escape_iteration(x, y, &params);
 
-            if grayscale != 0.0 {
-                coloring::shade(
-                    escape_iteration,
-                    max_iterations,
-                    full_max_iterations,
-                    grayscale,
-                )
+            if grayscale {
+                coloring::shade(escape_iteration, max_iterations)
+                // coloring::SHADE[escape_iteration]
             } else {
-                coloring::hue(
-                    escape_iteration,
-                    max_iterations,
-                    full_max_iterations,
-                    r_factor,
-                    g_factor,
-                    b_factor,
-                )
+                coloring::color(escape_iteration, max_iterations)
+                // coloring::COLOR[escape_iteration]
             }
         })
-        .flatten()
         .collect()
 }

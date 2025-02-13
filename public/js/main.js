@@ -5,6 +5,6 @@ const numWorkers = navigator.hardwareConcurrency || 2;
 const workerPool = new WorkerPool(numWorkers);
 await Promise.all(workerPool.initPromises);
 workerPool.changeOnmessageHandlers();
-let state = new State(23, workerPool);
+let state = new State(true, workerPool);
 new MandelbrotExplorer(state);
 //# sourceMappingURL=main.js.map

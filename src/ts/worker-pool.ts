@@ -11,7 +11,6 @@ export interface Work {
   canvasWidth: number;
   canvasHeight: number;
   maxIterations: number;
-  fullMaxIterations: number;
   tileLeft: number;
   tileTop: number;
   mid: ComplexPoint;
@@ -21,7 +20,7 @@ export interface Work {
   gFactor: number;
   bFactor: number;
   power: number;
-  grayscale: number;
+  grayscale: boolean;
 }
 
 export default class WorkerPool {

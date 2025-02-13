@@ -21,12 +21,8 @@ export default class State {
     ratio = 1.618033988749895;
     power = 2;
     grayscale;
-    initialGrayscale = 23;
     maxIterations = 128;
     fullMaxIterations = 1024;
-    rFactor = 1;
-    gFactor = 1;
-    bFactor = 1;
     canvas = canvas;
     tiles = [];
     workerPool;
@@ -37,7 +33,7 @@ export default class State {
         this.workerPool = workerPool;
     }
     changeColor() {
-        this.grayscale = this.grayscale === 0 ? this.initialGrayscale : 0;
+        this.grayscale = !this.grayscale;
     }
     panLeft() {
         this.mid.x -= this.scale * panDelta;
@@ -77,15 +73,11 @@ export default class State {
             canvasWidth: this.width,
             canvasHeight: this.height,
             maxIterations: this.maxIterations,
-            fullMaxIterations: this.fullMaxIterations,
             tileLeft: tile.x,
             tileTop: tile.y,
             mid: this.mid,
             scale: this.scale,
             ratio: this.ratio,
-            rFactor: this.rFactor,
-            gFactor: this.gFactor,
-            bFactor: this.bFactor,
             power: this.power,
             grayscale: this.grayscale,
         };
