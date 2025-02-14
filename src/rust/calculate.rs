@@ -1,5 +1,6 @@
 mod escape;
 mod perimeter;
+mod pixels;
 
 use generate_tables::generate_color_tables;
 use wasm_bindgen::prelude::*;
@@ -59,20 +60,9 @@ pub fn calculate_mandelbrot(
             .collect();
     }
 
-    (0..tile_width * tile_height)
-        .flat_map(|index| {
-            let x = index % tile_width;
-            let y = index / tile_width;
-
-            let escape_iteration = escape::get_escape_iteration(x, y, &params);
-
-            if escape_iteration >= params.max_iterations {
-                [0, 0, 0, 255]
-            } else if grayscale {
-                SHADES[escape_iteration]
-            } else {
-                COLORS[escape_iteration]
-            }
-        })
-        .collect()
+    if grayscale {
+        pixels::get_pixels(&params, &SHADES)
+    } else {
+        pixels::get_pixels(&params, &COLORS)
+    }
 }

@@ -23,15 +23,13 @@ pub fn generate_color_tables(_input: TokenStream) -> TokenStream {
         [shade, shade, shade, 255]
     }
 
-    let colors: Vec<_> = (0..FULL_MAX_ITERATIONS).map(color).collect();
-    let shades: Vec<_> = (0..FULL_MAX_ITERATIONS).map(shade).collect();
-
-    let colors_tokens = colors.iter().map(|c| {
-        let [r, g, b, a] = *c;
+    let colors_tokens = (0..FULL_MAX_ITERATIONS).map(|i| {
+        let [r, g, b, a] = color(i);
         quote! { [#r, #g, #b, #a] }
     });
-    let shades_tokens = shades.iter().map(|s| {
-        let [r, g, b, a] = *s;
+
+    let shades_tokens = (0..FULL_MAX_ITERATIONS).map(|i| {
+        let [r, g, b, a] = shade(i);
         quote! { [#r, #g, #b, #a] }
     });
 
