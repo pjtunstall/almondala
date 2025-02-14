@@ -92,6 +92,59 @@ python3 -m http.server
 
 Open a browser. When the popup prompts you, allow the application to accept incoming connections. Then navigate to `http://localhost:8000/public/`.
 
+## Tables
+
+The pixel values in `coloring::SHADE_TABLE` and `coloring::COLOR_TABLE` were calculated as follows:
+
+```rust
+const FULL_MAX_ITERATIONS: f64 = 1024.0;
+
+let mut colors = [[0, 0, 0, 0]; 1024];
+let mut shades = [[0, 0, 0, 0]; 1024];
+
+for i in 0..max_iterations {
+    let color = color(i, max_iterations);
+    colors[i] = color;
+
+    let shade = shade(i, max_iterations);
+    shades[i] = shade;
+}
+
+println!("const COLOR_TABLE: [[u8; 4]; FULL_MAX_ITERATIONS] = {:?}\n", colors);
+println!("const SHADE_TABLE: [[u8; 4]; FULL_MAX_ITERATIONS] = {:?}\n", shades);
+```
+
+using the `color` and `shade` functions
+
+```rust
+fn color(escape_iteration: usize, max_iterations: usize) -> [u8; 4] {
+    if escape_iteration == max_iterations {
+        return [0, 0, 0, 255];
+    }
+
+    let hue = escape_iteration as f64 / FULL_MAX_ITERATIONS;
+    let r = ((hue * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+    let g =
+        ((hue * 17.0 * std::f64::consts::TAU + 2.0).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+    let b =
+        ((hue * 17.0 * std::f64::consts::TAU + 3.0).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+
+    [r, g, b, 255]
+}
+
+fn shade(escape_iteration: usize, max_iterations: usize) -> [u8; 4] {
+    if escape_iteration == max_iterations {
+        return [0, 0, 0, 255];
+    }
+
+    let fraction = escape_iteration as f64 / FULL_MAX_ITERATIONS;
+    let shade =
+        ((fraction * 23.0 * std::f64::consts::TAU).sin() * 128.0 + 128.0).clamp(0.0, 255.0) as u8;
+
+    [shade, shade, shade, 255]
+}
+```
+
 ## Experimental branches
 
 This repo includes several old feature branches. At present, these are in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched them that I'm no longer trying to parallelize the Rust with the [rayon](https://docs.rs/rayon/latest/rayon/) crate (library). [Benchmarking](#benchmarking) showed that `rayon` made the calculations 1.8 times slower. As I now realize, this is because WebAssembly doesn't have direct support for multithreading at the hardware level and instead relies on JavaScript worker threads for parallelism.

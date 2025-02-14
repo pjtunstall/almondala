@@ -64,12 +64,14 @@ pub fn calculate_mandelbrot(
 
             let escape_iteration = escape::get_escape_iteration(x, y, &params);
 
-            if grayscale {
-                coloring::shade(escape_iteration, max_iterations)
-                // coloring::SHADE[escape_iteration]
+            if escape_iteration >= params.max_iterations {
+                [0, 0, 0, 255]
+            } else if grayscale {
+                // coloring::shade(escape_iteration, max_iterations)
+                coloring::SHADE_TABLE[escape_iteration]
             } else {
-                coloring::color(escape_iteration, max_iterations)
-                // coloring::COLOR[escape_iteration]
+                // coloring::color(escape_iteration, max_iterations)
+                coloring::COLOR_TABLE[escape_iteration]
             }
         })
         .collect()
