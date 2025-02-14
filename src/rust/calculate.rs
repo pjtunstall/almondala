@@ -1,8 +1,10 @@
-mod coloring;
 mod escape;
 mod perimeter;
 
+use generate_tables::generate_color_tables;
 use wasm_bindgen::prelude::*;
+
+generate_color_tables!();
 
 pub struct Params {
     max_iterations: usize,
@@ -67,11 +69,9 @@ pub fn calculate_mandelbrot(
             if escape_iteration >= params.max_iterations {
                 [0, 0, 0, 255]
             } else if grayscale {
-                // coloring::shade(escape_iteration, max_iterations)
-                coloring::SHADE_TABLE[escape_iteration]
+                SHADES[escape_iteration]
             } else {
-                // coloring::color(escape_iteration, max_iterations)
-                coloring::COLOR_TABLE[escape_iteration]
+                COLORS[escape_iteration]
             }
         })
         .collect()

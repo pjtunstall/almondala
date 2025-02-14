@@ -1,3 +1,9 @@
-target/
+# Node
 node_modules/
+
+# TypeScript
 *.js.map
+
+# Rust
+**/target/
+Cargo.lock

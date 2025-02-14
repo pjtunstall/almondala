@@ -99,8 +99,8 @@ The pixel values in `coloring::SHADE_TABLE` and `coloring::COLOR_TABLE` were cal
 ```rust
 const FULL_MAX_ITERATIONS: f64 = 1024.0;
 
-let mut colors = [[0, 0, 0, 0]; 1024];
-let mut shades = [[0, 0, 0, 0]; 1024];
+let mut colors = [[0, 0, 0, 0]; FULL_MAX_ITERATIONS];
+let mut shades = [[0, 0, 0, 0]; FULL_MAX_ITERATIONS];
 
 for i in 0..max_iterations {
     let color = color(i, max_iterations);
