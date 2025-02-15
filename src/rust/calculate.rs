@@ -2,8 +2,9 @@ mod escape;
 mod perimeter;
 mod pixels;
 
-use generate_tables::generate_color_tables;
 use wasm_bindgen::prelude::*;
+
+use generate_tables::generate_color_tables;
 
 generate_color_tables!();
 
