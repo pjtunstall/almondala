@@ -17,7 +17,7 @@
 
 ## Name
 
-[Benoit Mandelbrot](https://en.wikipedia.org/wiki/Benoit_Mandelbrot), the set's discoverer, is German for "almond bread". I coined Almondala as a [portmanteau](https://en.wikipedia.org/wiki/Blend_word) of almond and [mandala](https://en.wikipedia.org/wiki/Mandala).
+[Benoit Mandelbrot](https://en.wikipedia.org/wiki/Benoit_Mandelbrot) discovered this fractal. His surname is is German for "almond bread". I coined Almondala as a [portmanteau](https://en.wikipedia.org/wiki/Blend_word) of almond and [mandala](https://en.wikipedia.org/wiki/Mandala).
 
 ## Usage
 
