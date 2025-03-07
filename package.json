@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build:wasm": "wasm-pack build --release --target web --out-dir ./public/wasm/ && wasm-opt -O4 -o ./public/wasm/almondala_bg.wasm ./public/wasm/almondala_bg.wasm",
+    "build:wasm": "wasm-pack build --release --target web --out-dir ./public/wasm/ && wasm-opt -O2 -o ./public/wasm/almondala_bg.wasm ./public/wasm/almondala_bg.wasm",
     "build:ts": "tsc",
     "build:fix-imports:mac": "find ./public/js -name '*.js' -exec sed -i '' 's|\"../../public/wasm/almondala.js\"|\"../wasm/almondala.js\"|g' {} +",
     "build:fix-imports:linux": "find ./public/js -name '*.js' -exec sed -i 's|\"../../public/wasm/almondala.js\"|\"../wasm/almondala.js\"|g' {} +",

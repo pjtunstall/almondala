@@ -164,7 +164,7 @@ Further developments may include:
     - Reuse perimeter calculation of tiles, also shared edges.
     - Share memory between Wasm and JS.
     - Try making calculations cancellable so that some could skipped as an alternative to processing multiple slow requests that come close together. Be sure to benchmark to see if it actually helps. In Rust, this could be done with an async runtime like [tokio](https://docs.rs/tokio/latest/tokio/). On the JavaScript end, look into [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
-    - Benchmark with and without wasm-opt, and try out different wasm-opt options. I'm currently using this tool to optimize compilation. See the build script in `package.json`. (Option `04` is the most aggressive optimization for speed.)
+    - Benchmark with and without wasm-opt, and try out different wasm-opt options. I'm currently using this tool to optimize compilation. See the build script in `package.json`. (Option `02` is recommended as generally best for performance, but there are many details that can be customized.)
 - FEATURES
   - More buttons:
     - Share state by encoding it in the URL.
