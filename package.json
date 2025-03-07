@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build:wasm": "wasm-pack build --release --target web --out-dir ./pkg && mv ./pkg/*.wasm ./public/wasm/ && mv ./pkg/*.js ./public/wasm/ && mv ./pkg/*.d.ts ./public/wasm/ && sh -c \"rm -rf ./pkg\" || cmd /c \"rmdir /s /q pkg\"",
+    "build:wasm": "wasm-pack build --release --target web --out-dir ./public/wasm/",
     "build:ts": "tsc",
     "build:fix-imports:mac": "find ./public/js -name '*.js' -exec sed -i '' 's|\"../../public/wasm/almondala.js\"|\"../wasm/almondala.js\"|g' {} +",
     "build:fix-imports:linux": "find ./public/js -name '*.js' -exec sed -i 's|\"../../public/wasm/almondala.js\"|\"../wasm/almondala.js\"|g' {} +",

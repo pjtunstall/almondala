@@ -82,9 +82,7 @@ Run the build script with
 npm run build
 ```
 
-NOTE: The build script should be platform-agnostic, but, as yet, has only been tested on macOS.
-
-All being well, this will build the WebAssembly file `almondala_bg.wasm` to the `pkg` directory and copy it to the `public/wasm` directory along with its associated JavaScipt glue code `almondala.js` and the two TypeScript type-declaration files, `amondala.d.ts` and `almondala_bg.wasm.d.ts`. It concludes by correcting the import path for the glue from relative-to-the-TypeScript-source, as required by the TypeScript compiler, to relative-to-the-actual-compiled-JavaScript. It then deletes the superfluous `pkg`, which now contains only unwanted byproducts of the compilation process.
+NOTE: The build script includes a final step that corrects the import path in `worker.js` for the Wasm module from "relative to the TypeScript source file" (as required by the TypeScript compiler) to "relative to the compiled JavaScript file" (so that `worker.js` itself can actually import the Wasm module). This should run different instructions depending on the platform, but, as yet, has only been tested on macOS.
 
 Start a local server, for example:
 
