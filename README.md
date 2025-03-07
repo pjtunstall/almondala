@@ -164,6 +164,7 @@ Further developments may include:
     - Reuse perimeter calculation of tiles, also shared edges.
     - Share memory between Wasm and JS.
     - Try making calculations cancellable so that some could skipped as an alternative to processing multiple slow requests that come close together. Be sure to benchmark to see if it actually helps. In Rust, this could be done with an async runtime like [tokio](https://docs.rs/tokio/latest/tokio/). On the JavaScript end, look into [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
+    - Benchmark with and without wasm-opt, and try out different wasm-opt options. I'm currently using this tool to optimize compilation. See the build script in `package.json`. (Option `04` is the most aggressive optimization for speed.)
 - FEATURES
   - More buttons:
     - Share state by encoding it in the URL.
@@ -171,3 +172,16 @@ Further developments may include:
   - Touchscreen gestures: pinch and zoom.
   - Explore different color schemes to offer as options.
   - Investigate how to safely represent numbers with [https://en.wikipedia.org/wiki/Arbitrary-precision_arithmetic](arbitrary precision). At the moment, zoom is limited by to the precision of 64-bit floats. In practice, below `2e-13`, the image starts to get blocky. One strategy might by to represent `scale`, `mid.x`, and `mid.y` in TypeScript with the `Decimal` type from `decimal.js-light` and serialize them to pass to Rust. In Rust, I could use the [rug](https://docs.rs/rug/latest/rug/index.html) crate (library). The Rust function `calculate_mandelbrot` would receive them as type `String`. It could then deserialize them them as instances of `rug::Float`, a "multi-precision floating-point number with arbitrarily large precision and correct rounding", setting the precision based on the length of the `String`. An instance of the corresponding arbitrary-precision complex type `rug::Complex` could then be constructed from the real and imaginary parts. As I understand it, since the precision of `rug::FLoat` and `rug::Complex` has to be set during construction, arithmetic operations would have to be wrapped with logic to set an appropriate precision for the outcome.
+
+Finally, a CI/CD-related point. For a while, I had Netlify run the build script on each deployment via a `netlify.toml` file in the root of my project with the following:
+
+```toml
+[build]
+  command = "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source $HOME/.cargo/env && npm run build"
+  publish = "public"
+
+[build.environment]
+  RUST_VERSION = "stable"
+```
+
+But when I introduced wasm-op, it seemed more convenient to just build locally. At some point, I may explore installing and caching wasm-opt in the Netlify build environment. Alternatively, I might look into using a custom Docker image to ensure a more controlled and consistent build environment.
