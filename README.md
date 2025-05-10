@@ -81,7 +81,7 @@ Install `wasm-opt`:
 - Download it from the [Binaryen releases page](https://github.com/WebAssembly/binaryen/releases)
 - Or follow the instructions at the [Binaryen GitHub repo](https://github.com/WebAssembly/binaryen#tools)
 
-Then my [build script](./package.json) with
+Run my [build script](./package.json) with
 
 ```bash
 npm run build
