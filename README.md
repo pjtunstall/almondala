@@ -35,7 +35,7 @@
   - `⟲` to replay zoom, i.e. to zoom out to the initial scale or to zoom back in to the scale at which the replay started.
   - `+` and `-` to the adjust maximum number of iterations to check before coloring a pixel black. Higher values give greater precision, but take longer.
   - `i` for a reminder of this info.
-  - `˄` and `˅` to increment/decrement the power to which each number in the sequence is raised.
+  - `˄` and `˅` to increment/decrement the power to which `z` is raised in the equation. The default exponent is `2`, giving rise to the Mandenbrot set itself. More generally, for a power `d`, the fractals produced by the equation `z -> z^d + c`, are called [multibrot sets](https://en.wikipedia.org/wiki/Multibrot_set).
 
 Resizing the window also resets the view.
 
@@ -76,13 +76,18 @@ Install [Node.js](https://nodejs.org/en) if you don't already have it. This will
 npm install
 ```
 
-Run the build script with
+Install `wasm-opt`:
+
+- Download it from the [Binaryen releases page](https://github.com/WebAssembly/binaryen/releases)
+- Or follow the instructions at the [Binaryen GitHub repo](https://github.com/WebAssembly/binaryen#tools)
+
+Then my [build script](./package.json) with
 
 ```bash
 npm run build
 ```
 
-NOTE: The build script includes a final step that corrects the import path in `worker.js` for the Wasm module from "relative to the TypeScript source file" (as required by the TypeScript compiler) to "relative to the compiled JavaScript file" (so that `worker.js` itself can actually import the Wasm module). This should run different instructions depending on the platform, but, as yet, has only been tested on macOS.
+NOTE: This script includes a final step that corrects the import path in `worker.js` for the Wasm module from "relative to the TypeScript source file" (as required by the TypeScript compiler) to "relative to the compiled JavaScript file" (so that `worker.js` itself can actually import the Wasm module). This should run different instructions depending on the platform, but, as yet, has only been tested on macOS.
 
 Start a local server, for example:
 
@@ -94,9 +99,9 @@ Open a browser. When the popup prompts you, allow the application to accept inco
 
 ## Experimental branches
 
-This repo includes several old feature branches. At present, these are in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched them that I'm no longer trying to parallelize the Rust with the [rayon](https://docs.rs/rayon/latest/rayon/) crate (library). [Benchmarking](#benchmarking) showed that `rayon` made the calculations 1.8 times slower. As I now realize, this is because WebAssembly doesn't have direct support for multithreading at the hardware level and instead relies on JavaScript worker threads for parallelism.
+This repo includes several old feature branches. At present, these are in raw JavaScript, as they date to before I switched to using TypeScript for the project. Another significant change I've made to the main branch since I last touched them is that I'm no longer trying to parallelize the Rust with the [Rayon](https://docs.rs/rayon/latest/rayon/) crate (library). [Benchmarking](#benchmarking) showed that Rayon made the calculations 1.8 times slower. As I now realize, WebAssembly doesn't have direct support for multithreading at the hardware level and instead relies on JavaScript worker threads for parallelism. Hence, I assume, I was getting all of the overhead and none of the benefit of Rayon.
 
-- `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point: a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors. In the current asynchronous setup, there would also be the issue of rendered values always falling behind the actual state, hence why I've only used the effect for the replay zoom.)
+- `fake`: a progressive loading effect: panning or zooming the current frame before calculating the next one. (Works up to a point, but a series of pans and zooms will eventually get out of sync with the properly calculated view, maybe due accumulated rounding errors. In the current asynchronous setup, there would also be the issue of rendered values always falling behind the actual state, hence why I've only used the effect for the replay zoom.)
 - `offscreen`: two worker threads, each of which puts its image to an `OffscreenCanvas`. A request to calculate is sent to both simultaneously. One does a quick first pass with a smaller iteration limit. The main thread toggles the opacity of the two canvases to display the results as needed. (Works, but with occasional glitchy jumps, and reset is jarring on Firefox. Essentially supersceded when I successfully introduced the worker pool that's now used in `main`.)
 - `lines`: an attempt at calculating odd and even numbered columns separately, one after the other, so as to have something to display faster, while waiting for the rest of the calculation. (The basic idea of calculating alternate lines works--the Rust does its job--but the branch is not yet fully functional. It derived from `offscreen`, and I think the two workers/canvases are complicting matters.)
 - `shared`: an attempt at sharing memory betwee JS and Wasm. (Not yet working. The idea is still relevant as a possible future optimization.)
@@ -105,7 +110,7 @@ See their `README`s for more info.
 
 ## Benchmarking
 
-In earlier versions, I somehow absent-mindedly wound up using `Vec<u8>` for each pixel. When this came to my attention, I switched to using `[u8; 4]`, and took the opportunity to compare the performance.
+In earlier versions, I somehow unnecessarily wound up using `Vec<u8>` for each pixel, even though each one always consists of four bytes. When this came to my attention, I switched to using `[u8; 4]`, and took the opportunity to compare the performance.
 
 Originally, I calculated the color of each pixel every render. Now I use tables of precalculated values. The tables, `COLORS` and `SHADES` are generated by a macro in the `generate_tables` crate. again, I compared the performace.
 
@@ -166,6 +171,7 @@ Further developments may include:
     - Try making calculations cancellable so that some could skipped as an alternative to processing multiple slow requests that come close together. Be sure to benchmark to see if it actually helps. In Rust, this could be done with an async runtime like [tokio](https://docs.rs/tokio/latest/tokio/). On the JavaScript end, look into [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
     - Benchmark with and without wasm-opt, and try out different wasm-opt options. I'm currently using this tool to optimize compilation. See the build script in `package.json`. (Option `02` is recommended as generally best for performance, but there are many details that can be customized.)
 - FEATURES
+  - Allow arbitrary exponents, including negative and fractional.
   - More buttons:
     - Share state by encoding it in the URL.
     - Save image.
@@ -184,4 +190,4 @@ Finally, a CI/CD-related point. For a while, I had Netlify run the build script 
   RUST_VERSION = "stable"
 ```
 
-But when I introduced wasm-op, it seemed more convenient to just build locally. At some point, I may explore installing and caching wasm-opt in the Netlify build environment. Alternatively, I might look into using a custom Docker image to ensure a more controlled and consistent build environment.
+But when I introduced wasm-opt, it seemed more convenient to just build locally. At some point, I may explore installing and caching wasm-opt in the Netlify build environment. Alternatively, I might look into using a custom Docker image to ensure a more controlled and consistent build environment.
