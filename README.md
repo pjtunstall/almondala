@@ -58,12 +58,6 @@ cd almondala
 
 [Install Rust](https://www.rust-lang.org/tools/install), if you haven't already.
 
-Install Rust dependencies with
-
-```bash
-cargo add .
-```
-
 Make sure you have `wasm-pack` installed:
 
 ```bash
