@@ -13,7 +13,7 @@
 
 ## Description
 
-[Almondala](https://almondala.netlify.app/) is a [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) explorer, written in Rust (compiled to WebAssembly) and TypeScript.
+[Almondala](https://almondala.netlify.app/) is a program for exploring the [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) and realated fractals. It's written in Rust (compiled to WebAssembly) and TypeScript.
 
 ## Name
 
@@ -35,7 +35,7 @@
   - `⟲` to replay zoom, i.e. to zoom out to the initial scale or to zoom back in to the scale at which the replay started.
   - `+` and `-` to the adjust maximum number of iterations to check before coloring a pixel black. Higher values give greater precision, but take longer.
   - `i` for a reminder of this info.
-  - `˄` and `˅` to increment/decrement the power to which `z` is raised in the equation. The default exponent is `2`, giving rise to the Mandenbrot set itself. More generally, for a power `d`, the fractals produced by the equation `z -> z^d + c`, are called [multibrot sets](https://en.wikipedia.org/wiki/Multibrot_set).
+  - `^` and `v` to increment/decrement the power to which `z` is raised in the equation. The default exponent is `2`, giving rise to the Mandenbrot set itself. More generally, for a power `d`, the fractals produced by the equation `z -> z^d + c`, are called [multibrot sets](https://en.wikipedia.org/wiki/Multibrot_set).
 
 Resizing the window also resets the view.
 
